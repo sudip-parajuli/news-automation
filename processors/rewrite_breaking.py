@@ -1,6 +1,9 @@
 import google.generativeai as genai
 import os
+import time
+import random
 from dotenv import load_dotenv
+import google.api_core.exceptions
 
 load_dotenv()
 
@@ -8,6 +11,44 @@ class ScriptRewriter:
     def __init__(self, api_key: str):
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel('gemini-2.0-flash')
+        self.groq_api_key = os.getenv("GROQ_API_KEY")
+        if self.groq_api_key:
+            try:
+                from groq import Groq
+                self.groq_client = Groq(api_key=self.groq_api_key)
+            except ImportError:
+                self.groq_client = None
+        else:
+            self.groq_client = None
+
+    def _call_with_retry(self, prompt: str, max_retries: int = 5) -> str:
+        """Calls Gemini with exponential backoff, falling back to Groq if available."""
+        for attempt in range(max_retries):
+            try:
+                response = self.model.generate_content(prompt)
+                return response.text.strip()
+            except google.api_core.exceptions.ResourceExhausted as e:
+                if self.groq_client:
+                    print(f"Gemini Quota Exceeded. Trying Groq fallback...")
+                    try:
+                        chat_completion = self.groq_client.chat.completions.create(
+                            messages=[{"role": "user", "content": prompt}],
+                            model="llama-3.3-70b-versatile",
+                        )
+                        return chat_completion.choices[0].message.content.strip()
+                    except Exception as groq_err:
+                        print(f"Groq fallback failed: {groq_err}")
+                
+                wait_time = (2 ** attempt) + random.uniform(0, 1)
+                print(f"Quota exceeded. Retrying in {wait_time:.2f} seconds... (Attempt {attempt+1}/{max_retries})")
+                time.sleep(wait_time)
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                if attempt == max_retries - 1:
+                    raise e
+                time.sleep(2)
+        
+        return "Error: Maximum retries reached for LLM generation."
 
     def rewrite_for_shorts(self, headline: str, content: str) -> str:
         prompt = f"""
@@ -21,8 +62,7 @@ class ScriptRewriter:
         Simple global English
         End with: 'More updates will follow.'
         """
-        response = self.model.generate_content(prompt)
-        return response.text.strip()
+        return self._call_with_retry(prompt)
 
     def summarize_for_daily(self, news_items: list) -> str:
         news_text = "\n\n".join([f"Headline: {item['headline']}\nContent: {item['content']}" for item in news_items])
@@ -38,15 +78,11 @@ class ScriptRewriter:
         Use clear transitions between topics
         Avoid repetition or bias
         """
-        response = self.model.generate_content(prompt)
-        return response.text.strip()
+        return self._call_with_retry(prompt)
 
 if __name__ == "__main__":
     API_KEY = os.getenv("GEMINI_API_KEY")
     if API_KEY:
         rewriter = ScriptRewriter(API_KEY)
-        # Test Shorts
-        # script = rewriter.rewrite_for_shorts("Earthquake in Japan", "A magnitude 7.5 earthquake...")
-        # print(script)
     else:
         print("GEMINI_API_KEY not found.")

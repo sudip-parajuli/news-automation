@@ -29,4 +29,5 @@ jobs:
       - name: Run Daily Summary Script
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python international_news_automation/main_daily.py
+          YOUTUBE_TOKEN_BASE64: ${{ secrets.YOUTUBE_TOKEN_BASE64 }}
+        run: python main_daily.py
