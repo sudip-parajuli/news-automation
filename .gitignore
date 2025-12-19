@@ -34,7 +34,8 @@ wheels/
 *.egg
 
 # Media and Storage
-storage/
+storage/*
+!storage/*.json
 media/*.mp4
 media/*.mp3
 media/*.jpg
