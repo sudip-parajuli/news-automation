@@ -38,7 +38,7 @@ async def main():
     script = rewriter.summarize_for_daily(normal_news)
     
     audio_path = "storage/daily_summary.mp3"
-    await TTSEngine.generate_audio(script, audio_path)
+    _, word_offsets = await TTSEngine.generate_audio(script, audio_path)
     
     vgen = VideoLongGenerator()
     sections = []

@@ -57,11 +57,16 @@ class VideoLongGenerator:
         # Audio Mixing (Randomized from music/ folder)
         import glob
         import random
-        music_files = glob.glob("music/*.mp3") + glob.glob("music/*.wav")
+        music_dir = "music"
+        if not os.path.exists(music_dir):
+            music_dir = os.path.join(os.getcwd(), "music")
+            
+        music_files = glob.glob(os.path.join(music_dir, "*.mp3")) + glob.glob(os.path.join(music_dir, "*.wav"))
+        
         if music_files:
             try:
                 bg_music_path = random.choice(music_files)
-                print(f"Using random background music: {bg_music_path}")
+                print(f"Mixing music (long video): {os.path.basename(bg_music_path)}")
                 from moviepy.audio.AudioClip import CompositeAudioClip
                 from moviepy.editor import afx
                 bg_music = AudioFileClip(bg_music_path).volumex(0.1).set_duration(total_duration)
@@ -72,6 +77,7 @@ class VideoLongGenerator:
                 print(f"Failed to load background music: {e}")
                 final_audio = audio
         else:
+            print(f"No background music files found in {os.path.abspath(music_dir)}")
             final_audio = audio
 
         final_video = final_video.set_audio(final_audio)
