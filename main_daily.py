@@ -32,6 +32,8 @@ async def main():
         print("No news to summarize.")
         return
 
+    from media.image_fetcher import ImageFetcher
+    img_fetcher = ImageFetcher()
     rewriter = ScriptRewriter(os.getenv("GEMINI_API_KEY"))
     script = rewriter.summarize_for_daily(normal_news)
     
@@ -41,9 +43,18 @@ async def main():
     vgen = VideoLongGenerator()
     sections = []
     lines = script.split('.')
-    for line in lines:
-        if len(line.strip()) > 10:
-            sections.append({'text': line.strip(), 'image_path': None})
+    temp_images = []
+    
+    print("Fetching images for summary sections...")
+    for i, line in enumerate(lines):
+        text = line.strip()
+        if len(text) > 20:
+            # For long videos, we search images for each sentence or paragraph
+            img_name = f"summary_img_{i}.jpg"
+            # Use the first 50 chars of text as query
+            img_path = img_fetcher.fetch_image(text[:50], img_name)
+            sections.append({'text': text, 'image_path': img_path})
+            if img_path: temp_images.append(img_path)
     
     video_path = "storage/daily_summary.mp4"
     if sections:

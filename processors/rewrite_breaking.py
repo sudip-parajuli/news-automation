@@ -58,11 +58,27 @@ class ScriptRewriter:
 
         Language: English
         Tone: Urgent, neutral, factual
-        No opinions or assumptions
+        - RETURN ONLY THE SPEECH TEXT. 
+        - DO NOT include narrator instructions like "[Music plays]".
+        - DO NOT include speaker labels like "Anchor:".
+        - DO NOT include hashtags.
         Simple global English
         End with: 'More updates will follow.'
         """
-        return self._call_with_retry(prompt)
+        script = self._call_with_retry(prompt)
+        return self.clean_script(script)
+
+    def clean_script(self, text: str) -> str:
+        """Removes common narrator patterns like [Music] or Anchor: from text."""
+        import re
+        # Remove patterns like [Music plays], [Serious music], (Upbeat tone)
+        text = re.sub(r'\[.*?\]', '', text)
+        text = re.sub(r'\(.*?\)', '', text)
+        # Remove speaker labels like Anchor:, Narrator:, Voiceover:
+        text = re.sub(r'^(Anchor|Narrator|Voiceover|Anchorperson):\s*', '', text, flags=re.IGNORECASE | re.MULTILINE)
+        # Remove hashtags
+        text = re.sub(r'#\w+', '', text)
+        return text.strip()
 
     def summarize_for_daily(self, news_items: list) -> str:
         news_text = "\n\n".join([f"Headline: {item['headline']}\nContent: {item['content']}" for item in news_items])
@@ -77,8 +93,11 @@ class ScriptRewriter:
         Group related stories
         Use clear transitions between topics
         Avoid repetition or bias
+        - RETURN ONLY THE SPEECH TEXT.
+        - DO NOT include labels like "Segment 1" or "Visual:".
         """
-        return self._call_with_retry(prompt)
+        script = self._call_with_retry(prompt)
+        return self.clean_script(script)
 
 if __name__ == "__main__":
     API_KEY = os.getenv("GEMINI_API_KEY")

@@ -36,6 +36,8 @@ async def main():
     classifier = NewsClassifier()
     breaking_news = classifier.filter_breaking(news_items)
 
+    from media.image_fetcher import ImageFetcher
+    img_fetcher = ImageFetcher()
     rewriter = ScriptRewriter(os.getenv("GEMINI_API_KEY"))
     vgen = VideoShortsGenerator()
     uploader = YouTubeUploader() if (os.path.exists("client_secrets.json") or os.path.exists("client_secret.json") or os.getenv("YOUTUBE_TOKEN_BASE64")) else None
@@ -47,10 +49,13 @@ async def main():
             script = rewriter.rewrite_for_shorts(item['headline'], item['content'])
             
             audio_path = f"storage/temp_audio_{item['hash'][:8]}.mp3"
-            await TTSEngine.generate_audio(script, audio_path)
+            _, word_offsets = await TTSEngine.generate_audio(script, audio_path)
+            
+            # Fetch a relevant image
+            image_path = img_fetcher.fetch_image(item['headline'], f"img_{item['hash'][:8]}.jpg")
             
             video_path = f"storage/breaking_{item['hash'][:8]}.mp4"
-            vgen.create_shorts(script, audio_path, video_path)
+            vgen.create_shorts(script, audio_path, video_path, word_offsets=word_offsets, image_path=image_path)
             
             if uploader:
                 title = f"BREAKING: {item['headline'][:70]}"
@@ -62,8 +67,9 @@ async def main():
                 )
             
             posted_hashes.append(item['hash'])
-            if os.path.exists(audio_path):
-                os.remove(audio_path)
+            # Clean up
+            if os.path.exists(audio_path): os.remove(audio_path)
+            if image_path and os.path.exists(image_path): os.remove(image_path)
             break 
 
     with open(POSTED_FILE, 'w') as f:

@@ -8,14 +8,32 @@ class TTSEngine:
     @staticmethod
     async def generate_audio(text: str, output_path: str, voice: str = None):
         """
-        Generates high-quality English narration using edge-tts.
+        Generates high-quality English narration and word-level timestamps.
+        Returns: (audio_path, word_offsets)
         """
         if not voice:
             voice = TTSEngine.default_voice
             
         communicate = edge_tts.Communicate(text, voice)
-        await communicate.save(output_path)
-        print(f"Audio saved to {output_path}")
+        
+        word_offsets = []
+        
+        # Capture offsets while saving
+        # Note: we need to use stream to get metadata
+        with open(output_path, "wb") as f:
+            async for chunk in communicate.stream():
+                if chunk["type"] == "audio":
+                    f.write(chunk["data"])
+                elif chunk["type"] == "WordBoundary":
+                    # Convert microseconds to seconds
+                    word_offsets.append({
+                        "word": chunk["text"],
+                        "start": chunk["offset"] / 10**7,
+                        "duration": chunk["duration"] / 10**7
+                    })
+        
+        print(f"Audio saved to {output_path} with {len(word_offsets)} word offsets.")
+        return output_path, word_offsets
 
 if __name__ == "__main__":
     # Test generation

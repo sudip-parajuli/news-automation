@@ -7,53 +7,68 @@ class VideoLongGenerator:
 
     def create_daily_summary(self, sections: list, audio_path: str, output_path: str):
         """
-        Creates a long-form video for daily summaries.
-        sections: list of dicts with {'text': ..., 'image_path': ...}
+        Creates a long-form video for daily summaries with dynamic backgrounds.
         """
         audio = AudioFileClip(audio_path)
         total_duration = audio.duration
-        
-        # For simplicity, we'll divide duration equally among sections
-        # In a real app, we'd use timestamps from the script.
-        section_duration = total_duration / len(sections)
+        section_duration = total_duration / len(sections) if sections else 0
         
         clips = []
         for i, section in enumerate(sections):
-            # Fallback to color if image missing
             if section.get('image_path') and os.path.exists(section['image_path']):
-                bg = ImageClip(section['image_path']).set_duration(section_duration).resize(height=self.size[1])
-                if bg.w < self.size[0]:
-                    bg = bg.margin(left=(self.size[0]-bg.w)//2, color=(0,0,0))
+                bg = ImageClip(section['image_path']).set_duration(section_duration)
+                # Resize and crop to fill 16:9 screen
+                w, h = bg.size
+                aspect_ratio = w/h
+                target_ratio = self.size[0]/self.size[1]
+                
+                if aspect_ratio > target_ratio:
+                    bg = bg.resize(height=self.size[1])
+                else:
+                    bg = bg.resize(width=self.size[0])
+                
+                bg = bg.set_position('center')
+                # Zoom effect
+                bg = bg.resize(lambda t: 1 + 0.05 * t/section_duration)
             else:
                 bg = ColorClip(size=self.size, color=(20, 20, 60), duration=section_duration)
             
             try:
+                # Add a semi-transparent black background to text for readability
                 txt = TextClip(
                     section['text'], 
                     fontsize=50, 
                     color='white', 
                     font='DejaVu-Sans-Bold' if os.name != 'nt' else 'Arial-Bold', 
-                    method='label', 
+                    method='caption', 
+                    size=(self.size[0]-200, None),
                     bg_color='black',
                     align='Center'
-                ).set_duration(section_duration).set_position('bottom')
+                ).set_duration(section_duration).set_position(('center', 850))
+                
+                clips.append(CompositeVideoClip([bg, txt], size=self.size))
             except:
-                txt = TextClip(
-                    section['text'], 
-                    fontsize=50, 
-                    color='white', 
-                    method='label', 
-                    bg_color='black',
-                    align='Center'
-                ).set_duration(section_duration).set_position('bottom')
-            
-            clips.append(CompositeVideoClip([bg, txt]))
+                clips.append(bg)
 
-        final_video = concatenate_videoclips(clips)
-        final_video = final_video.set_audio(audio)
+        if not clips: return
+
+        final_video = concatenate_videoclips(clips, method="compose")
         
-        final_video.write_videofile(output_path, fps=24, codec="libx264", audio_codec="aac")
-        print(f"Daily summary video saved to {output_path}")
+        # Audio Mixing
+        bg_music_path = "music/daily_news.mp3"
+        if os.path.exists(bg_music_path):
+            from moviepy.audio.AudioClip import CompositeAudioClip
+            from moviepy.editor import afx
+            bg_music = AudioFileClip(bg_music_path).volumex(0.1).set_duration(total_duration)
+            if bg_music.duration < total_duration:
+                bg_music = bg_music.fx(afx.audio_loop, duration=total_duration)
+            final_audio = CompositeAudioClip([audio.volumex(1.1), bg_music])
+        else:
+            final_audio = audio
+
+        final_video = final_video.set_audio(final_audio)
+        final_video.write_videofile(output_path, fps=24, codec="libx264", audio_codec="aac", threads=4)
+        print(f"Enhanced daily summary video saved to {output_path}")
 
 if __name__ == "__main__":
     pass
