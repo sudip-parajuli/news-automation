@@ -54,6 +54,7 @@ class VideoShortsGenerator:
         return "\n".join(lines)
 
 if __name__ == "__main__":
+    pass
     # Test generation (Requires ImageMagick configured for MoviePy)
-    vgen = VideoShortsGenerator()
+    # vgen = VideoShortsGenerator()
     # vgen.create_shorts("BREAKING NEWS: A major international event is unfolding right now. More updates to follow.", "test_narration.mp3", "test_video.mp4")

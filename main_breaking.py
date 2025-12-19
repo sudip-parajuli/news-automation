@@ -74,8 +74,8 @@ async def main():
             posted_hashes.append(item['hash'])
             
             # Cleanup temp files
-            if os.path.exists(audio_path): os.remove(audio_path)
-            # We might want to keep the video or delete it
+            if os.path.exists(audio_path): 
+                os.remove(audio_path)
             
             # Only process one per run to avoid spamming/quota issues
             break 

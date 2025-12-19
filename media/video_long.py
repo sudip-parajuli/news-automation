@@ -47,6 +47,7 @@ class VideoLongGenerator:
         print(f"Daily summary video saved to {output_path}")
 
 if __name__ == "__main__":
+    pass
     # vgen = VideoLongGenerator()
     # sections = [{'text': 'Story 1 summary', 'image_path': None}, {'text': 'Story 2 summary', 'image_path': None}]
     # vgen.create_daily_summary(sections, "test_audio.mp3", "test_long.mp4")
