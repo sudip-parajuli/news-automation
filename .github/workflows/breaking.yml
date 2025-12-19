@@ -44,4 +44,5 @@ jobs:
           git config --global user.email 'github-actions@github.com'
           git add -f storage/posted_breaking.json
           git commit -m "Update posted news log" || echo "No changes to commit"
-          git push
+          git pull --rebase origin main
+          git push origin main
