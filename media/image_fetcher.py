@@ -30,15 +30,25 @@ class ImageFetcher:
         filename = "".join([c if c.isalnum() or c in "._-" else "_" for c in filename])
         save_path = os.path.join(self.download_dir, filename)
         
-        # KEYWORD EXTRACTION: DuckDuckGo hates long queries. 
-        # Extract the most 'meaningful' words or just the first few nouns/keywords.
-        words = [w for w in query.split() if len(w) > 3] # Filter out short words
-        if len(words) > 4:
-            search_query = " ".join(words[:4]) # Only use first 4 keywords
+        # KEYWORD EXTRACTION & CONTEXT FILTERING
+        # Avoid generic terms that trigger "Diagrams"
+        stop_words = ["decision", "system", "program", "random", "process", "rule"]
+        query_words = query.lower().split()
+        
+        # If the query is mostly "stop words", try using the first few words but force "Photo" and "News"
+        search_terms = [w for w in query_words if len(w) > 3]
+        
+        # Construct a very specific news query
+        # We append negative terms to avoid diagrams/charts
+        # AND we force photographic context
+        if len(search_terms) > 5:
+            base_query = " ".join(search_terms[:5])
         else:
-            search_query = " ".join(words)
+            base_query = " ".join(search_terms)
             
-        print(f"Searching images for: {search_query}")
+        search_query = f"{base_query} news photo -diagram -chart -graph -map -decision-tree -vector"
+        
+        print(f"Refined search: {search_query}")
         
         try:
             with DDGS() as ddgs:
@@ -46,27 +56,31 @@ class ImageFetcher:
                     keywords=search_query,
                     region="wt-wt",
                     safesearch="on",
-                    size="large"
+                    size="large",
+                    type_image="photo" # EXPLICITLY ask for photos
                 )
                 
                 if not results:
-                    print(f"No results for: {search_query}")
+                    # Fallback: remove some restrictions
+                    results = ddgs.images(keywords=f"{base_query} news reporter", size="large")
+
+                if not results:
                     return None
 
                 # Shuffle to get variety
                 image_urls = [r['image'] for r in results if r['image'].split('.')[-1].lower() in ['jpg', 'jpeg', 'png']]
                 random.shuffle(image_urls)
 
-                for url in image_urls[:5]:
+                for url in image_urls[:8]:
                     try:
                         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
                         response = requests.get(url, timeout=8, headers=headers)
                         if response.status_code == 200:
-                            with open(save_path, 'wb') as f:
-                                f.write(response.content)
-                            return save_path
-                        elif response.status_code == 202 or response.status_code == 403:
-                            print(f"Image host {url} returned {response.status_code}. Skipping.")
+                            # Verify it's not a tiny thumbnail
+                            if len(response.content) > 50000: # Min 50KB
+                                with open(save_path, 'wb') as f:
+                                    f.write(response.content)
+                                return save_path
                     except:
                         continue
         except Exception as e:

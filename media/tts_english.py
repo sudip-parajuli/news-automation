@@ -12,19 +12,16 @@ class TTSEngine:
         Returns: (audio_path, word_offsets)
         """
         if not voice:
-            voice = TTSEngine.default_voice
+            # Switch to GuyNeural which often has more robust metadata in cloud envs
+            voice = "en-US-GuyNeural"
             
         communicate = edge_tts.Communicate(text, voice)
         word_offsets = []
         chunk_types = set()
+        
         try:
-            # We'll collect all chunks first into memory to ensure we don't block the stream
-            # but for very long summaries, we should still write audio incrementally.
-            # Let's do a hybrid: write audio, but keep metadata.
             audio_data = bytearray()
-            
             async for chunk in communicate.stream():
-                # Some versions use 'type', others 'Type'. Let's be safe.
                 ctype = chunk.get("type") or chunk.get("Type") or "unknown"
                 chunk_types.add(ctype)
                 
@@ -36,14 +33,6 @@ class TTSEngine:
                         "start": (chunk.get("offset") or chunk.get("Offset")) / 10**7,
                         "duration": (chunk.get("duration") or chunk.get("Duration")) / 10**7
                     })
-                elif ctype == "Metadata":
-                    # Check if word boundaries are inside metadata (rare but possible in some versions)
-                    if "text" in chunk and "offset" in chunk:
-                         word_offsets.append({
-                            "word": chunk["text"],
-                            "start": chunk["offset"] / 10**7,
-                            "duration": chunk["duration"] / 10**7
-                        })
 
             with open(output_path, "wb") as f:
                 f.write(audio_data)
@@ -51,13 +40,35 @@ class TTSEngine:
         except Exception as e:
             print(f"Error during TTS streaming: {e}")
         
-        # Verify capture
+        # --- FALLBACK: Simulated Word Offsets ---
+        # If WordBoundary events are missing, we manually estimate them based on duration.
+        if not word_offsets and len(text.strip()) > 0:
+            print("FALLBACK: Simulated Word Sync initiated.")
+            from moviepy.editor import AudioFileClip
+            try:
+                temp_audio = AudioFileClip(output_path)
+                total_dur = temp_audio.duration
+                words = text.split()
+                # Average duration per word
+                avg_word_dur = total_dur / len(words)
+                
+                start_time = 0
+                for w in words:
+                    # Logic: use word length to adjust slightly for better realism
+                    w_dur = (len(w) / sum(len(x) for x in words)) * total_dur
+                    word_offsets.append({
+                        "word": w,
+                        "start": start_time,
+                        "duration": w_dur
+                    })
+                    start_time += w_dur
+            except Exception as e:
+                print(f"Simulated sync failed: {e}")
+
         if not word_offsets:
-            print(f"CRITICAL WARNING: No word boundaries captured for '{text[:30]}...'")
-            print(f"Captured chunk types: {chunk_types}")
-            print("Possible causes: Voice incompatibility, edge-tts version mismatch, or network packet loss in GHA.")
+            print(f"CRITICAL: Failed to generate word offsets for synchronization.")
         else:
-            print(f"SUCCESS: Captured {len(word_offsets)} word boundaries for synchronization.")
+            print(f"SUCCESS: {len(word_offsets)} word milestones ready for animation.")
         
         return output_path, word_offsets
 
