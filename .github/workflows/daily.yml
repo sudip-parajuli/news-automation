@@ -1,0 +1,32 @@
+name: Daily News Summary
+
+on:
+  schedule:
+    - cron: '0 22 * * *' # Every night at 22:00 UTC
+  workflow_dispatch:
+
+jobs:
+  run-daily:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg imagemagick
+          pip install feedparser edge-tts moviepy requests beautifulsoup4 google-generativeai telethon python-dotenv duckduckgo-search google-api-python-client google-auth-oauthlib
+          
+      - name: Configure ImageMagick
+        run: |
+          sudo sed -i 's/policy domain="path" rights="none" pattern="@\*"/policy domain="path" rights="read|write" pattern="@*"/g' /etc/ImageMagick-6/policy.xml
+
+      - name: Run Daily Summary Script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python international_news_automation/main_daily.py

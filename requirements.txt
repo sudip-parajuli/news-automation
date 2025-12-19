@@ -1,0 +1,11 @@
+feedparser
+edge-tts
+moviepy
+requests
+beautifulsoup4
+google-generativeai
+telethon
+python-dotenv
+duckduckgo-search
+google-api-python-client
+google-auth-oauthlib

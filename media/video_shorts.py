@@ -1,0 +1,59 @@
+from moviepy.editor import TextClip, ColorClip, CompositeVideoClip, AudioFileClip
+import os
+
+class VideoShortsGenerator:
+    def __init__(self, size=(1080, 1920)):
+        self.size = size
+
+    def create_shorts(self, text: str, audio_path: str, output_path: str):
+        """
+        Creates a vertical YouTube Shorts video with animated subtitles.
+        """
+        audio = AudioFileClip(audio_path)
+        duration = audio.duration
+
+        # Background: Dark blue gradient or solid color
+        bg = ColorClip(size=self.size, color=(10, 10, 40), duration=duration)
+
+        # Simple centered text (in a real scenario, we'd split text by time)
+        # For MVP, we'll display the headline or the whole script in chunks
+        text_lines = self._wrap_text(text, 20)
+        clips = [bg]
+        
+        # Adding text clip with some styling
+        # Note: 'font' needs to be available on the system. 'Arial' is common on Windows.
+        # In Linux/GHA, we might need to specify a path or a different font name.
+        txt_clip = TextClip(
+            text, 
+            fontsize=70, 
+            color='white', 
+            font='Arial-Bold', 
+            method='caption', 
+            size=(self.size[0]-200, None),
+            align='Center'
+        ).set_duration(duration).set_position('center')
+
+        final_video = CompositeVideoClip([bg, txt_clip])
+        final_video = final_video.set_audio(audio)
+        
+        # Write file with low bitrate for speed
+        final_video.write_videofile(output_path, fps=24, codec="libx264", audio_codec="aac")
+        print(f"Video saved to {output_path}")
+
+    def _wrap_text(self, text: str, width: int) -> str:
+        words = text.split()
+        lines = []
+        current_line = []
+        for word in words:
+            if len(" ".join(current_line + [word])) <= width:
+                current_line.append(word)
+            else:
+                lines.append(" ".join(current_line))
+                current_line = [word]
+        lines.append(" ".join(current_line))
+        return "\n".join(lines)
+
+if __name__ == "__main__":
+    # Test generation (Requires ImageMagick configured for MoviePy)
+    vgen = VideoShortsGenerator()
+    # vgen.create_shorts("BREAKING NEWS: A major international event is unfolding right now. More updates to follow.", "test_narration.mp3", "test_video.mp4")
