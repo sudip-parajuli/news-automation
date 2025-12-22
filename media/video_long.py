@@ -1,4 +1,5 @@
-from moviepy.editor import TextClip, ColorClip, CompositeVideoClip, AudioFileClip, ImageClip, concatenate_videoclips
+from moviepy.editor import TextClip, ColorClip, CompositeVideoClip, AudioFileClip, ImageClip, concatenate_videoclips, afx
+from moviepy.audio.AudioClip import CompositeAudioClip
 import os
 
 class VideoLongGenerator:
@@ -79,11 +80,12 @@ class VideoLongGenerator:
             try:
                 bg_music_path = random.choice(music_files)
                 print(f"Mixing music (long video): {bg_music_path}")
-                from moviepy.audio.AudioClip import CompositeAudioClip
-                from moviepy.editor import afx
-                bg_music = AudioFileClip(bg_music_path).volumex(0.1).set_duration(total_duration)
+                bg_music = AudioFileClip(bg_music_path)
                 if bg_music.duration < total_duration:
                     bg_music = bg_music.fx(afx.audio_loop, duration=total_duration)
+                else:
+                    bg_music = bg_music.set_duration(total_duration)
+                bg_music = bg_music.volumex(0.1)
                 final_audio = CompositeAudioClip([audio.volumex(1.1), bg_music])
             except Exception as e:
                 print(f"Failed to load background music: {e}")
@@ -96,7 +98,9 @@ class VideoLongGenerator:
         final_video.write_videofile(output_path, fps=24, codec="libx264", audio_codec="aac", threads=4)
         print(f"Enhanced daily summary video saved to {output_path}")
 
+
 if __name__ == "__main__":
+
     pass
     # vgen = VideoLongGenerator()
     # sections = [{'text': 'Story 1 summary', 'image_path': None}, {'text': 'Story 2 summary', 'image_path': None}]
