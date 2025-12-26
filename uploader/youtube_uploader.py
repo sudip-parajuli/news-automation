@@ -41,8 +41,13 @@ class YouTubeUploader:
                 creds = pickle.load(token)
         
         if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
+            try:
+                if creds and creds.expired and creds.refresh_token:
+                    print("Refreshing YouTube access token...")
+                    creds.refresh(Request())
+            except Exception as e:
+                print(f"Error refreshing YouTube token: {e}")
+                creds = None # Force re-authentication if refresh fails
             else:
                 if not os.path.exists(self.secrets_file):
                     print(f"Error: {self.secrets_file} not found. Please provide it for YouTube uploading.")

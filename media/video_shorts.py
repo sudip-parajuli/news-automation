@@ -1,5 +1,8 @@
-from moviepy.editor import TextClip, ColorClip, CompositeVideoClip, AudioFileClip, ImageClip, afx
+from moviepy.editor import TextClip, ColorClip, CompositeVideoClip, AudioFileClip, ImageClip, afx, concatenate_videoclips
 import os
+import random
+import glob
+from moviepy.audio.AudioClip import CompositeAudioClip
 
 class VideoShortsGenerator:
     def __init__(self, size=(1080, 1920)):
@@ -31,8 +34,15 @@ class VideoShortsGenerator:
                         
                         img_clip = img_clip.set_position('center')
                         
-                        # Zoom effect (Ken Burns)
-                        img_clip = img_clip.resize(lambda t: 1 + 0.1 * (t % section_dur)/section_dur)
+                        # Enhanced Ken Burns Effect
+                        zoom_dir = random.choice([1, -1])
+                        start_scale = 1.0 if zoom_dir == 1 else 1.1
+                        end_scale = 1.1 if zoom_dir == 1 else 1.0
+                        img_clip = img_clip.resize(lambda t: start_scale + (end_scale - start_scale) * (t % section_dur)/section_dur)
+                        
+                        # Transition
+                        img_clip = img_clip.crossfadein(0.5)
+                        
                         bg_clips.append(img_clip)
                     except Exception as e:
                         print(f"Error processing image {img_path}: {e}")
@@ -43,63 +53,30 @@ class VideoShortsGenerator:
         # Add a subtle dark gradient at the bottom for text readability
         try:
             # Create a semi-transparent black overlay for the bottom third
-            overlay = ColorClip(size=(self.size[0], 600), color=(0,0,0)).set_opacity(0.5).set_duration(duration).set_position(('center', 1350))
+            overlay = ColorClip(size=(self.size[0], 600), color=(0,0,0)).set_opacity(0.4).set_duration(duration).set_position(('center', 1350))
             bg_clips.append(overlay)
         except:
             pass
 
         clips = bg_clips
 
-        # 2. Modern Karaoke Logic (Phrase-based grouping)
+        # 2. Modern Karaoke Logic
         if word_offsets:
-            print(f"Rendering {len(word_offsets)} points with Phrase-Sync...")
-            
-            # UI Config
-            FONT_SIZE = 100 # Slightly reduced as requested
-            TEXT_Y = 1450 # Focus on bottom third
-            
-            # Phrase Grouping: Show 4 words at a time for rhythm
-            phrase_size = 4
-            for i in range(0, len(word_offsets), phrase_size):
-                phrase_chunk = word_offsets[i : i + phrase_size]
-                if not phrase_chunk: continue
-                
-                phrase_start = phrase_chunk[0]['start']
-                phrase_end = phrase_chunk[-1]['start'] + phrase_chunk[-1]['duration']
-                
-                # Render each word in the phrase separately to allow highlighting
-                for j, word_info in enumerate(phrase_chunk):
-                    w_start = word_info['start']
-                    w_end = word_info['start'] + word_info['duration']
-                    w_text = word_info['word'].upper()
-                    
-                    # 1. Active Highlighting (Yellow & Large)
-                    try:
-                        active_clip = TextClip(
-                            w_text,
-                            fontsize=FONT_SIZE + 20,
-                            color='yellow',
-                            font='DejaVu-Sans-Bold' if os.name != 'nt' else 'Arial-Bold',
-                            stroke_color='black',
-                            stroke_width=6,
-                            method='label'
-                        ).set_start(w_start).set_duration(w_end - w_start).set_position(('center', TEXT_Y))
-                        
-                        # Subtle pop
-                        active_clip = active_clip.resize(lambda t: 1.1 + 0.05*t if t < 0.1 else 1.15)
-                        clips.append(active_clip)
-                    except Exception as e:
-                        if i == 0: print(f"Caption engine warning: {e}")
-                        fallback = TextClip(w_text, fontsize=90, color='yellow').set_start(w_start).set_duration(w_end - w_start).set_position(('center', TEXT_Y))
-                        clips.append(fallback)
+            print(f"Rendering {len(word_offsets)} points with Karaoke Sync...")
+            try:
+                caption_clips = self._create_karaoke_caption(word_offsets)
+                clips.extend(caption_clips)
+            except Exception as e:
+                print(f"Caption engine error: {e}")
+                # Fallback to block captions
+                txt = TextClip(self._wrap_text(text, 15), fontsize=80, color='white', bg_color='black', method='caption', size=(self.size[0]-80, None)).set_duration(duration).set_position('center')
+                clips.append(txt)
         else:
             print("WARNING: Falling back to block captions.")
             txt = TextClip(self._wrap_text(text, 15), fontsize=80, color='white', bg_color='black', method='caption', size=(self.size[0]-80, None)).set_duration(duration).set_position('center')
             clips.append(txt)
 
         # 3. Audio Mixing
-        import glob
-        import random
         # Detection: Check multiple possible locations for music
         possible_music_paths = [
             "music",
@@ -122,10 +99,11 @@ class VideoShortsGenerator:
             try:
                 bg_music_path = random.choice(music_files)
                 print(f"Mixing music: {bg_music_path}")
-                bg_music = AudioFileClip(bg_music_path).volumex(0.12).set_duration(duration)
+                bg_music = AudioFileClip(bg_music_path).volumex(0.12)
                 if bg_music.duration < duration:
                     bg_music = bg_music.fx(afx.audio_loop, duration=duration)
-                from moviepy.audio.AudioClip import CompositeAudioClip
+                else:
+                    bg_music = bg_music.set_duration(duration)
                 final_audio = CompositeAudioClip([audio.volumex(1.1), bg_music])
             except Exception as e:
                 print(f"Music mix failed: {e}")
@@ -152,6 +130,57 @@ class VideoShortsGenerator:
                 current_line = [word]
         lines.append(" ".join(current_line))
         return "\n".join(lines)
+
+    def _create_karaoke_caption(self, word_offsets: list):
+        """
+        Creates a list of TextClips for karaoke effect with word-level highlighting (yellow background).
+        """
+        clips = []
+        PHRASE_SIZE = 4
+        FONT_SIZE = 80
+        TEXT_Y = 1450
+        
+        for i in range(0, len(word_offsets), PHRASE_SIZE):
+            phrase_chunk = word_offsets[i : i + PHRASE_SIZE]
+            if not phrase_chunk: continue
+            
+            p_start = phrase_chunk[0]['start']
+            p_end = phrase_chunk[-1]['start'] + phrase_chunk[-1]['duration']
+            
+            # Phrase container
+            phrase_text = " ".join([w['word'].upper() for w in phrase_chunk])
+            
+            try:
+                # 1. Base Phrase (White text)
+                base_txt = TextClip(
+                    phrase_text,
+                    fontsize=FONT_SIZE,
+                    color='white',
+                    font='DejaVu-Sans-Bold' if os.name != 'nt' else 'Arial-Bold',
+                    method='label'
+                ).set_start(p_start).set_duration(p_end - p_start).set_position(('center', TEXT_Y))
+                clips.append(base_txt)
+                
+                # 2. Individual Word Highlighting (Yellow background)
+                for word_info in phrase_chunk:
+                    w_text = word_info['word'].upper()
+                    w_start = word_info['start']
+                    w_dur = word_info['duration']
+                    
+                    highlight = TextClip(
+                        w_text,
+                        fontsize=FONT_SIZE + 10,
+                        color='black',
+                        bg_color='yellow',
+                        font='DejaVu-Sans-Bold' if os.name != 'nt' else 'Arial-Bold',
+                        method='label'
+                    ).set_start(w_start).set_duration(w_dur).set_position(('center', TEXT_Y))
+                    
+                    clips.append(highlight)
+            except Exception as e:
+                print(f"Error in _create_karaoke_caption (Shorts): {e}")
+                
+        return clips
 
 if __name__ == "__main__":
     pass
