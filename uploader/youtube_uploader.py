@@ -37,27 +37,43 @@ class YouTubeUploader:
 
         # Fallback to local file
         if not creds and os.path.exists(self.token_file):
+            print(f"Loading credentials from {self.token_file}...")
             with open(self.token_file, 'rb') as token:
-                creds = pickle.load(token)
-        
+                try:
+                    creds = pickle.load(token)
+                except Exception as e:
+                    print(f"Error loading {self.token_file}: {e}")
+
+        # Refresh or re-authenticate
         if not creds or not creds.valid:
-            try:
-                if creds and creds.expired and creds.refresh_token:
-                    print("Refreshing YouTube access token...")
+            if creds and creds.expired and creds.refresh_token:
+                print("Refreshing YouTube access token...")
+                try:
                     creds.refresh(Request())
-            except Exception as e:
-                print(f"Error refreshing YouTube token: {e}")
-                creds = None # Force re-authentication if refresh fails
-            else:
+                except Exception as e:
+                    print(f"Error refreshing YouTube token: {e}")
+                    creds = None
+
+            if not creds or not creds.valid:
+                # Interactive login
                 if not os.path.exists(self.secrets_file):
-                    print(f"Error: {self.secrets_file} not found. Please provide it for YouTube uploading.")
+                    print(f"Error: Secrets file '{self.secrets_file}' not found. Cannot authentication interactively.")
                     return None
+                
+                print(f"Starting interactive authentication using {self.secrets_file}...")
                 flow = InstalledAppFlow.from_client_secrets_file(self.secrets_file, SCOPES)
                 creds = flow.run_local_server(port=0)
             
-            if not token_b64:
+            # Save the new token if we are using local file storage (priority over env var for saving?)
+            # Usually we only save to file if we are running locally.
+            # If we loaded from env var, we might not want to overwrite local file unless explicitly intended.
+            # But here, saving to token.pickle is good for local dev cache.
+            try:
                 with open(self.token_file, 'wb') as token:
                     pickle.dump(creds, token)
+                print(f"Saved new credentials to {self.token_file}")
+            except Exception as e:
+                print(f"Warning: Could not save {self.token_file}: {e}")
 
         return build('youtube', 'v3', credentials=creds)
 

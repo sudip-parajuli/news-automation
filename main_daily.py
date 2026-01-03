@@ -59,7 +59,7 @@ async def main():
     
     video_path = "storage/daily_summary.mp4"
     if sections:
-        vgen.create_daily_summary(sections, audio_path, video_path)
+        vgen.create_daily_summary(sections, audio_path, video_path, word_offsets=word_offsets)
     
         uploader = YouTubeUploader() if (os.path.exists("client_secrets.json") or os.path.exists("client_secret.json") or os.getenv("YOUTUBE_TOKEN_BASE64")) else None
         if uploader:

@@ -2,7 +2,10 @@ from moviepy.editor import TextClip, ColorClip, CompositeVideoClip, AudioFileCli
 import os
 import random
 import glob
+import numpy as np
+from PIL import Image, ImageDraw, ImageFont
 from moviepy.audio.AudioClip import CompositeAudioClip
+
 
 class VideoLongGenerator:
     def __init__(self, size=(1920, 1080)):
@@ -15,7 +18,8 @@ class VideoLongGenerator:
         audio = AudioFileClip(audio_path)
         total_duration = audio.duration
         section_duration = total_duration / len(sections) if sections else 0
-        
+        clips = []
+
         for i, section in enumerate(sections):
             # Background Logic
             if section.get('image_path') and os.path.exists(section['image_path']):
@@ -65,15 +69,15 @@ class VideoLongGenerator:
             else:
                 try:
                     # Fallback to static block captions
-                    txt = TextClip(
+                    # Fallback to static block captions
+                    # Use a simpler font size for blocks
+                    txt = self.create_text_clip_pil(
                         section['text'], 
                         fontsize=50, 
                         color='white', 
-                        font='DejaVu-Sans-Bold' if os.name != 'nt' else 'Arial-Bold', 
-                        method='caption', 
-                        size=(self.size[0]-200, None),
                         bg_color='black',
-                        align='Center'
+                        size=(self.size[0]-200, None),
+                        font='arial.ttf' if os.name == 'nt' else 'DejaVuSans-Bold.ttf'
                     ).set_duration(section_duration).set_position(('center', 850))
                     clips.append(CompositeVideoClip([bg, txt], size=self.size))
                 except:
@@ -125,55 +129,149 @@ class VideoLongGenerator:
         print(f"Enhanced daily summary video saved to {output_path}")
 
 
+    def create_text_clip_pil(self, text, fontsize, color, bg_color=None, font="arial.ttf", size=None):
+        """
+        Creates a MoviePy ImageClip using PIL for text rendering (bypassing ImageMagick).
+        """
+        try:
+            pil_font = ImageFont.truetype(font, fontsize)
+        except:
+            pil_font = ImageFont.load_default()
+            
+        dummy_draw = ImageDraw.Draw(Image.new("RGB", (1, 1)))
+        bbox = dummy_draw.textbbox((0, 0), text, font=pil_font)
+        w, h = bbox[2] - bbox[0], bbox[3] - bbox[1]
+        
+        # Add some padding
+        w += 20
+        h += 20
+        
+        if size and size[0] is not None:
+            max_width = size[0]
+            words = text.split()
+            lines = []
+            current_line = []
+            
+            for word in words:
+                test_line = " ".join(current_line + [word])
+                bbox = dummy_draw.textbbox((0, 0), test_line, font=pil_font)
+                if bbox[2] - bbox[0] <= max_width:
+                    current_line.append(word)
+                else:
+                    lines.append(" ".join(current_line))
+                    current_line = [word]
+            if current_line:
+                lines.append(" ".join(current_line))
+            
+            text = "\n".join(lines)
+            
+            # Recalculate size with wrapped text
+            bbox = dummy_draw.textbbox((0, 0), text, font=pil_font)
+            w, h = bbox[2] - bbox[0], bbox[3] - bbox[1]
+            if w < max_width: w = max_width # Ensure it's at least max_width for centering if desired, or just fit.
+            w += 40
+            h += 40
+        else:
+             w, h = bbox[2] - bbox[0], bbox[3] - bbox[1]
+             w += 20
+             h += 20
+        
+        img = Image.new("RGBA", (int(w), int(h)), (0, 0, 0, 0) if not bg_color else bg_color)
+        draw = ImageDraw.Draw(img)
+        
+        # Draw text centered
+        # PIL multiline text support
+        left, top, right, bottom = dummy_draw.textbbox((0, 0), text, font=pil_font)
+        # For centering, we might need to calculate position line by line or use align parameter (works for multiline)
+        
+        # Center in the image
+        text_x = w / 2
+        text_y = h / 2
+        
+        draw.multiline_text((text_x, text_y), text, font=pil_font, fill=color, anchor="mm", align="center")
+        
+        return ImageClip(np.array(img))
+
     def _create_karaoke_caption(self, word_offsets: list, duration: float):
         """
-        Creates a list of TextClips for karaoke effect.
+        Creates a list of CompositeVideoClips for karaoke effect, ensuring proper alignment.
         """
         clips = []
-        PHRASE_SIZE = 5
-        FONT_SIZE = 60
+        PHRASE_SIZE = 8 # Words per screen
+        FONT_SIZE = 70
         TEXT_Y = 850
+        FONT = 'arial.ttf' if os.name == 'nt' else 'DejaVuSans-Bold.ttf'
         
         for i in range(0, len(word_offsets), PHRASE_SIZE):
             phrase_chunk = word_offsets[i : i + PHRASE_SIZE]
             if not phrase_chunk: continue
             
+            # 1. Measure all words first to calculate total width and offsets
+            word_clips_data = []
+            total_width = 0
+            SPACING = 20
+            
+            for w in phrase_chunk:
+                txt = w['word'].upper()
+                # Create a temp clip to get size using PIL helper
+                temp = self.create_text_clip_pil(txt, fontsize=FONT_SIZE, font=FONT, color='white')
+                w_w, w_h = temp.size
+                word_clips_data.append({
+                    'word': txt,
+                    'width': w_w,
+                    'height': w_h,
+                    'start_time': w['start'],
+                    'duration': w['duration'],
+                    'x': total_width # Relative x from start of phrase
+                })
+                total_width += w_w + SPACING
+            
+            total_width -= SPACING # Remove last spacing
+            start_x = (self.size[0] - total_width) / 2
+            
+            # Phrase start and end time
             p_start = phrase_chunk[0]['start']
             p_end = phrase_chunk[-1]['start'] + phrase_chunk[-1]['duration']
             
-            # Phrase container
-            phrase_text = " ".join([w['word'].upper() for w in phrase_chunk])
-            
-            try:
-                # 1. Base Phrase (White text)
-                base_txt = TextClip(
-                    phrase_text,
-                    fontsize=FONT_SIZE,
-                    color='white',
-                    font='DejaVu-Sans-Bold' if os.name != 'nt' else 'Arial-Bold',
-                    method='label'
-                ).set_start(p_start).set_duration(p_end - p_start).set_position(('center', TEXT_Y))
-                clips.append(base_txt)
+            # 2. Create clips for each word "event"
+            for active_idx, active_w in enumerate(word_clips_data):
+                current_time = active_w['start_time']
+                current_dur = active_w['duration']
                 
-                # 2. Individual Word Highlighting (Yellow background)
-                for word_info in phrase_chunk:
-                    w_text = word_info['word'].upper()
-                    w_start = word_info['start']
-                    w_dur = word_info['duration']
-                    
-                    highlight = TextClip(
-                        w_text,
-                        fontsize=FONT_SIZE + 5,
-                        color='black',
-                        bg_color='yellow',
-                        font='DejaVu-Sans-Bold' if os.name != 'nt' else 'Arial-Bold',
-                        method='label'
-                    ).set_start(w_start).set_duration(w_dur).set_position(('center', TEXT_Y))
-                    
-                    clips.append(highlight)
-            except Exception as e:
-                print(f"Error in _create_karaoke_caption chunk: {e}")
+                # Build the composite for this timeframe
+                sub_clips = []
                 
+                for idx, w_data in enumerate(word_clips_data):
+                    abs_x = start_x + w_data['x']
+                    
+                    if idx == active_idx:
+                        # Highlighted Word -> Black text on Yellow BG
+                        # We can generate this as a single image with BG
+                        txt_img = self.create_text_clip_pil(
+                            w_data['word'], 
+                            fontsize=FONT_SIZE, 
+                            font=FONT, 
+                            color='black',
+                            bg_color='yellow'
+                        )
+                        txt_img = txt_img.set_position((abs_x, TEXT_Y))
+                        sub_clips.append(txt_img)
+                    else:
+                        # Normal Word -> White text, transparent BG
+                        txt_img = self.create_text_clip_pil(
+                            w_data['word'], 
+                            fontsize=FONT_SIZE, 
+                            font=FONT, 
+                            color='white'
+                        )
+                        txt_img = txt_img.set_position((abs_x, TEXT_Y))
+                        sub_clips.append(txt_img)
+                        
+                # Create the composite for this word's duration
+                if sub_clips:
+                    comp = CompositeVideoClip(sub_clips, size=self.size).set_start(current_time).set_duration(current_dur)
+                    clips.append(comp)
+        
         return clips
 
 if __name__ == "__main__":
