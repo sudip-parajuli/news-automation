@@ -5,6 +5,7 @@ import glob
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from moviepy.audio.AudioClip import CompositeAudioClip
+import gc
 
 
 class VideoLongGenerator:
@@ -69,19 +70,22 @@ class VideoLongGenerator:
             else:
                 try:
                     # Fallback to static block captions
-                    # Fallback to static block captions
                     # Use a simpler font size for blocks
                     txt = self.create_text_clip_pil(
                         section['text'], 
-                        fontsize=50, 
+                        fontsize=40, # Smaller font for 720p
                         color='white', 
                         bg_color='black',
-                        size=(self.size[0]-200, None),
+                        size=(self.size[0]-100, None),
                         font='arial.ttf' if os.name == 'nt' else 'DejaVuSans-Bold.ttf'
-                    ).set_duration(section_duration).set_position(('center', 850))
+                    ).set_duration(section_duration).set_position(('center', 0.8), relative=True) # Relative positioning
                     clips.append(CompositeVideoClip([bg, txt], size=self.size))
                 except:
                     clips.append(bg)
+            
+            # Explicit Garbage Collection to prevent OOM
+            if i % 2 == 0:
+                gc.collect()
 
         if not clips: return
 
@@ -198,8 +202,8 @@ class VideoLongGenerator:
         """
         clips = []
         PHRASE_SIZE = 8 # Words per screen
-        FONT_SIZE = 70
-        TEXT_Y = 850
+        FONT_SIZE = 50 # Adjusted for 720p
+        TEXT_Y = 550 # Adjusted for 720p (approx 75% down)
         FONT = 'arial.ttf' if os.name == 'nt' else 'DejaVuSans-Bold.ttf'
         
         for i in range(0, len(word_offsets), PHRASE_SIZE):

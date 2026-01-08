@@ -40,7 +40,8 @@ async def main():
     audio_path = "storage/daily_summary.mp3"
     _, word_offsets = await TTSEngine.generate_audio(script, audio_path)
     
-    vgen = VideoLongGenerator()
+    # Memory Optimization: Use 720p instead of 1080p to prevent OOM (Exit Code 137)
+    vgen = VideoLongGenerator(size=(1280, 720))
     sections = []
     # Batching Optimization: Group sentences to reduce API calls (Target ~200-300 chars per section)
     raw_sentences = [s.strip() + "." for s in script.split('.') if len(s.strip()) > 10]
