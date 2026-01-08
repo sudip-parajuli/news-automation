@@ -19,6 +19,10 @@ class YouTubeUploader:
                 secrets_file = 'client_secret.json'
             else:
                 secrets_file = 'client_secrets.json' # Default
+        
+        print(f"YouTubeUploader initialized. CWD: {os.getcwd()}")
+        print(f"Selected secrets file: {os.path.abspath(secrets_file) if secrets_file else 'None'}")
+        
         self.secrets_file = secrets_file
         self.token_file = token_file
         self.youtube = self._get_authenticated_service()
