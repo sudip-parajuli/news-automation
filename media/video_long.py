@@ -76,7 +76,7 @@ class VideoLongGenerator:
                         fontsize=40, # Smaller font for 720p
                         color='white', 
                         bg_color='black',
-                        size=(self.size[0]-100, None),
+                        size=(self.size[0]-200, None), # Increased margin (100px each side)
                         font='arial.ttf' if os.name == 'nt' else 'DejaVuSans-Bold.ttf'
                     ).set_duration(section_duration).set_position(('center', 0.8), relative=True) # Relative positioning
                     clips.append(CompositeVideoClip([bg, txt], size=self.size))
@@ -210,28 +210,49 @@ class VideoLongGenerator:
             phrase_chunk = word_offsets[i : i + PHRASE_SIZE]
             if not phrase_chunk: continue
             
-            # 1. Measure all words first to calculate total width and offsets
-            word_clips_data = []
-            total_width = 0
-            SPACING = 20
+            # Dynamic Font Scaling to fit Margins
+            MARGIN_X = 100
+            MAX_WIDTH = self.size[0] - (2 * MARGIN_X)
             
-            for w in phrase_chunk:
-                txt = w['word'].upper()
-                # Create a temp clip to get size using PIL helper
-                temp = self.create_text_clip_pil(txt, fontsize=FONT_SIZE, font=FONT, color='white')
-                w_w, w_h = temp.size
-                word_clips_data.append({
-                    'word': txt,
-                    'width': w_w,
-                    'height': w_h,
-                    'start_time': w['start'],
-                    'duration': w['duration'],
-                    'x': total_width # Relative x from start of phrase
-                })
-                total_width += w_w + SPACING
+            # Helper to measure a phrase with a specific font size
+            def measure_phrase(f_size):
+                words_data = []
+                width_accum = 0
+                active_font = ImageFont.truetype(FONT, f_size)  # Load font once per size check
+                dummy_draw = ImageDraw.Draw(Image.new("RGB", (1, 1)))
+
+                for w in phrase_chunk:
+                    txt = w['word'].upper()
+                    bbox = dummy_draw.textbbox((0, 0), txt, font=active_font)
+                    w_w = bbox[2] - bbox[0] + 20 # +20 padding from create_text_clip_pil logic
+                    w_h = bbox[3] - bbox[1] + 20
+                    
+                    words_data.append({
+                        'word': txt,
+                        'width': w_w,
+                        'height': w_h,
+                        'start_time': w['start'],
+                        'duration': w['duration'],
+                        'x': width_accum
+                    })
+                    width_accum += w_w + SPACING
+                width_accum -= SPACING
+                return words_data, width_accum
+
+            # Iteratively reduce font size until it fits
+            current_font_size = FONT_SIZE
+            word_clips_data, total_width = measure_phrase(current_font_size)
             
-            total_width -= SPACING # Remove last spacing
+            while total_width > MAX_WIDTH and current_font_size > 30:
+                current_font_size -= 5
+                SPACING = max(5, SPACING - 2) # Reduce spacing too
+                word_clips_data, total_width = measure_phrase(current_font_size)
+            
             start_x = (self.size[0] - total_width) / 2
+            
+            # Update the stored word measurements for the rendering loop below (since we just re-measured)
+            # The loop below relies on re-calling create_text_clip_pil which creates the image.
+            # We need to pass the *final* determined font size to the rendering loop.
             
             # Phrase start and end time
             p_start = phrase_chunk[0]['start']
@@ -250,10 +271,9 @@ class VideoLongGenerator:
                     
                     if idx == active_idx:
                         # Highlighted Word -> Black text on Yellow BG
-                        # We can generate this as a single image with BG
                         txt_img = self.create_text_clip_pil(
                             w_data['word'], 
-                            fontsize=FONT_SIZE, 
+                            fontsize=current_font_size, 
                             font=FONT, 
                             color='black',
                             bg_color='yellow'
@@ -264,7 +284,7 @@ class VideoLongGenerator:
                         # Normal Word -> White text, transparent BG
                         txt_img = self.create_text_clip_pil(
                             w_data['word'], 
-                            fontsize=FONT_SIZE, 
+                            fontsize=current_font_size, 
                             font=FONT, 
                             color='white'
                         )
