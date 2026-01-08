@@ -42,13 +42,26 @@ async def main():
     
     vgen = VideoLongGenerator()
     sections = []
-    lines = script.split('.')
+    # Batching Optimization: Group sentences to reduce API calls (Target ~200-300 chars per section)
+    raw_sentences = [s.strip() + "." for s in script.split('.') if len(s.strip()) > 10]
+    chunked_sections = []
     temp_images = []
+    current_chunk = ""
     
+    for sent in raw_sentences:
+        if len(current_chunk) + len(sent) < 280:
+            current_chunk += " " + sent
+        else:
+            chunked_sections.append(current_chunk.strip())
+            current_chunk = sent
+    if current_chunk:
+        chunked_sections.append(current_chunk.strip())
+            
+    print(f"Optimization: Reduced {len(raw_sentences)} sentences to {len(chunked_sections)} image sections.")
+
     print("Fetching images for summary sections...")
-    for i, line in enumerate(lines):
-        text = line.strip()
-        if len(text) > 20:
+    for i, text in enumerate(chunked_sections):
+        if len(text) > 10:
             # Generate AI keywords for better image context
             try:
                 keywords = rewriter.generate_image_keywords(text)
@@ -69,7 +82,7 @@ async def main():
             
             # Rate limit politeness
             import time
-            time.sleep(2)
+            time.sleep(1.5)
     
     video_path = "storage/daily_summary.mp4"
     if sections:
