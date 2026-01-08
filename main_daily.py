@@ -50,12 +50,26 @@ async def main():
         text = line.strip()
         if len(text) > 20:
             # Generate AI keywords for better image context
-            keywords = rewriter.generate_image_keywords(text)
+            try:
+                keywords = rewriter.generate_image_keywords(text)
+            except Exception as e:
+                print(f"Keyword gen failed: {e}")
+                keywords = ""
+            
+            if not keywords or len(keywords) < 3 or keywords.lower() == 'none':
+                print(f"Skipping image for section {i} (no valid keywords)")
+                sections.append({'text': text, 'image_path': None})
+                continue
+
             img_name = f"summary_img_{i}.jpg"
             print(f"Section {i} keywords: {keywords}")
             img_path = img_fetcher.fetch_image(keywords, img_name)
             sections.append({'text': text, 'image_path': img_path})
             if img_path: temp_images.append(img_path)
+            
+            # Rate limit politeness
+            import time
+            time.sleep(2)
     
     video_path = "storage/daily_summary.mp4"
     if sections:
