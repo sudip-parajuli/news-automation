@@ -4,6 +4,7 @@ import subprocess
 import argparse
 import base64
 import json
+import pickle
 from pathlib import Path
 
 def print_result(name: str, passed: bool, details: str = ""):
@@ -44,15 +45,15 @@ def check_env_vars(skip_youtube_live: bool = False):
             if req == "YOUTUBE_TOKEN_BASE64":
                 try:
                     token_data = base64.b64decode(val)
-                    token_json = json.loads(token_data)
-                    # For youtube uploader
-                    if "refresh_token" in token_json or token_json.get("type") == "service_account":
-                        print_result(req, True, "Set and valid JSON")
+                    creds = pickle.loads(token_data)
+                    # For youtube uploader pickle
+                    if hasattr(creds, 'refresh_token') or hasattr(creds, 'token') or hasattr(creds, '_service_account_email'):
+                        print_result(req, True, "Set and valid pickle")
                     else:
-                        print_result(req, False, "Decoded JSON missing refresh_token or type:service_account")
+                        print_result(req, False, "Decoded pickle missing credentials format")
                         all_passed = False
                 except Exception as e:
-                    print_result(req, False, f"Failed to decode base64 or parse JSON: {e}")
+                    print_result(req, False, f"Failed to decode base64 or parse pickle: {e}")
                     all_passed = False
             else:
                 print_result(req, True, "Set")
@@ -66,19 +67,8 @@ def check_env_vars(skip_youtube_live: bool = False):
     
     return all_passed
 
-def check_fonts():
-    print("\n--- Checking Essential Fonts ---")
-    fonts = ["Anton-Regular.ttf", "Montserrat-Bold.ttf"]
-    font_dir = Path("assets/fonts")
-    all_passed = True
-    for f in fonts:
-        p = font_dir / f
-        if p.exists():
-            print_result(f, True, "Found")
-        else:
-            print_result(f, False, f"Missing: {p}")
-            all_passed = False
-    return all_passed
+# Fonts are downloaded dynamically during the pipeline run,
+# so we no longer block the preflight check on them.
 
 def main():
     parser = argparse.ArgumentParser()
@@ -95,10 +85,9 @@ def main():
     
     b_ok = check_binaries()
     e_ok = check_env_vars(args.skip_youtube_live)
-    f_ok = check_fonts()
     
     print("\n" + "=" * 60)
-    if b_ok and e_ok and f_ok:
+    if b_ok and e_ok:
         print("\033[92mALL CHECKS PASSED. SYSTEM IS READY FOR PRODUCTION.\033[0m")
     else:
         print("\033[91mPREFLIGHT FAILED. PLEASE FIX THE ISSUES ABOVE.\033[0m")

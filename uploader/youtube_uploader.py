@@ -11,28 +11,25 @@ import base64
 SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
 
 class YouTubeUploader:
+    def __init__(self, secrets_file=None, token_file='token.pickle'):
         import tempfile
-        import json
+        
+        # Check for base64 env var for token.pickle
+        token_b64 = os.getenv("YOUTUBE_TOKEN_BASE64")
+        if token_b64 and not os.path.exists(token_file):
+            try:
+                token_data = base64.b64decode(token_b64)
+                with open(token_file, "wb") as f:
+                    f.write(token_data)
+                print("Restored token.pickle from YOUTUBE_TOKEN_BASE64")
+            except Exception as e:
+                print(f"Error decoding YOUTUBE_TOKEN_BASE64: {e}")
+
         if secrets_file is None:
             if os.path.exists('client_secrets.json'):
                 secrets_file = 'client_secrets.json'
             elif os.path.exists('client_secret.json'):
                 secrets_file = 'client_secret.json'
-            else:
-                # Check for base64 env var
-                token_b64 = os.getenv("YOUTUBE_TOKEN_BASE64")
-                if token_b64:
-                    try:
-                        token_data = base64.b64decode(token_b64)
-                        # We will validate it's JSON later, but we save it as the secrets_file
-                        token_path = os.path.join(tempfile.gettempdir(), "yt_token.json")
-                        with open(token_path, "wb") as f:
-                            f.write(token_data)
-                        secrets_file = token_path
-                    except Exception as e:
-                        print(f"Error decoding YOUTUBE_TOKEN_BASE64: {e}")
-                else:
-                    secrets_file = 'client_secrets.json' # Default
         
         print(f"YouTubeUploader initialized. CWD: {os.getcwd()}")
         print(f"Selected secrets file: {os.path.abspath(secrets_file) if secrets_file else 'None'}")
