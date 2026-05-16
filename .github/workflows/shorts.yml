@@ -12,12 +12,15 @@ on:
     - cron: "0 15 * * 6,0" # Sat-Sun 15:00 UTC
 
 env:
-  USE_REMOTION_SHORTS: "false"
+  USE_REMOTION_SHORTS: "true"
   GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
   GEMINI_API_KEY2: ${{ secrets.GEMINI_API_KEY2 }}
   GEMINI_API_KEY3: ${{ secrets.GEMINI_API_KEY3 }}
   GEMINI_API_KEY4: ${{ secrets.GEMINI_API_KEY4 }}
   GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+  GROQ_API_KEY2: ${{ secrets.GROQ_API_KEY2 }}
+  GROQ_API_KEY3: ${{ secrets.GROQ_API_KEY3 }}
+  GROQ_API_KEY4: ${{ secrets.GROQ_API_KEY4 }}
   HUME_API_KEY: ${{ secrets.HUME_API_KEY }}
   HUME_API_KEY2: ${{ secrets.HUME_API_KEY2 }}
   HUME_API_KEY3: ${{ secrets.HUME_API_KEY3 }}
@@ -65,18 +68,12 @@ jobs:
 
       - name: Run Shorts Pipeline
         run: |
-          if [ "${{ env.USE_REMOTION_SHORTS }}" = "false" ]; then
+          if [ "$USE_REMOTION_SHORTS" = "true" ]; then
+            echo "Running Remotion Shorts pipeline"
+            python scripts/shorts_pipeline.py || python main_breaking.py
+          else
             echo "Running legacy breaking news pipeline (MoviePy)"
             python main_breaking.py
-          else
-            TOPIC="${{ github.event.inputs.topic || '' }}"
-            if [ -z "$TOPIC" ]; then
-              echo "No topic provided, running daily_run.py for shorts"
-              python daily_run.py --shorts
-            else
-              echo "Running shorts_pipeline.py for topic: $TOPIC"
-              python scripts/shorts_pipeline.py "$TOPIC"
-            fi
           fi
 
       - name: Upload Artifacts

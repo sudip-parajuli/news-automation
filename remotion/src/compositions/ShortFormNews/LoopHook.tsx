@@ -1,17 +1,29 @@
 import React from 'react';
-import { AbsoluteFill, Img } from 'remotion';
+import { AbsoluteFill, Img, Video } from 'remotion';
 import { resolveMediaPath } from '../../utils';
 
 export const LoopHook: React.FC<{
   firstFrame: string;
   loopText: string;
 }> = ({ firstFrame, loopText }) => {
+  const isImage = firstFrame && firstFrame.match(/\.(jpg|jpeg|png|webp)$/i);
   return (
     <AbsoluteFill>
-      <Img
-        src={resolveMediaPath(firstFrame)}
-        style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.5)' }}
-      />
+      {firstFrame ? (
+        isImage ? (
+          <Img
+            src={resolveMediaPath(firstFrame)}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.5)' }}
+          />
+        ) : (
+          <Video
+            src={resolveMediaPath(firstFrame)}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.5)' }}
+          />
+        )
+      ) : (
+        <AbsoluteFill style={{ backgroundColor: '#0d0d1a' }} />
+      )}
       <AbsoluteFill
         style={{
           justifyContent: 'center',

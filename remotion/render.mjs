@@ -47,4 +47,7 @@ const main = async () => {
   console.log(`\nRender complete: ${values.output}`);
 };
 
-main().catch(console.error);
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
