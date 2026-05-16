@@ -28,6 +28,13 @@ def check_env_vars(skip_youtube_live: bool = False):
     print("\n--- Checking API Keys & Tokens ---")
     required = [
         "GEMINI_API_KEY",
+        "GEMINI_API_KEY2",
+        "GEMINI_API_KEY3",
+        "GEMINI_API_KEY4",
+        "GROQ_API_KEY",
+        "GROQ_API_KEY2",
+        "GROQ_API_KEY3",
+        "GROQ_API_KEY4",
         "PEXELS_API_KEY",
         "PIXABAY_API_KEY",
         "HUME_API_KEY",
