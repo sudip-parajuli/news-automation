@@ -14,7 +14,7 @@ export const CTACard: React.FC = () => {
       style={{
         justifyContent: 'flex-end',
         alignItems: 'center',
-        paddingBottom: '160px',
+        paddingBottom: '300px', // Adjusted for safe zone (above channel name/Subscribe button)
         opacity,
       }}
     >

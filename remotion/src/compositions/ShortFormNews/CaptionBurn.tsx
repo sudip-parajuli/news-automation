@@ -23,7 +23,7 @@ export const CaptionBurn: React.FC<{
       style={{
         justifyContent: 'flex-end',
         alignItems: 'center',
-        paddingBottom: '220px', // safe zone — above 75% of frame height
+        paddingBottom: '700px', // Moved higher to clear CTA card and YouTube UI
         paddingLeft: '80px',
         paddingRight: '80px',
       }}
