@@ -118,6 +118,14 @@ class HumeKeyRotator:
                 k["cooldown_until"] = time.time() + 60.0
                 break
 
+    def mark_timeout(self, key_val):
+        """Mark a key as timed-out with a shorter 30s cooldown (transient issue)."""
+        for k in self.keys:
+            if k["key"] == key_val:
+                k["cooldown_until"] = time.time() + 30.0
+                print(f"Hume key #{k['index']} marked for 30s timeout cooldown")
+                break
+
 rotator = HumeKeyRotator()
 
 @llm_retry_decorator()
@@ -139,7 +147,12 @@ def _call_hume_tts(text: str, output_path: str, chunk_index: int, total_chunks: 
         "format": {"type": "mp3"}
     }
     
-    response = httpx.post(url, json=payload, headers=headers, timeout=60.0)
+    try:
+        response = httpx.post(url, json=payload, headers=headers, timeout=120.0)
+    except (httpx.ReadTimeout, httpx.ConnectTimeout) as e:
+        rotator.mark_timeout(key)
+        raise  # tenacity will retry with the next key
+
     if response.status_code == 429:
         rotator.mark_cooldown(key)
         raise Exception(f"Hume API rate limited (429) for key #{idx_name}")
@@ -156,7 +169,7 @@ def _call_hume_tts(text: str, output_path: str, chunk_index: int, total_chunks: 
 
 
 # ─── Chunked generation + FFmpeg concat ──────────────────────────────────────
-def _split_into_chunks(text: str, max_chars: int = 4500) -> list[str]:
+def _split_into_chunks(text: str, max_chars: int = 1500) -> list[str]:
     """Split text at sentence boundaries keeping each chunk ≤ max_chars."""
     sentences = re.split(r'(?<=[.!?])\s+', text)
     chunks = []

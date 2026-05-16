@@ -3,8 +3,7 @@ import hashlib
 import json
 import httpx
 from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
-from google import genai
-import groq
+from scripts.llm_utils import call_gemini
 
 KEN_BURNS_FILTER = "zoompan=z='min(zoom+0.0015,1.5)':d={duration_frames}:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1920x1080"
 
@@ -25,18 +24,6 @@ class BRollFetcher:
         if not self.pexels_api_key:
             print("WARNING: PEXELS_API_KEY not found. Video fetching may fail.")
 
-        self.gemini_api_key = os.getenv("GEMINI_API_KEY")
-        self.client = None
-        if self.gemini_api_key:
-            self.client = genai.Client(api_key=self.gemini_api_key)
-        self.model_name = 'gemini-2.0-flash'
-        
-        self.groq_api_key = os.getenv("GROQ_API_KEY")
-        self.groq_client = None
-        if self.groq_api_key:
-            self.groq_client = groq.Groq(api_key=self.groq_api_key)
-        self.groq_model_name = 'llama-3.3-70b-versatile'
-
     @llm_retry_decorator()
     def _extract_keywords(self, sentence: str) -> str:
         system_prompt = """
@@ -45,31 +32,7 @@ class BRollFetcher:
         Output ONLY the query string, nothing else. No quotes, no explanation.
         Example: "OPEC ministers met in Vienna to discuss production cuts amid falling crude prices" -> "OPEC oil ministers"
         """
-        user_prompt = sentence
-        
-        try:
-            if not getattr(self, 'client', None):
-                raise ValueError("Gemini client not initialized")
-            response = self.client.models.generate_content(
-                model=self.model_name,
-                contents=[system_prompt, user_prompt],
-            )
-            if not response or not response.text:
-                raise ValueError("Empty response from Gemini")
-            return response.text.strip()
-        except Exception as e:
-            if not getattr(self, 'groq_client', None):
-                raise e
-            completion = self.groq_client.chat.completions.create(
-                model=self.groq_model_name,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ]
-            )
-            if not completion or not completion.choices:
-                raise ValueError("Empty response from Groq")
-            return completion.choices[0].message.content.strip()
+        return call_gemini(system_prompt, sentence).strip()
 
     def fetch_broll(self, sentence: str) -> dict:
         query = self._extract_keywords(sentence)

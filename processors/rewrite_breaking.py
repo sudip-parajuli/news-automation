@@ -1,9 +1,9 @@
-from google import genai
-from google.genai import types
 import os
+import re
 import time
 import random
 from dotenv import load_dotenv
+from scripts.llm_utils import call_gemini
 
 load_dotenv()
 
@@ -12,64 +12,17 @@ class LLMGenerationError(Exception):
     pass
 
 class ScriptRewriter:
-    def __init__(self, api_key: str):
-        self.client = genai.Client(api_key=api_key)
-        self.model_name = 'gemini-2.0-flash'
-        self.groq_api_key = os.getenv("GROQ_API_KEY")
-        self.groq_client = None
-        if self.groq_api_key:
-            try:
-                from groq import Groq
-                self.groq_client = Groq(api_key=self.groq_api_key)
-            except ImportError:
-                print("Groq library not installed, fallback will not be available.")
-        else:
-            print("GROQ_API_KEY not found in .env, fallback will not be available.")
+    def __init__(self, api_key: str = None):
+        # api_key kept for backwards-compat but ignored — GeminiKeyRotator handles rotation
+        pass
 
     def _call_with_retry(self, prompt: str, max_retries: int = 5) -> str:
-        """Calls Gemini with exponential backoff, falling back to Groq if available."""
-        last_error = ""
-        for attempt in range(max_retries):
-            try:
-                response = self.client.models.generate_content(
-                    model=self.model_name,
-                    contents=prompt
-                )
-                if response and response.text:
-                    return response.text.strip()
-                raise LLMGenerationError("Empty response from Gemini")
-            except Exception as e:
-                err_msg = str(e)
-                last_error = err_msg
-                # Handle quota or service issues
-                if "429" in err_msg or "ResourceExhausted" in err_msg or "503" in err_msg:
-                    print(f"Gemini Issue: Quota or Service Unavailable. Attempt {attempt+1}/{max_retries}")
-                    
-                    # Immediate fallback to Groq if available
-                    if self.groq_client:
-                        print("Trying Groq fallback...")
-                        try:
-                            chat_completion = self.groq_client.chat.completions.create(
-                                messages=[{"role": "user", "content": prompt}],
-                                model="llama-3.3-70b-versatile",
-                            )
-                            content = chat_completion.choices[0].message.content.strip()
-                            if content:
-                                return content
-                        except Exception as groq_err:
-                            print(f"Groq fallback failed: {groq_err}")
-                    
-                    # Wait and retry Gemini
-                    wait_time = (2 ** attempt) + random.uniform(0, 1)
-                    print(f"Retrying Gemini in {wait_time:.2f} seconds...")
-                    time.sleep(wait_time)
-                else:
-                    print(f"Unexpected Gemini error: {err_msg}")
-                    if attempt == max_retries - 1:
-                        raise LLMGenerationError(f"Unexpected LLM error: {err_msg}")
-                    time.sleep(2)
-        
-        raise LLMGenerationError(f"Maximum retries reached for LLM generation. Last error: {last_error}")
+        """Calls Gemini via GeminiKeyRotator with automatic key rotation and Groq fallback."""
+        # call_gemini internally handles rotation, cooldowns, and Groq fallback
+        return call_gemini(
+            system_prompt="You are a professional news script writer.",
+            user_prompt=prompt,
+        )
 
     def rewrite_for_shorts(self, headline: str, content: str) -> str:
         prompt = f"""

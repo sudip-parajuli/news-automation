@@ -2,7 +2,7 @@ import os
 import json
 import re
 from datetime import datetime
-from google import genai
+from scripts.llm_utils import call_gemini
 import groq
 from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
 
@@ -24,51 +24,16 @@ def llm_retry_decorator():
 
 class LongformScriptGenerator:
     def __init__(self, api_key: str = None):
-        self.api_key = api_key or os.getenv("GEMINI_API_KEY")
-        self.client = None
-        if self.api_key:
-            self.client = genai.Client(api_key=self.api_key)
-        self.model_name = 'gemini-2.0-flash'
-        
+        # api_key kept for backwards-compat but ignored — GeminiKeyRotator handles rotation
         self.groq_api_key = os.getenv("GROQ_API_KEY")
         self.groq_client = None
         if self.groq_api_key:
             self.groq_client = groq.Groq(api_key=self.groq_api_key)
         self.groq_model_name = 'llama-3.3-70b-versatile'
-        
-        if not self.client and not self.groq_client:
-            raise ValueError("Either GEMINI_API_KEY or GROQ_API_KEY is required")
 
     @llm_retry_decorator()
     def _call_llm(self, system_prompt: str, user_prompt: str) -> str:
-        try:
-            if not self.client:
-                raise ValueError("Gemini client not initialized")
-            from google import genai
-            response = self.client.models.generate_content(
-                model=self.model_name,
-                contents=[system_prompt, user_prompt],
-                config=genai.types.GenerateContentConfig(max_output_tokens=4096)
-            )
-            if not response or not response.text:
-                raise ValueError("Empty response from Gemini")
-            return response.text
-        except Exception as e:
-            print(f"Gemini generation failed: {e}. Attempting Groq fallback...")
-            if not self.groq_client:
-                raise e
-            
-            completion = self.groq_client.chat.completions.create(
-                model=self.groq_model_name,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
-                max_tokens=4096
-            )
-            if not completion or not completion.choices:
-                raise ValueError("Empty response from Groq")
-            return completion.choices[0].message.content
+        return call_gemini(system_prompt, user_prompt)
 
     def generate_script(self, topic: str) -> dict:
         system_prompt = """

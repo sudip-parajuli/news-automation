@@ -6,8 +6,7 @@ from pathlib import Path
 import httpx
 from PIL import Image, ImageDraw, ImageFont
 from dotenv import load_dotenv
-from google import genai
-import groq
+from scripts.llm_utils import call_gemini
 from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
 
 load_dotenv()
@@ -192,33 +191,7 @@ def generate_shorts_thumbnail(
 # ─── LLM Title Selection ───────────────────────────────────────────────────────
 @_llm_retry()
 def _call_llm(system_prompt: str, user_prompt: str) -> str:
-    gemini_key = os.getenv("GEMINI_API_KEY")
-    groq_key = os.getenv("GROQ_API_KEY")
-
-    if gemini_key:
-        try:
-            client = genai.Client(api_key=gemini_key)
-            response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=[system_prompt, user_prompt],
-            )
-            if response and response.text:
-                return response.text.strip()
-        except Exception as e:
-            print(f"Gemini failed: {e}. Trying Groq...")
-
-    if groq_key:
-        client = groq.Groq(api_key=groq_key)
-        completion = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-        )
-        return completion.choices[0].message.content.strip()
-
-    raise ValueError("Neither GEMINI_API_KEY nor GROQ_API_KEY is set")
+    return call_gemini(system_prompt, user_prompt)
 
 
 def select_best_thumbnail(
