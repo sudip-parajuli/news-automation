@@ -1,0 +1,44 @@
+{
+  "tracks": [
+    {
+      "file": "calm_1.mp3",
+      "mood": "calm",
+      "bpm": 80,
+      "duration_seconds": 60,
+      "replace_with_real_track": true,
+      "source": "placeholder silence — replace with CC0 track from YouTube Audio Library"
+    },
+    {
+      "file": "calm_2.mp3",
+      "mood": "calm",
+      "bpm": 72,
+      "duration_seconds": 60,
+      "replace_with_real_track": true,
+      "source": "placeholder silence — replace with CC0 track from Pixabay Music"
+    },
+    {
+      "file": "tense_1.mp3",
+      "mood": "tense",
+      "bpm": 110,
+      "duration_seconds": 60,
+      "replace_with_real_track": true,
+      "source": "placeholder silence — replace with CC0 track from Incompetech"
+    },
+    {
+      "file": "dramatic_1.mp3",
+      "mood": "dramatic",
+      "bpm": 95,
+      "duration_seconds": 60,
+      "replace_with_real_track": true,
+      "source": "placeholder silence — replace with CC0 track from YouTube Audio Library"
+    },
+    {
+      "file": "upbeat_1.mp3",
+      "mood": "upbeat",
+      "bpm": 128,
+      "duration_seconds": 60,
+      "replace_with_real_track": true,
+      "source": "placeholder silence — replace with CC0 track from Pixabay Music"
+    }
+  ]
+}

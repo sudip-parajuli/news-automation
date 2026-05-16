@@ -11,14 +11,28 @@ import base64
 SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
 
 class YouTubeUploader:
-    def __init__(self, secrets_file=None, token_file='token.pickle'):
+        import tempfile
+        import json
         if secrets_file is None:
             if os.path.exists('client_secrets.json'):
                 secrets_file = 'client_secrets.json'
             elif os.path.exists('client_secret.json'):
                 secrets_file = 'client_secret.json'
             else:
-                secrets_file = 'client_secrets.json' # Default
+                # Check for base64 env var
+                token_b64 = os.getenv("YOUTUBE_TOKEN_BASE64")
+                if token_b64:
+                    try:
+                        token_data = base64.b64decode(token_b64)
+                        # We will validate it's JSON later, but we save it as the secrets_file
+                        token_path = os.path.join(tempfile.gettempdir(), "yt_token.json")
+                        with open(token_path, "wb") as f:
+                            f.write(token_data)
+                        secrets_file = token_path
+                    except Exception as e:
+                        print(f"Error decoding YOUTUBE_TOKEN_BASE64: {e}")
+                else:
+                    secrets_file = 'client_secrets.json' # Default
         
         print(f"YouTubeUploader initialized. CWD: {os.getcwd()}")
         print(f"Selected secrets file: {os.path.abspath(secrets_file) if secrets_file else 'None'}")
@@ -29,18 +43,8 @@ class YouTubeUploader:
 
     def _get_authenticated_service(self):
         creds = None
-        # Try loading from environment variable first (for GHA)
-        token_b64 = os.getenv("YOUTUBE_TOKEN_BASE64")
-        if token_b64:
-            try:
-                creds_data = base64.b64decode(token_b64)
-                creds = pickle.loads(creds_data)
-                print("Loaded YouTube credentials from environment variable.")
-            except Exception as e:
-                print(f"Error decoding YOUTUBE_TOKEN_BASE64: {e}")
-
-        # Fallback to local file
-        if not creds and os.path.exists(self.token_file):
+        # Fallback to local file for cached tokens
+        if os.path.exists(self.token_file):
             print(f"Loading credentials from {self.token_file}...")
             with open(self.token_file, 'rb') as token:
                 try:
@@ -48,9 +52,27 @@ class YouTubeUploader:
                 except Exception as e:
                     print(f"Error loading {self.token_file}: {e}")
 
+        # If it's our temp JSON or another JSON file, see if we can load it directly
+        if not creds and self.secrets_file and os.path.exists(self.secrets_file):
+            try:
+                import json
+                with open(self.secrets_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if "refresh_token" in data:
+                    from google.oauth2.credentials import Credentials
+                    creds = Credentials.from_authorized_user_file(self.secrets_file, SCOPES)
+                    print("Loaded OAuth2 credentials from JSON file.")
+                elif data.get("type") == "service_account":
+                    from google.oauth2 import service_account
+                    creds = service_account.Credentials.from_service_account_file(self.secrets_file, scopes=SCOPES)
+                    print("Loaded Service Account credentials from JSON file.")
+            except Exception as e:
+                # Might just be client secrets (for interactive flow)
+                pass
+
         # Refresh or re-authenticate
         if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
+            if creds and creds.expired and hasattr(creds, 'refresh_token') and creds.refresh_token:
                 print("Refreshing YouTube access token...")
                 try:
                     creds.refresh(Request())
@@ -61,12 +83,19 @@ class YouTubeUploader:
             if not creds or not creds.valid:
                 # Interactive login
                 if not os.path.exists(self.secrets_file):
-                    print(f"Error: Secrets file '{self.secrets_file}' not found. Cannot authentication interactively.")
+                    print(f"Error: Secrets file '{self.secrets_file}' not found. Cannot authenticate interactively.")
                     return None
                 
-                print(f"Starting interactive authentication using {self.secrets_file}...")
-                flow = InstalledAppFlow.from_client_secrets_file(self.secrets_file, SCOPES)
-                creds = flow.run_local_server(port=0)
+                # Check if it's actually client secrets format before trying interactive
+                with open(self.secrets_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if "installed" in data or "web" in data:
+                    print(f"Starting interactive authentication using {self.secrets_file}...")
+                    flow = InstalledAppFlow.from_client_secrets_file(self.secrets_file, SCOPES)
+                    creds = flow.run_local_server(port=0)
+                else:
+                    print("Provided secrets file is neither service account, full oauth user, nor client secrets.")
+                    return None
             
             # Save the new token if we are using local file storage (priority over env var for saving?)
             # Usually we only save to file if we are running locally.
@@ -117,6 +146,32 @@ class YouTubeUploader:
         
         print(f"Video uploaded successfully! ID: {response['id']}")
         return response['id']
+
+    def test_connection(self):
+        """
+        Tests the connection to the YouTube Data API by fetching the authenticated channel's name.
+        """
+        if not self.youtube:
+            print("YouTube service not initialized.")
+            return False
+            
+        try:
+            request = self.youtube.channels().list(
+                part="snippet",
+                mine=True
+            )
+            response = request.execute()
+            
+            if response.get("items"):
+                channel_name = response["items"][0]["snippet"]["title"]
+                print(f"Authenticated as channel: {channel_name}")
+                return True
+            else:
+                print("Authenticated successfully, but no channel found for this account.")
+                return True # Assuming service account with valid auth but no channel
+        except Exception as e:
+            print(f"Error testing connection: {e}")
+            return False
 
 if __name__ == "__main__":
     pass

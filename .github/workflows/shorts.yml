@@ -1,0 +1,80 @@
+name: Shorts Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: "Topic for the video"
+        required: false
+        type: string
+  schedule:
+    - cron: "0 17 * * 1-5" # Mon-Fri 17:00 UTC
+    - cron: "0 15 * * 6,0" # Sat-Sun 15:00 UTC
+
+env:
+  GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+  GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+  HUME_API_KEY: ${{ secrets.HUME_API_KEY }}
+  HUME_API_KEY2: ${{ secrets.HUME_API_KEY2 }}
+  HUME_API_KEY3: ${{ secrets.HUME_API_KEY3 }}
+  HUME_API_KEY4: ${{ secrets.HUME_API_KEY4 }}
+  HUME_API_KEY5: ${{ secrets.HUME_API_KEY5 }}
+  HUME_VOICE_ID: ${{ secrets.HUME_VOICE_ID }}
+  PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+  PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+  YOUTUBE_TOKEN_BASE64: ${{ secrets.YOUTUBE_TOKEN_BASE64 }}
+
+jobs:
+  run-shorts-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'remotion/package-lock.json'
+
+      - name: Install NPM dependencies
+        working-directory: remotion
+        run: npm install
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Run Preflight Check
+        run: python scripts/preflight_check.py
+
+      - name: Run Shorts Pipeline
+        run: |
+          TOPIC="${{ github.event.inputs.topic || '' }}"
+          if [ -z "$TOPIC" ]; then
+            echo "No topic provided, running daily_run.py for shorts"
+            python daily_run.py --shorts
+          else
+            echo "Running shorts_pipeline.py for topic: $TOPIC"
+            python scripts/shorts_pipeline.py "$TOPIC"
+          fi
+
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shorts-pipeline-output-${{ github.run_id }}
+          path: |
+            output/videos/
+            output/pipeline_state/
+            output/dry_run_upload_*.json
+          retention-days: 7

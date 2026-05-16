@@ -63,3 +63,43 @@ python international_news_automation/main_breaking.py
 - Content is rewritten from scratch (no verbatim copying).
 - Original narration (no source audio used).
 - Educational/News context (Transformative work).
+
+---
+
+## Music Assets
+
+Background music for the long-form pipeline lives in `assets/music/`.
+
+### Adding Real Tracks
+
+1. Download a CC0-licensed track from one of these free sources:
+   - **YouTube Audio Library** (studio.youtube.com/channel/music) — filter by "CC0"
+   - **Pixabay Music** (pixabay.com/music) — all tracks are royalty-free
+   - **Incompetech** (incompetech.filmmusic.io) — Kevin MacLeod's catalog, CC BY 4.0
+
+2. Place the `.mp3` file in `assets/music/`.
+
+3. Update `assets/music/catalog.json` — add an entry and set `"replace_with_real_track": false`:
+```json
+{
+  "file": "your_track.mp3",
+  "mood": "calm",
+  "bpm": 80,
+  "duration_seconds": 180,
+  "replace_with_real_track": false,
+  "source": "YouTube Audio Library — Track Name"
+}
+```
+
+### Mood ? Section Mapping
+
+| Mood | Sections |
+|------|---------|
+| calm | hook, context, resolution |
+| tense | conflict, evidence |
+| dramatic | twist |
+| upbeat | cta |
+
+The `scripts/music_selector.py` module uses this mapping automatically.
+The current placeholder files in `assets/music/` are 60-second silent `.mp3` files
+that allow the pipeline to run end-to-end without real audio.
