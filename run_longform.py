@@ -413,17 +413,22 @@ def run_pipeline(topic: str, dry_run: bool = False, slug: str = None, from_step:
         # Step 4: Music Mixing
         if from_step <= 4:
             print("\n--- Step 4: Music Mixing ---")
-            # Usually hook or context determines main music
             main_mood = get_mood_for_section("context")
             music_src = select_music(main_mood, vo_dur)
-            
-            mixed_out = f"output/voiceovers/{slug}_mixed.mp3"
-            mixed_path = apply_music_ducking(vo_path, music_src, mixed_out)
-            
+
+            if music_src:
+                mixed_out = f"output/voiceovers/{slug}_mixed.mp3"
+                mixed_path = apply_music_ducking(vo_path, music_src, mixed_out)
+                summary[4] = ("Music mixing", "PASS", f"mixed with {os.path.basename(music_src)}")
+            else:
+                # No local music and Pixabay unavailable — use raw voiceover
+                mixed_path = vo_path
+                print("WARNING: No music available — using voiceover-only audio")
+                summary[4] = ("Music mixing", "SKIP", "no music available, using VO only")
+
             state["step_outputs"]["4"] = {"music_path": mixed_path}
             state["completed_steps"].append(4)
             _save_state(state)
-            summary[4] = ("Music mixing", "PASS", f"mixed with {os.path.basename(music_src)}")
         else:
             mixed_path = state["step_outputs"]["4"]["music_path"]
             summary[4] = ("Music mixing", "SKIP", "loaded from state")

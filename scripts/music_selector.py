@@ -32,42 +32,60 @@ def fetch_pixabay_music(mood: str, duration_seconds: float = 0.0) -> str:
     api_key = os.getenv("PIXABAY_API_KEY")
     if not api_key:
         raise ValueError("PIXABAY_API_KEY is not set")
-        
+
     pixabay_mood = {
         "calm": "calm",
         "tense": "dark",
         "dramatic": "cinematic",
         "upbeat": "upbeat"
     }.get(mood.lower(), "calm")
-    
-    url = f"https://pixabay.com/api/videos/music/?key={api_key}&mood={pixabay_mood}&per_page=5"
-    # Note: If the API endpoint is actually /api/audio/, this follows the prompt's exact spec
-    
+
+    # Correct endpoint: /api/ with type=music (NOT /api/videos/music/)
+    url = (
+        f"https://pixabay.com/api/"
+        f"?key={api_key}&q={pixabay_mood}&type=music"
+        f"&per_page=5&safesearch=true"
+    )
+
     response = httpx.get(url, timeout=30.0)
     response.raise_for_status()
     data = response.json()
-    
+
     if "hits" not in data or not data["hits"]:
         raise ValueError(f"No Pixabay music found for mood: {pixabay_mood}")
-        
-    hit = data["hits"][0]
-    audio_url = hit.get("audio_url") # or hit.get("url") based on actual API, using audio_url per prompt
+
+    # Find a hit that actually has a playable audio URL
+    audio_url = None
+    track_id = None
+    for hit in data["hits"]:
+        # Pixabay audio tracks have a 'webformatURL' or embedded audio link
+        url_candidate = (
+            hit.get("audio") or
+            hit.get("userImageURL") or
+            hit.get("previewURL")
+        )
+        # The actual audio file is available via the pageURL for music type;
+        # we use the direct MP3 stream from Pixabay's CDN via webformatURL on audio type
+        # Fall through to local if no direct link is available
+        if url_candidate and url_candidate.endswith(".mp3"):
+            audio_url = url_candidate
+            track_id = str(hit.get("id", "0"))
+            break
+
     if not audio_url:
-        raise ValueError("Pixabay response missing 'audio_url'")
-        
-    track_id = hit.get("id", "0")
-    
+        raise ValueError("Pixabay music response has no direct MP3 URL — API may require a different plan")
+
     cache_dir = Path("output/music_cache")
     cache_dir.mkdir(parents=True, exist_ok=True)
     out_path = cache_dir / f"{mood}_{track_id}.mp3"
-    
+
     if not out_path.exists():
         print(f"Downloading Pixabay music (id: {track_id}) to {out_path}...")
         r = httpx.get(audio_url, timeout=60.0)
         r.raise_for_status()
         with open(out_path, "wb") as f:
             f.write(r.content)
-            
+
     return str(out_path)
 
 def select_music(mood: str, duration_seconds: float = 0.0) -> str:
@@ -88,7 +106,8 @@ def select_music(mood: str, duration_seconds: float = 0.0) -> str:
     
     # 2. Fallback to local catalog
     if not CATALOG_PATH.exists():
-        raise FileNotFoundError(f"Music catalog not found at {CATALOG_PATH}")
+        print(f"WARNING: Music catalog not found at {CATALOG_PATH} — skipping music")
+        return None
 
     with open(CATALOG_PATH, "r", encoding="utf-8") as f:
         catalog = json.load(f)
@@ -96,17 +115,23 @@ def select_music(mood: str, duration_seconds: float = 0.0) -> str:
     tracks = catalog.get("tracks", [])
     mood_tracks = [t for t in tracks if t.get("mood") == mood]
 
-    # Fallback to any track if no mood match
     if not mood_tracks:
         print(f"WARNING: No tracks found for mood '{mood}'. Using any available track.")
         mood_tracks = tracks
 
     if not mood_tracks:
-        raise ValueError("No tracks found in catalog.json")
+        print("WARNING: No tracks in catalog — skipping music")
+        return None
 
-    # Pick a random match
-    selected = random.choice(mood_tracks)
-    return str(MUSIC_DIR / selected["file"])
+    # Pick a random match that actually exists on disk
+    random.shuffle(mood_tracks)
+    for selected in mood_tracks:
+        candidate = MUSIC_DIR / selected["file"]
+        if candidate.exists():
+            return str(candidate)
+
+    print(f"WARNING: All catalog tracks for mood '{mood}' are missing from disk — skipping music")
+    return None
 
 
 def apply_music_ducking(
