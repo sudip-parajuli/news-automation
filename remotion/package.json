@@ -15,5 +15,10 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^6.0.3"
   }
 }

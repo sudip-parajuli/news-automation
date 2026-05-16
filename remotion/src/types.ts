@@ -18,6 +18,12 @@ export type LongFormVideoData = {
   background_music: string;
 };
 
+export type WordTimestamp = {
+  word: string;
+  start: number;
+  end?: number;
+};
+
 // Also define short form data to satisfy the ShortFormNews composition
 export type ShortFormVideoData = {
   headline: string;
@@ -28,4 +34,5 @@ export type ShortFormVideoData = {
   hook_text: string;
   loop_hook: string;
   audio_track?: string;
+  timestamps?: WordTimestamp[];
 };

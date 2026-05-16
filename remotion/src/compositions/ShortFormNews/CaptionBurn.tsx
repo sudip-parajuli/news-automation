@@ -1,9 +1,10 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
 import { buildCaptionChunks, normalizeTimestamps, CaptionChunk, NormalizedWord } from '../../utils';
+import { WordTimestamp } from '../../types';
 
 export const CaptionBurn: React.FC<{
-  timestamps: any[];
+  timestamps: WordTimestamp[];
 }> = ({ timestamps }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
