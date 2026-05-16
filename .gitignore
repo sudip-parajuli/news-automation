@@ -41,11 +41,11 @@ media/*.mp3
 media/*.jpg
 media/*.png
 
-# Block all audio/video by default but allow music folder
+# Block all audio/video by default but allow assets/music folder
 *.mp3
 *.mp4
-!music/*.mp3
-!music/*.wav
+!assets/music/*.mp3
+!assets/music/*.wav
 *.log
 
 # IDEs
