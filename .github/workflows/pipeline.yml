@@ -24,6 +24,11 @@ env:
   HUME_API_KEY3: ${{ secrets.HUME_API_KEY3 }}
   HUME_API_KEY4: ${{ secrets.HUME_API_KEY4 }}
   HUME_API_KEY5: ${{ secrets.HUME_API_KEY5 }}
+  HUME_API_KEY6: ${{ secrets.HUME_API_KEY6 }}
+  HUME_API_KEY7: ${{ secrets.HUME_API_KEY7 }}
+  HUME_API_KEY8: ${{ secrets.HUME_API_KEY8 }}
+  HUME_API_KEY9: ${{ secrets.HUME_API_KEY9 }}
+  HUME_API_KEY10: ${{ secrets.HUME_API_KEY10 }}
   HUME_VOICE_ID: ${{ secrets.HUME_VOICE_ID }}
   PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
   PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
