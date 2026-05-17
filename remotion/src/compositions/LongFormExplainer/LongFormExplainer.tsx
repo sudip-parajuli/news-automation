@@ -9,15 +9,22 @@ import { ChapterCard } from './ChapterCard';
 export const LongFormExplainer: React.FC<{ data: LongFormVideoData }> = ({ data }) => {
   const { fps } = useVideoConfig();
 
+  const totalVoiceoverFrames = Math.ceil(data.voiceover_duration_seconds * fps);
+  
+  // Calculate total word count safely
+  const totalWordCount = data.sections.reduce((acc, section) => {
+    return acc + Math.max(section.word_count, 10);
+  }, 0);
+
   return (
     <AbsoluteFill style={{ backgroundColor: 'black' }}>
       <AudioSync voiceoverFile={data.voiceover_file} backgroundMusic={data.background_music} />
       
       <Series>
         {data.sections.map((section, index) => {
-          // Calculate section duration based on its broll clips
-          const sectionDurationSeconds = section.broll.reduce((acc, clip) => acc + clip.duration, 0);
-          const sectionFrames = Math.max(1, Math.round(sectionDurationSeconds * fps));
+          // Calculate section duration based on proportional word count
+          const safeWordCount = Math.max(section.word_count, 10);
+          const sectionFrames = Math.max(1, Math.ceil((safeWordCount / totalWordCount) * totalVoiceoverFrames));
           
           // Used between CONTEXT -> CONFLICT -> EVIDENCE -> TWIST only.
           const showChapterCard = ['conflict', 'evidence', 'twist'].includes(section.id.toLowerCase());

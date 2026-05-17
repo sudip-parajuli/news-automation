@@ -25,17 +25,44 @@ class BRollFetcher:
             print("WARNING: PEXELS_API_KEY not found. Video fetching may fail.")
 
     @llm_retry_decorator()
-    def _extract_keywords(self, sentence: str) -> str:
+    def _extract_all_keywords(self, sections: dict) -> dict:
         system_prompt = """
-        You are an expert at extracting highly searchable stock video keywords from narrative sentences.
-        Extract a 2-4 word query that captures the core visual subject.
-        Output ONLY the query string, nothing else. No quotes, no explanation.
-        Example: "OPEC ministers met in Vienna to discuss production cuts amid falling crude prices" -> "OPEC oil ministers"
+        Given these 7 script sections, generate one 2-4 word video search query for each.
+        Each query must be concrete and visual (suitable for stock footage search).
+        Return ONLY a JSON object with section names as keys:
+        {
+          "hook": "query here",
+          "context": "query here", 
+          "conflict": "query here",
+          "evidence": "query here",
+          "twist": "query here",
+          "resolution": "query here",
+          "cta": "query here"
+        }
         """
-        return call_gemini(system_prompt, sentence).strip()
+        
+        user_prompt = "Sections:\n"
+        for name, text in sections.items():
+            user_prompt += f"{name}: {text}\n"
+            
+        response = call_gemini(system_prompt, user_prompt)
+        
+        # Clean up possible markdown json blocks
+        response = response.strip()
+        if response.startswith("```json"):
+            response = response[7:]
+        if response.startswith("```"):
+            response = response[3:]
+        if response.endswith("```"):
+            response = response[:-3]
+            
+        try:
+            return json.loads(response.strip())
+        except json.JSONDecodeError as e:
+            print(f"Failed to parse batched keywords JSON: {response}")
+            raise ValueError(f"Failed to parse batched keywords JSON: {e}")
 
-    def fetch_broll(self, sentence: str) -> dict:
-        query = self._extract_keywords(sentence)
+    def fetch_broll(self, query: str) -> dict:
         query_hash = hashlib.md5(query.encode('utf-8')).hexdigest()
         
         cached_info_path = os.path.join(self.cache_dir, f"{query_hash}.json")
@@ -134,12 +161,23 @@ class BRollFetcher:
 
     def fetch_broll_for_script(self, sections: dict) -> dict:
         results = {}
+        try:
+            batched_queries = self._extract_all_keywords(sections)
+        except Exception as e:
+            print(f"Failed to extract batched keywords: {e}")
+            batched_queries = {}
+            
         for section_name, section_text in sections.items():
             results[section_name] = []
+            query = batched_queries.get(section_name)
+            if not query:
+                # Fallback to a basic extract if missing
+                query = "news footage"
+                
             try:
-                broll = self.fetch_broll(section_text)
+                broll = self.fetch_broll(query)
                 results[section_name].append(broll)
             except Exception as e:
-                print(f"Failed to fetch broll for section {section_name}: {e}")
+                print(f"Failed to fetch broll for section {section_name} with query {query}: {e}")
                 
         return results

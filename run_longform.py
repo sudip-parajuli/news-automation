@@ -96,7 +96,7 @@ def _assemble_description(resolution_text: str, search_keywords: list, topic: st
     return desc
 
 
-def _build_remotion_data(script_data: dict, broll_dict: dict, voiceover_path: str, music_path: str, title: str) -> dict:
+def _build_remotion_data(script_data: dict, broll_dict: dict, voiceover_path: str, music_path: str, title: str, voiceover_duration: float) -> dict:
     sections = []
     for section_id in ["hook", "context", "conflict", "evidence", "twist", "resolution", "cta"]:
         text = script_data.get("sections", {}).get(section_id, "")
@@ -119,6 +119,7 @@ def _build_remotion_data(script_data: dict, broll_dict: dict, voiceover_path: st
         sections.append({
             "id": section_id,
             "text": text,
+            "word_count": len(text.split()),
             "broll": abs_broll
         })
         
@@ -129,7 +130,8 @@ def _build_remotion_data(script_data: dict, broll_dict: dict, voiceover_path: st
         "title": title,
         "sections": sections,
         "voiceover_file": abs_vo,
-        "background_music": abs_music
+        "background_music": abs_music,
+        "voiceover_duration_seconds": voiceover_duration
     }
 
 
@@ -443,15 +445,58 @@ def run_pipeline(topic: str, dry_run: bool = False, slug: str = None, from_step:
                 path_a = f"output/thumbnails/{slug}_a.png"
                 path_b = f"output/thumbnails/{slug}_b.png"
                 
-                generate_longform_thumbnail(title_a, topic, keywords, path_a)
-                generate_longform_thumbnail(title_b, topic, keywords, path_b)
+                # Extract still frame from first available broll video clip
+                first_video_clip = None
+                for section_clips in broll_dict.values():
+                    for clip in section_clips:
+                        if clip.get("type") == "video":
+                            first_video_clip = clip["file_path"]
+                            break
+                    if first_video_clip:
+                        break
                 
-                winning_title, _ = select_best_thumbnail(title_a, title_b, topic)
+                bg_image_path = None
+                if first_video_clip and os.path.exists(first_video_clip):
+                    bg_image_path = f"output/thumbnails/{slug}_bg.jpg"
+                    subprocess.run([
+                        "ffmpeg", "-y", "-ss", "00:00:02", "-i", first_video_clip,
+                        "-frames:v", "1", "-q:v", "2", bg_image_path
+                    ], check=True, capture_output=True)
+                
+                generate_longform_thumbnail(title_a, topic, keywords, path_a, background_image_path=bg_image_path)
+                generate_longform_thumbnail(title_b, topic, keywords, path_b, background_image_path=bg_image_path)
+                
+                # Fetch winning title directly from LLM metadata without extra call
+                best_index = script_data.get("metadata", {}).get("best_title_index", 0)
+                if best_index < len(title_opts):
+                    winning_title = title_opts[best_index]
+                else:
+                    winning_title = title_opts[0]
+                    
                 final_thumb = path_a if winning_title == title_a else path_b
             else:
                 winning_title = title_opts[0] if title_opts else topic
                 final_thumb = f"output/thumbnails/{slug}.png"
-                generate_longform_thumbnail(winning_title, topic, keywords, final_thumb)
+                
+                # Extract still frame from first available broll video clip
+                first_video_clip = None
+                for section_clips in broll_dict.values():
+                    for clip in section_clips:
+                        if clip.get("type") == "video":
+                            first_video_clip = clip["file_path"]
+                            break
+                    if first_video_clip:
+                        break
+                
+                bg_image_path = None
+                if first_video_clip and os.path.exists(first_video_clip):
+                    bg_image_path = f"output/thumbnails/{slug}_bg.jpg"
+                    subprocess.run([
+                        "ffmpeg", "-y", "-ss", "00:00:02", "-i", first_video_clip,
+                        "-frames:v", "1", "-q:v", "2", bg_image_path
+                    ], check=True, capture_output=True)
+                    
+                generate_longform_thumbnail(winning_title, topic, keywords, final_thumb, background_image_path=bg_image_path)
                 
             state["step_outputs"]["5"] = {"thumbnail_path": final_thumb, "winning_title": winning_title}
             state["completed_steps"].append(5)
@@ -465,7 +510,7 @@ def run_pipeline(topic: str, dry_run: bool = False, slug: str = None, from_step:
         # Step 6: Remotion Data File
         if from_step <= 6:
             print("\n--- Step 6: Remotion Data File ---")
-            remotion_data = _build_remotion_data(script_data, broll_dict, mixed_path, "", winning_title)
+            remotion_data = _build_remotion_data(script_data, broll_dict, mixed_path, "", winning_title, vo_dur)
             
             data_out = f"output/remotion_data/{slug}.json"
             os.makedirs("output/remotion_data", exist_ok=True)

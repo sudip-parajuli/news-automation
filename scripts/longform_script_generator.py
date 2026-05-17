@@ -80,10 +80,11 @@ class LongformScriptGenerator:
         
         After the script, on a new line, output a JSON block in this exact format:
         {{"title_options": ["...", "...", "..."], "thumbnail_keywords": ["...", "...", "..."],
-         "search_keywords": ["...", "...", "..."], "estimated_duration_minutes": 0}}
+         "search_keywords": ["...", "...", "..."], "estimated_duration_minutes": 0,
+         "best_title_index": 0, "best_title_reasoning": "one sentence explaining why"}}
         
         The three title_options must use different hooks: one curiosity gap, one number,
-        one "nobody is talking about this" framing.
+        one "nobody is talking about this" framing. Also rank the 3 title options you generate and mark the best one using best_title_index (0, 1, or 2).
         """
         
         response_text = self._call_llm(system_prompt, user_prompt)
@@ -162,6 +163,9 @@ class LongformScriptGenerator:
             
     @llm_retry_decorator()
     def select_best_title(self, title_options: list) -> str:
+        # DEPRECATED: Title selection is now batched in the script generation step
+        # via the 'best_title_index' JSON field. This function remains for A/B testing
+        # or fallback if needed in the future.
         if not title_options:
             return "Default Title"
             

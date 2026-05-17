@@ -30,7 +30,7 @@ SECTION_ORDER = ["hook", "context", "conflict", "evidence", "twist", "resolution
 def llm_retry_decorator():
     return retry(
         wait=wait_exponential(min=2, max=30),
-        stop=stop_after_attempt(4),
+        stop=stop_after_attempt(6),
         reraise=True,
         retry=retry_if_exception_type((Exception,)),
     )
@@ -108,6 +108,8 @@ class HumeKeyRotator:
             if self.current_idx == start_idx:
                 earliest = min(k["cooldown_until"] for k in self.keys)
                 wait_time = earliest - time.time()
+                if wait_time > 86400: # more than a day
+                    raise Exception("All Hume API keys are permanently exhausted (out of credits).")
                 if wait_time > 0:
                     print(f"All Hume keys rate limited. Waiting {wait_time:.1f}s...")
                     time.sleep(wait_time)
@@ -157,7 +159,21 @@ def _call_hume_tts(text: str, output_path: str, chunk_index: int, total_chunks: 
         rotator.mark_cooldown(key)
         raise Exception(f"Hume API rate limited (429) for key #{idx_name}")
         
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
+    except httpx.HTTPStatusError as e:
+        print(f"Hume API Error [{response.status_code}] on key #{idx_name}: {response.text}")
+        if response.status_code == 400 and ("credit" in response.text.lower() or "fund" in response.text.lower()):
+            print(f"Key #{idx_name} is out of credits. Removing from rotation.")
+            # We can mark it with a very long cooldown
+            rotator.mark_cooldown(key)
+            # Actually, let's just make it a year
+            for k in rotator.keys:
+                if k["key"] == key:
+                    k["cooldown_until"] = time.time() + 31536000.0
+                    break
+        raise
+        
     data = response.json()
     
     audio_b64 = data["generations"][0]["audio"]

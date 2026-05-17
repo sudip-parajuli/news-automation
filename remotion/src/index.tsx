@@ -11,10 +11,12 @@ const longFormStub: LongFormVideoData = {
   title: "Test Explainer",
   voiceover_file: `${publicDir}/voiceover.mp3`,
   background_music: `${publicDir}/bgm.mp3`,
+  voiceover_duration_seconds: 10,
   sections: [
     {
       id: "HOOK",
       text: "The world runs on oil.",
+      word_count: 5,
       broll: [
         { query: "oil pump", file_path: `${publicDir}/hook.mp4`, type: "video", duration: 5 }
       ]
@@ -22,6 +24,7 @@ const longFormStub: LongFormVideoData = {
     {
       id: "CONTEXT",
       text: "OPEC met in Vienna.",
+      word_count: 4,
       broll: [
         { query: "vienna", file_path: `${publicDir}/context.jpg`, type: "still_image", duration: 5 }
       ]
@@ -70,6 +73,11 @@ export const RemotionRoot = () => {
 				width={1920}
 				height={1080}
 				defaultProps={{ data: longFormStub }}
+				calculateMetadata={({ props }) => {
+					return {
+						durationInFrames: Math.max(1, Math.ceil((props.data.voiceover_duration_seconds || 10) * 30))
+					};
+				}}
 			/>
 			<Composition
 				id="ShortFormNews"

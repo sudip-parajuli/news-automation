@@ -8,6 +8,7 @@ export type BRollItem = {
 export type ScriptSectionData = {
   id: string; // "hook" | "context" | "conflict" etc.
   text: string;
+  word_count: number;
   broll: BRollItem[];
 };
 
@@ -16,6 +17,7 @@ export type LongFormVideoData = {
   title: string;
   voiceover_file: string;
   background_music: string;
+  voiceover_duration_seconds: number;
 };
 
 export type WordTimestamp = {

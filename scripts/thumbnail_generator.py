@@ -105,6 +105,19 @@ def _apply_overlay_gradient(img: Image.Image) -> Image.Image:
     return Image.alpha_composite(img.convert("RGBA"), overlay).convert("RGB")
 
 
+def _get_title_font_size(title: str) -> int:
+    """Dynamically reduce font size for longer titles."""
+    words = len(title.split())
+    if words <= 5:
+        return 88
+    elif words <= 8:
+        return 72
+    elif words <= 12:
+        return 58
+    else:
+        return 48
+
+
 # ─── Thumbnail generators ──────────────────────────────────────────────────────
 def generate_longform_thumbnail(
     title: str,
@@ -131,11 +144,16 @@ def generate_longform_thumbnail(
 
     draw = ImageDraw.Draw(img)
     w, h = LONGFORM_SIZE
-    headline_font, sub_font, tag_font, ttf_loaded = _get_fonts(72, 28, 26)
+    
+    title_font_size = _get_title_font_size(title)
+    headline_font, sub_font, tag_font, ttf_loaded = _get_fonts(title_font_size, 28, 22)
     PADDING = 60
 
     # 3. Topic tag (e.g. "OIL PRICES")
     tag_text = topic.upper()[:30]
+    if len(topic.upper()) > 30:
+        tag_text = tag_text[:27] + "..."
+        
     tag_y = h - 180
     draw.text((PADDING, tag_y), tag_text, font=tag_font, fill=ACCENT)
 
@@ -147,9 +165,20 @@ def generate_longform_thumbnail(
     max_text_width = w - (PADDING * 2)
     # Estimate chars per line for the font size; wrap conservatively
     wrapped = textwrap.fill(title, width=32)
-    title_y = h - 140
+    
+    # Calculate how many lines the wrapped title will take
+    # then position from the bottom up with 40px bottom margin
+    bottom_margin = 40
+    num_lines = len(wrapped.split('\n'))
+    line_spacing = 8
+    title_block_height = num_lines * (title_font_size + line_spacing)
+    title_y = min(
+        img.height - bottom_margin - title_block_height,
+        int(img.height * 0.55)  # never start above 55% of canvas height
+    )
+    
     draw.text((PADDING, title_y), wrapped, font=headline_font, fill=(255, 255, 255),
-              spacing=8)
+              spacing=line_spacing)
 
     img.save(output_path, "PNG")
     print(f"Saved thumbnail: {output_path} | TTF font: {ttf_loaded}")

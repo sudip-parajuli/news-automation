@@ -35,6 +35,7 @@ def _slug(text: str) -> str:
 # ─── Hook text ────────────────────────────────────────────────────────────────
 def generate_hook_text(summary: str) -> str:
     """
+    DEPRECATED: Replaced by batched call in enhance_shorts_script.
     Generate a ≤8-word hook for a YouTube Short.
     Returns the hook_text string. Falls back to a truncated headline if LLM fails.
     """
@@ -85,6 +86,7 @@ Return JSON only: {{"hook_text": "..."}}"""
 # ─── Loop hook ────────────────────────────────────────────────────────────────
 def generate_loop_hook(hook_text: str) -> str:
     """
+    DEPRECATED: Replaced by batched call in enhance_shorts_script.
     Generate a ≤6-word loop hook that callbacks to the hook_text.
     Makes the last frame feel like the first to encourage replays.
     """
@@ -126,11 +128,45 @@ def enhance_shorts_script(script_text: str, headline: str) -> dict:
     Saves result to output/shorts_enhanced/{hash}.json.
     Returns {"hook_text": str, "loop_hook": str, "headline": str}.
     """
-    # Use headline as the hook generation seed (more punchy than full script)
     summary = headline if headline else script_text[:300]
 
-    hook_text = generate_hook_text(summary)
-    loop_hook = generate_loop_hook(hook_text)
+    system_prompt = (
+        "You are an expert YouTube Shorts hook writer. "
+        "You only output valid JSON with keys 'hook_text' and 'loop_hook'. No markdown, no explanation."
+    )
+    user_prompt = f"""Given this news summary: {summary}
+    
+    Generate both:
+    1. hook_text: max 8 words, urgent curiosity, no banned phrases
+       (banned: Shocking Truth, You Won't Believe, Mind Blowing, Game Changer)
+    2. loop_hook: max 6 words, callbacks to hook_text, encourages replay
+    
+    Return JSON only:
+    {{"hook_text": "...", "loop_hook": "..."}}"""
+
+    try:
+        raw = call_gemini(system_prompt, user_prompt, max_output_tokens=128)
+        raw = re.sub(r"```(?:json)?", "", raw).strip()
+        parsed = json.loads(raw)
+        
+        hook_text = parsed.get("hook_text", "").strip()
+        loop_hook = parsed.get("loop_hook", "").strip()
+        
+        if not hook_text or not loop_hook:
+            raise ValueError("Empty hook_text or loop_hook from LLM")
+            
+        # Word count checks
+        if len(hook_text.split()) > 8:
+            hook_text = " ".join(hook_text.split()[:8])
+        if len(loop_hook.split()) > 6:
+            loop_hook = " ".join(loop_hook.split()[:6])
+            
+    except Exception as e:
+        print(f"[ShortEnhancer] batched LLM call failed: {e}. Using fallback.")
+        words = summary.split()
+        hook_text = " ".join(words[:8]) if len(words) > 8 else summary
+        words_hook = hook_text.split()
+        loop_hook = " ".join(words_hook[:6]) if len(words_hook) > 6 else hook_text
 
     result = {
         "hook_text": hook_text,
