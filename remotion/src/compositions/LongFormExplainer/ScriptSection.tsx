@@ -1,5 +1,5 @@
-import { Series, Video, Img, useVideoConfig, useCurrentFrame } from 'remotion';
-import { ScriptSectionData } from '../../types';
+import { Series, Video, Img, useVideoConfig, AbsoluteFill } from 'remotion';
+import { ScriptSectionData, BRollItem } from '../../types';
 import { resolveMediaPath } from '../../utils';
 import { LowerThird } from './LowerThird';
 import { KenBurnsImage } from '../../components/KenBurnsImage';
@@ -10,17 +10,39 @@ export const ScriptSection: React.FC<{
 }> = ({ section, durationInFrames }) => {
   const { fps } = useVideoConfig();
   
-  // Extract a 1-line key fact from the script text for the lower third
-  const sentences = section.text.split(/[.?!]/).filter(s => s.trim().length > 0);
-  const keyFact = sentences.length > 0 ? sentences[0].trim() : section.id.toUpperCase();
+  // Extract key facts from the script text for the lower third
+  const sentences = section.text.split(/[.?!]/).filter(s => s.trim().length > 0).map(s => s.trim());
+  const fallbackFact = [section.id.toUpperCase()];
+  const factsToDisplay = sentences.length > 0 ? sentences : fallbackFact;
+
+  const totalClipFrames = section.broll.reduce((sum, c) => sum + Math.round(c.duration * fps), 0);
+
+  if (totalClipFrames === 0) {
+    return (
+      <AbsoluteFill style={{backgroundColor: '#1a1a2e'}}>
+        <LowerThird facts={factsToDisplay} durationInFrames={durationInFrames} />
+      </AbsoluteFill>
+    );
+  }
+
+  const loopCount = Math.ceil(durationInFrames / totalClipFrames);
+  const loopedClips: BRollItem[] = Array.from({length: loopCount}, () => section.broll).flat();
+
+  let framesUsed = 0;
+  const clipsToRender = loopedClips.map((clip) => {
+    const clipFrames = Math.round(clip.duration * fps);
+    const remaining = durationInFrames - framesUsed;
+    const actualFrames = Math.min(clipFrames, remaining);
+    framesUsed += actualFrames;
+    return { ...clip, actualFrames };
+  }).filter(c => c.actualFrames > 0);
 
   return (
     <div style={{ flex: 1, backgroundColor: 'black' }}>
       <Series>
-        {section.broll.map((clip, index) => {
-          const clipFrames = Math.round(clip.duration * fps);
+        {clipsToRender.map((clip, index) => {
           return (
-            <Series.Sequence key={index} durationInFrames={clipFrames}>
+            <Series.Sequence key={index} durationInFrames={clip.actualFrames}>
               {clip.type === 'video' ? (
                 <Video
                   src={resolveMediaPath(clip.file_path)}
@@ -35,7 +57,7 @@ export const ScriptSection: React.FC<{
       </Series>
       
       <LowerThird
-        mainText={keyFact.length > 80 ? keyFact.substring(0, 80) + '...' : keyFact}
+        facts={factsToDisplay}
         durationInFrames={durationInFrames}
       />
     </div>

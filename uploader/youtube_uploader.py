@@ -170,6 +170,26 @@ class YouTubeUploader:
             print(f"Error testing connection: {e}")
             return False
 
+    def set_thumbnail(self, video_id: str, thumbnail_path: str) -> bool:
+        """
+        Uploads and sets a custom thumbnail for a video.
+        """
+        if not self.youtube:
+            print("YouTube service not initialized.")
+            return False
+            
+        try:
+            self.youtube.thumbnails().set(
+                videoId=video_id,
+                media_body=MediaFileUpload(thumbnail_path, mimetype="image/png")
+            ).execute()
+            print(f"Thumbnail set for video {video_id}")
+            return True
+        except Exception as e:
+            print(f"WARNING: Thumbnail upload failed: {e}")
+            print("If error is 'forbidden', verify channel at youtube.com/verify")
+            return False
+
 if __name__ == "__main__":
     pass
     # Test (requires client_secrets.json)

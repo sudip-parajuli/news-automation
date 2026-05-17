@@ -1,13 +1,28 @@
 import { useCurrentFrame, useVideoConfig, spring, interpolate } from 'remotion';
 
 export const LowerThird: React.FC<{
-  mainText: string;
-  subText?: string;
+  facts: string[];
   durationInFrames: number;
-}> = ({ mainText, subText, durationInFrames }) => {
+}> = ({ facts, durationInFrames }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
+  // Determine which fact to show based on 8-second rotation
+  const framesPerFact = 8 * fps;
+  let currentFactIndex = Math.floor(frame / framesPerFact);
+  
+  // Cap the index so we don't go out of bounds if the section is very long
+  if (currentFactIndex >= facts.length) {
+    currentFactIndex = currentFactIndex % facts.length;
+  }
+  
+  let currentFact = facts[currentFactIndex] || "";
+  // Truncate if too long to fit nicely
+  if (currentFact.length > 100) {
+    currentFact = currentFact.substring(0, 100) + '...';
+  }
+
+  // Animate slide-in at the very beginning of the section
   const slideIn = spring({
     fps,
     frame,
@@ -15,6 +30,7 @@ export const LowerThird: React.FC<{
     durationInFrames: 20,
   });
 
+  // Fade out only at the very end of the section
   const fadeOut = interpolate(
     frame,
     [durationInFrames - 20, durationInFrames],
@@ -38,8 +54,7 @@ export const LowerThird: React.FC<{
         maxWidth: '70%',
       }}
     >
-      <div style={{ fontSize: '28px', fontWeight: 'bold' }}>{mainText}</div>
-      {subText && <div style={{ fontSize: '20px', marginTop: '8px', color: '#ccc' }}>{subText}</div>}
+      <div style={{ fontSize: '28px', fontWeight: 'bold' }}>{currentFact}</div>
     </div>
   );
 };

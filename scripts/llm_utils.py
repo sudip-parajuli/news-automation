@@ -29,7 +29,7 @@ class GeminiKeyRotator:
 
     def __init__(self):
         self.keys = []
-        for suffix in ["", "2", "3", "4"]:
+        for suffix in ["", "2", "3", "4", "5", "6", "7", "8", "9", "10"]:
             key = os.getenv(f"GEMINI_API_KEY{suffix}")
             if key:
                 name = f"GEMINI_API_KEY{suffix if suffix else '1'}"
@@ -108,7 +108,7 @@ def _get_rotator() -> GeminiKeyRotator:
 class GroqKeyRotator:
     def __init__(self):
         self.keys = []
-        for suffix in ["", "2", "3", "4"]:
+        for suffix in ["", "2", "3", "4", "5", "6", "7", "8", "9", "10"]:
             key = os.getenv(f"GROQ_API_KEY{suffix}")
             if key:
                 name = f"GROQ_API_KEY{suffix if suffix else '1'}"

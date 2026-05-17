@@ -594,6 +594,11 @@ def run_pipeline(topic: str, dry_run: bool = False, slug: str = None, from_step:
                         tags=search_kws,
                         category_id="25"
                     )
+                    if yt_id:
+                        thumbnail_path = state.get("step_outputs", {}).get("5", {}).get("thumbnail_path")
+                        if thumbnail_path and os.path.exists(thumbnail_path):
+                            uploader.set_thumbnail(yt_id, thumbnail_path)
+                            
                     state["step_outputs"]["8"] = {"youtube_id": yt_id}
                     state["completed_steps"].append(8)
                     _save_state(state)

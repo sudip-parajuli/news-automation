@@ -74,20 +74,34 @@ def fetch_pixabay_music(mood: str, duration_seconds: float = 0.0) -> str:
     audio_url = None
     track_id = None
     for hit in data["hits"]:
-        # Pixabay audio tracks have an 'audio' or embedded link.
+        # The correct field in Pixabay Music API is previewUrl
         url_candidate = (
-            hit.get("audio") or
-            hit.get("preview_url") or
+            hit.get("previewUrl") or
             hit.get("audio_url") or
-            hit.get("previewURL")
+            hit.get("url") or
+            hit.get("audio") or
+            hit.get("preview_url")
         )
         if url_candidate and isinstance(url_candidate, str):
+            # HEAD validation
+            try:
+                head_resp = httpx.head(url_candidate, follow_redirects=True, timeout=10.0)
+                content_type = head_resp.headers.get("content-type", "").lower()
+                if "audio" not in content_type and not any(
+                    url_candidate.lower().endswith(ext) for ext in [".mp3", ".ogg", ".wav", ".m4a"]
+                ):
+                    print(f"WARNING: URL does not appear to be audio: {url_candidate} ({content_type})")
+                    continue
+            except Exception as e:
+                print(f"WARNING: HEAD request failed for {url_candidate}: {e}")
+                continue
+
             audio_url = url_candidate
             track_id = str(hit.get("id", "0"))
             break
 
     if not audio_url:
-        raise ValueError("Pixabay music response has no direct MP3 URL — API may require a different plan")
+        raise ValueError("Pixabay music response has no direct MP3 URL — API may require a different plan or all hits failed validation")
 
     cache_dir = Path("output/music_cache")
     cache_dir.mkdir(parents=True, exist_ok=True)
@@ -113,8 +127,29 @@ def fetch_pixabay_music(mood: str, duration_seconds: float = 0.0) -> str:
 
         with open(out_path, "wb") as f:
             f.write(r.content)
+            
+        # Validation 1: Size > 50KB
+        if os.path.getsize(out_path) < 50000:
+            try:
+                out_path.unlink()
+            except OSError:
+                pass
+            raise ValueError(f"Downloaded Pixabay file is too small (<50KB), likely an error page or corrupted.")
 
-        # Confirm downloaded file is actually readable by FFmpeg
+        # Validation 2: Codec type using ffprobe
+        result = subprocess.run(
+            ["ffprobe", "-v", "quiet", "-show_entries",
+             "stream=codec_type", "-of", "csv=p=0", str(out_path)],
+            capture_output=True, text=True
+        )
+        if "audio" not in result.stdout:
+            try:
+                out_path.unlink()
+            except OSError:
+                pass
+            raise ValueError(f"Downloaded file is not audio (codec_type check failed): {out_path}")
+
+        # Validation 3: Confirm readable by FFmpeg
         if not is_valid_audio(str(out_path)):
             try:
                 out_path.unlink()

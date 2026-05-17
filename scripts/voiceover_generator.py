@@ -6,6 +6,8 @@ import subprocess
 import tempfile
 import httpx
 import time
+import asyncio
+import edge_tts
 from dotenv import load_dotenv
 from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
 
@@ -265,9 +267,23 @@ def generate_voiceover(
     return output_path
 
 
+def _call_edge_tts(text: str, output_path: str) -> str:
+    voice = "en-US-GuyNeural"  # male voice, good for news
+    communicate = edge_tts.Communicate(text, voice)
+    asyncio.run(communicate.save(output_path.replace(".mp3", ".mp3")))
+    return output_path
+
+
 def _generate_chunk(text: str, output_path: str, provider: str, chunk_index: int = 1, total_chunks: int = 1) -> str:
-    """Generate audio for a single text chunk using Hume AI."""
-    return _call_hume_tts(text, output_path, chunk_index, total_chunks)
+    """Generate audio for a single text chunk using Hume AI, falling back to edge-tts if needed."""
+    try:
+        return _call_hume_tts(text, output_path, chunk_index, total_chunks)
+    except Exception as e:
+        error_msg = str(e).lower()
+        if "out of credits" in error_msg or "permanently exhausted" in error_msg or "E0300" in error_msg or "zero_credits" in error_msg:
+            print("WARNING: All Hume keys out of credits. FALLBACK TTS: Using edge-tts (Microsoft Neural).")
+            return _call_edge_tts(text, output_path)
+        raise
 
 
 def generate_voiceover_from_ssml(ssml: str, output_path: str) -> str:
