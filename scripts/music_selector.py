@@ -138,70 +138,28 @@ def apply_music_ducking(
     output_path: str,
 ) -> str:
     """
-    Mix voiceover and background music with ducking via a two-step FFmpeg process.
-
-    Step 1: Loop music to match voiceover duration (stream_loop flag BEFORE -i).
-    Step 2: Mix with aeval filter at 12% music volume.
-    Step 3: Delete temp looped file.
-
+    Mix voiceover and background music with ducking using a single FFmpeg process.
+    Uses stream_loop for the music and amix=duration=first to match the VO length.
+    This safely avoids MP3 truncation bugs and eliminates the need for temporary files.
+    
     Returns path to the mixed output mp3.
     """
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
 
-    # Get voiceover duration
-    result = subprocess.run(
+    subprocess.run(
         [
-            "ffprobe", "-v", "error",
-            "-show_entries", "format=duration",
-            "-of", "default=noprint_wrappers=1:nokey=1",
-            voiceover_path,
+            "ffmpeg", "-y",
+            "-stream_loop", "-1",
+            "-i", music_path,
+            "-i", voiceover_path,
+            "-filter_complex",
+            "[0:a]aeval=val(0)*0.12[music_low];"
+            "[1:a][music_low]amix=inputs=2:duration=first:dropout_transition=0",
+            "-ac", "2",
+            output_path,
         ],
-        capture_output=True, text=True, check=True,
+        check=True,
+        capture_output=True,
     )
-    duration = float(result.stdout.strip())
-
-    tmp_dir = tempfile.mkdtemp()
-    looped_music = os.path.join(tmp_dir, "looped_music.wav")
-
-    try:
-        # Step 1: Loop music to voiceover duration
-        # -stream_loop MUST come before -i (critical on Windows FFmpeg builds)
-        subprocess.run(
-            [
-                "ffmpeg", "-y",
-                "-stream_loop", "-1",
-                "-i", music_path,
-                "-t", str(duration),
-                looped_music,
-            ],
-            check=True,
-            capture_output=True,
-        )
-
-        # Step 2: Mix with aeval ducking filter (music permanently at 12%)
-        subprocess.run(
-            [
-                "ffmpeg", "-y",
-                "-i", voiceover_path,
-                "-i", looped_music,
-                "-filter_complex",
-                "[1:a]aeval=val(0)*0.12:c=same[music_low];"
-                "[0:a][music_low]amix=inputs=2:duration=first:dropout_transition=0",
-                "-ac", "2",
-                output_path,
-            ],
-            check=True,
-            capture_output=True,
-        )
-
-    finally:
-        # Step 3: Clean up temp files
-        if os.path.exists(looped_music):
-            os.remove(looped_music)
-        if os.path.exists(tmp_dir):
-            try:
-                os.rmdir(tmp_dir)
-            except OSError:
-                pass  # Non-empty dir — skip, it'll be GC'd
 
     return output_path
