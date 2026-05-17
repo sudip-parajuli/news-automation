@@ -29,14 +29,13 @@ def get_mood_for_section(section_id: str) -> str:
 
 # ─── Pixabay API ──────────────────────────────────────────────────────────────
 def is_valid_audio(file_path: str) -> bool:
-    """Check if the given file is a valid, readable audio file using ffprobe."""
+    """Check if the given file is a valid, readable audio file by running a mock decode using ffmpeg."""
     try:
         subprocess.run(
             [
-                "ffprobe", "-v", "error",
-                "-show_entries", "format=duration",
-                "-of", "default=noprint_wrappers=1:nokey=1",
-                file_path,
+                "ffmpeg", "-y",
+                "-i", file_path,
+                "-f", "null", "-",
             ],
             check=True,
             capture_output=True,
@@ -171,54 +170,62 @@ def select_music(mood: str, duration_seconds: float = 0.0) -> str:
     return None
 
 
-def apply_music_ducking(
+def _apply_music_ducking_impl(
     voiceover_path: str,
     music_path: str,
     output_path: str,
 ) -> str:
-    """
-    Mix voiceover and background music with ducking using a robust process:
-    1. Decode the input music (e.g., MP3) to a temporary uncompressed WAV file.
-       (Crucial for preventing -stream_loop demuxer issues on MP3s).
-    2. Mix the voiceover and looped WAV in one FFmpeg command using amix=duration=first.
-    3. Clean up the temporary WAV file.
-    
-    Returns path to the mixed output mp3.
-    """
+    """Internal implementation of music ducking mixing."""
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
 
     tmp_dir = tempfile.mkdtemp()
     decoded_wav = os.path.join(tmp_dir, "decoded_music.wav")
 
     try:
-        # Step 1: Decode to temporary WAV (lossless, easy for FFmpeg to seek and loop)
-        subprocess.run(
-            [
-                "ffmpeg", "-y",
-                "-i", music_path,
-                "-c:a", "pcm_s16le",
-                decoded_wav,
-            ],
-            check=True,
-            capture_output=True,
-        )
+        # Step 1: Decode to temporary WAV
+        try:
+            subprocess.run(
+                [
+                    "ffmpeg", "-y",
+                    "-i", music_path,
+                    "-c:a", "pcm_s16le",
+                    decoded_wav,
+                ],
+                check=True,
+                capture_output=True,
+            )
+        except subprocess.CalledProcessError as e:
+            stderr_msg = e.stderr.decode('utf-8', errors='replace') if e.stderr else "No stderr"
+            stdout_msg = e.stdout.decode('utf-8', errors='replace') if e.stdout else "No stdout"
+            print(f"[!] FFmpeg WAV decoding failed (return code {e.returncode}).")
+            print(f"FFmpeg STDERR:\n{stderr_msg}")
+            print(f"FFmpeg STDOUT:\n{stdout_msg}")
+            raise
 
         # Step 2: Mix voiceover with the looped WAV
-        subprocess.run(
-            [
-                "ffmpeg", "-y",
-                "-stream_loop", "-1",
-                "-i", decoded_wav,
-                "-i", voiceover_path,
-                "-filter_complex",
-                "[0:a]aeval=val(0)*0.12[music_low];"
-                "[1:a][music_low]amix=inputs=2:duration=first:dropout_transition=0",
-                "-ac", "2",
-                output_path,
-            ],
-            check=True,
-            capture_output=True,
-        )
+        try:
+            subprocess.run(
+                [
+                    "ffmpeg", "-y",
+                    "-stream_loop", "-1",
+                    "-i", decoded_wav,
+                    "-i", voiceover_path,
+                    "-filter_complex",
+                    "[0:a]aeval=val(0)*0.12[music_low];"
+                    "[1:a][music_low]amix=inputs=2:duration=first:dropout_transition=0",
+                    "-ac", "2",
+                    output_path,
+                ],
+                check=True,
+                capture_output=True,
+            )
+        except subprocess.CalledProcessError as e:
+            stderr_msg = e.stderr.decode('utf-8', errors='replace') if e.stderr else "No stderr"
+            stdout_msg = e.stdout.decode('utf-8', errors='replace') if e.stdout else "No stdout"
+            print(f"[!] FFmpeg amix mixing failed (return code {e.returncode}).")
+            print(f"FFmpeg STDERR:\n{stderr_msg}")
+            print(f"FFmpeg STDOUT:\n{stdout_msg}")
+            raise
 
     finally:
         # Step 3: Clean up temp files
@@ -231,3 +238,57 @@ def apply_music_ducking(
                 pass
 
     return output_path
+
+
+def apply_music_ducking(
+    voiceover_path: str,
+    music_path: str,
+    output_path: str,
+) -> str:
+    """
+    Mix voiceover and background music with ducking.
+    Includes automated fail-safes to ensure a zero-crash pipeline:
+    1. If the target music fails to decode/mix, purges the cache file.
+    2. Falls back to a local catalog track.
+    3. If local mixing also fails, copies the raw voiceover to output as a final safety.
+    """
+    import shutil
+    
+    try:
+        print(f"Attempting to mix music ({music_path}) with voiceover...")
+        return _apply_music_ducking_impl(voiceover_path, music_path, output_path)
+    except Exception as e:
+        print(f"WARNING: Music mixing failed with {music_path}: {e}")
+        
+        # If it was a cached download, delete it to prevent poisoned cache issues next run
+        if "music_cache" in music_path:
+            try:
+                os.remove(music_path)
+                print(f"Purged poisoned cached music: {music_path}")
+            except OSError:
+                pass
+
+        # Fallback 1: Try local track matching the mood
+        print("Attempting fallback to local catalog track...")
+        try:
+            filename = os.path.basename(music_path).lower()
+            mood = "calm"
+            for m in ["calm", "tense", "dramatic", "upbeat"]:
+                if m in filename:
+                    mood = m
+                    break
+            
+            local_music = select_local_music(mood)
+            if local_music and local_music != music_path:
+                print(f"Mixing local fallback music: {local_music}")
+                return _apply_music_ducking_impl(voiceover_path, local_music, output_path)
+        except Exception as fallback_err:
+            print(f"WARNING: Local fallback mixing failed: {fallback_err}")
+
+        # Fallback 2: Absolute safety (direct copy of voiceover)
+        print("CRITICAL: All music mixing failed. Copying raw voiceover as final output to guarantee zero-crash...")
+        try:
+            shutil.copy2(voiceover_path, output_path)
+            return output_path
+        except Exception as copy_err:
+            raise RuntimeError(f"Fatal fallback error: failed to copy voiceover: {copy_err}") from e
