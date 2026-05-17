@@ -28,6 +28,23 @@ def get_mood_for_section(section_id: str) -> str:
 
 
 # ─── Pixabay API ──────────────────────────────────────────────────────────────
+def is_valid_audio(file_path: str) -> bool:
+    """Check if the given file is a valid, readable audio file using ffprobe."""
+    try:
+        subprocess.run(
+            [
+                "ffprobe", "-v", "error",
+                "-show_entries", "format=duration",
+                "-of", "default=noprint_wrappers=1:nokey=1",
+                file_path,
+            ],
+            check=True,
+            capture_output=True,
+        )
+        return True
+    except Exception:
+        return False
+
 def fetch_pixabay_music(mood: str, duration_seconds: float = 0.0) -> str:
     api_key = os.getenv("PIXABAY_API_KEY")
     if not api_key:
@@ -77,12 +94,34 @@ def fetch_pixabay_music(mood: str, duration_seconds: float = 0.0) -> str:
     cache_dir.mkdir(parents=True, exist_ok=True)
     out_path = cache_dir / f"{mood}_{track_id}.mp3"
 
+    # If the file exists but is corrupted (e.g. holds HTML error text), delete it
+    if out_path.exists() and not is_valid_audio(str(out_path)):
+        print(f"WARNING: Cached music {out_path} is corrupted. Deleting to re-download...")
+        try:
+            out_path.unlink()
+        except OSError:
+            pass
+
     if not out_path.exists():
         print(f"Downloading Pixabay music (id: {track_id}) to {out_path}...")
         r = httpx.get(audio_url, timeout=60.0)
         r.raise_for_status()
+        
+        # Check Content-Type to make sure we didn't receive a Cloudflare captcha/HTML page
+        content_type = r.headers.get("content-type", "").lower()
+        if "html" in content_type or "text" in content_type:
+            raise ValueError("Pixabay returned HTML/text instead of binary audio (Cloudflare/IP block)")
+
         with open(out_path, "wb") as f:
             f.write(r.content)
+
+        # Confirm downloaded file is actually readable by FFmpeg
+        if not is_valid_audio(str(out_path)):
+            try:
+                out_path.unlink()
+            except OSError:
+                pass
+            raise ValueError("Downloaded Pixabay file is not a valid audio file.")
 
     return str(out_path)
 
