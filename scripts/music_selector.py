@@ -161,7 +161,7 @@ def apply_music_ducking(
     duration = float(result.stdout.strip())
 
     tmp_dir = tempfile.mkdtemp()
-    looped_music = os.path.join(tmp_dir, "looped_music.mp3")
+    looped_music = os.path.join(tmp_dir, "looped_music.wav")
 
     try:
         # Step 1: Loop music to voiceover duration
@@ -172,7 +172,6 @@ def apply_music_ducking(
                 "-stream_loop", "-1",
                 "-i", music_path,
                 "-t", str(duration),
-                "-c", "copy",
                 looped_music,
             ],
             check=True,
