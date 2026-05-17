@@ -10,6 +10,11 @@ os.environ["HUME_API_KEY2"] = "fake_key_2"
 os.environ["HUME_API_KEY3"] = "fake_key_3"
 os.environ["HUME_API_KEY4"] = "fake_key_4"
 os.environ["HUME_API_KEY5"] = "fake_key_5"
+os.environ["HUME_API_KEY6"] = "fake_key_6"
+os.environ["HUME_API_KEY7"] = "fake_key_7"
+os.environ["HUME_API_KEY8"] = "fake_key_8"
+os.environ["HUME_API_KEY9"] = "fake_key_9"
+os.environ["HUME_API_KEY10"] = "fake_key_10"
 os.environ["HUME_VOICE_ID"] = "fake_voice_id"
 
 # Now import the module so it picks up the keys

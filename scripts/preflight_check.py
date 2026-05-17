@@ -42,6 +42,11 @@ def check_env_vars(skip_youtube_live: bool = False):
         "HUME_API_KEY3",
         "HUME_API_KEY4",
         "HUME_API_KEY5",
+        "HUME_API_KEY6",
+        "HUME_API_KEY7",
+        "HUME_API_KEY8",
+        "HUME_API_KEY9",
+        "HUME_API_KEY10",
         "HUME_VOICE_ID",
         "YOUTUBE_TOKEN_BASE64"
     ]

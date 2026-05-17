@@ -82,7 +82,7 @@ def build_ssml(sections: dict) -> str:
 class HumeKeyRotator:
     def __init__(self):
         self.keys = []
-        for i in ["", "2", "3", "4", "5"]:
+        for i in ["", "2", "3", "4", "5", "6", "7", "8", "9", "10"]:
             key = os.getenv(f"HUME_API_KEY{i}")
             if key:
                 self.keys.append({"key": key, "cooldown_until": 0.0, "index": i or "1"})
