@@ -58,16 +58,14 @@ def fetch_pixabay_music(mood: str, duration_seconds: float = 0.0) -> str:
     audio_url = None
     track_id = None
     for hit in data["hits"]:
-        # Pixabay audio tracks have a 'webformatURL' or embedded audio link
+        # Pixabay audio tracks have an 'audio' or embedded link.
         url_candidate = (
             hit.get("audio") or
-            hit.get("userImageURL") or
+            hit.get("preview_url") or
+            hit.get("audio_url") or
             hit.get("previewURL")
         )
-        # The actual audio file is available via the pageURL for music type;
-        # we use the direct MP3 stream from Pixabay's CDN via webformatURL on audio type
-        # Fall through to local if no direct link is available
-        if url_candidate and url_candidate.endswith(".mp3"):
+        if url_candidate and isinstance(url_candidate, str):
             audio_url = url_candidate
             track_id = str(hit.get("id", "0"))
             break

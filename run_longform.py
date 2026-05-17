@@ -381,23 +381,18 @@ def run_pipeline(topic: str, dry_run: bool = False, slug: str = None, from_step:
             
             # Since generate_voiceover takes raw text and _call_google_tts takes SSML natively,
             # wait, Phase 7 implemented generate_voiceover_from_ssml
-            from scripts.voiceover_generator import generate_voiceover_from_ssml
             try:
-                vo_path = generate_voiceover_from_ssml(ssml_text, vo_out_path)
-            except Exception as e:
-                print(f"generate_voiceover_from_ssml failed: {e}. Falling back to generate_voiceover with text...")
-                try:
-                    vo_path = generate_voiceover(script_data.get("full_script", ""), vo_out_path, provider="auto")
-                except Exception as inner_e:
-                    if dry_run:
-                        print(f"Voiceover generation failed: {inner_e}. Using 30s silence for DRY RUN.")
-                        subprocess.run([
-                            "ffmpeg", "-y", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo",
-                            "-t", "30", "-q:a", "9", "-acodec", "libmp3lame", vo_out_path
-                        ], check=True, capture_output=True)
-                        vo_path = vo_out_path
-                    else:
-                        raise inner_e
+                vo_path = generate_voiceover(script_data.get("full_script", ""), vo_out_path, provider="auto")
+            except Exception as inner_e:
+                if dry_run:
+                    print(f"Voiceover generation failed: {inner_e}. Using 30s silence for DRY RUN.")
+                    subprocess.run([
+                        "ffmpeg", "-y", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo",
+                        "-t", "30", "-q:a", "9", "-acodec", "libmp3lame", vo_out_path
+                    ], check=True, capture_output=True)
+                    vo_path = vo_out_path
+                else:
+                    raise inner_e
                 
             vo_dur = get_voiceover_duration(vo_path)
             
@@ -539,9 +534,12 @@ def run_pipeline(topic: str, dry_run: bool = False, slug: str = None, from_step:
                 _save_state(state)
                 summary[8] = ("Upload (DRY RUN)", "PASS", dry_out)
             else:
-                if not os.path.exists("client_secrets.json"):
-                    print(f"UPLOAD SKIPPED: client_secrets.json not found. Video saved at {video_out}")
-                    summary[8] = ("YouTube Upload", "SKIP", "client_secrets.json missing")
+                has_secrets = os.path.exists("client_secrets.json") or os.path.exists("client_secret.json")
+                has_token = bool(os.getenv("YOUTUBE_TOKEN_BASE64")) or os.path.exists("token.pickle")
+                
+                if not (has_secrets or has_token):
+                    print(f"UPLOAD SKIPPED: YouTube credentials not found. Video saved at {video_out}")
+                    summary[8] = ("YouTube Upload", "SKIP", "credentials missing")
                 else:
                     uploader = YouTubeUploader()
                     yt_id = uploader.upload_video(
