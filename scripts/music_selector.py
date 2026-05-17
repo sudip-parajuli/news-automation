@@ -138,28 +138,57 @@ def apply_music_ducking(
     output_path: str,
 ) -> str:
     """
-    Mix voiceover and background music with ducking using a single FFmpeg process.
-    Uses stream_loop for the music and amix=duration=first to match the VO length.
-    This safely avoids MP3 truncation bugs and eliminates the need for temporary files.
+    Mix voiceover and background music with ducking using a robust process:
+    1. Decode the input music (e.g., MP3) to a temporary uncompressed WAV file.
+       (Crucial for preventing -stream_loop demuxer issues on MP3s).
+    2. Mix the voiceover and looped WAV in one FFmpeg command using amix=duration=first.
+    3. Clean up the temporary WAV file.
     
     Returns path to the mixed output mp3.
     """
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
 
-    subprocess.run(
-        [
-            "ffmpeg", "-y",
-            "-stream_loop", "-1",
-            "-i", music_path,
-            "-i", voiceover_path,
-            "-filter_complex",
-            "[0:a]aeval=val(0)*0.12[music_low];"
-            "[1:a][music_low]amix=inputs=2:duration=first:dropout_transition=0",
-            "-ac", "2",
-            output_path,
-        ],
-        check=True,
-        capture_output=True,
-    )
+    tmp_dir = tempfile.mkdtemp()
+    decoded_wav = os.path.join(tmp_dir, "decoded_music.wav")
+
+    try:
+        # Step 1: Decode to temporary WAV (lossless, easy for FFmpeg to seek and loop)
+        subprocess.run(
+            [
+                "ffmpeg", "-y",
+                "-i", music_path,
+                "-c:a", "pcm_s16le",
+                decoded_wav,
+            ],
+            check=True,
+            capture_output=True,
+        )
+
+        # Step 2: Mix voiceover with the looped WAV
+        subprocess.run(
+            [
+                "ffmpeg", "-y",
+                "-stream_loop", "-1",
+                "-i", decoded_wav,
+                "-i", voiceover_path,
+                "-filter_complex",
+                "[0:a]aeval=val(0)*0.12[music_low];"
+                "[1:a][music_low]amix=inputs=2:duration=first:dropout_transition=0",
+                "-ac", "2",
+                output_path,
+            ],
+            check=True,
+            capture_output=True,
+        )
+
+    finally:
+        # Step 3: Clean up temp files
+        if os.path.exists(decoded_wav):
+            os.remove(decoded_wav)
+        if os.path.exists(tmp_dir):
+            try:
+                os.rmdir(tmp_dir)
+            except OSError:
+                pass
 
     return output_path
