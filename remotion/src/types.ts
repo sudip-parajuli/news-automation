@@ -27,10 +27,23 @@ export type WordTimestamp = {
 };
 
 // Also define short form data to satisfy the ShortFormNews composition
+export type HighlightCardData = {
+  label: string;
+  value: string;
+  description: string;
+  startTime: number;
+  endTime: number;
+};
+
 export type ShortFormVideoData = {
   headline: string;
   body_text: string;
-  clips: Array<{ file: string; duration: number }>;
+  clips: Array<{
+    file: string;
+    duration: number;
+    type?: "video" | "still_image";
+    label?: string;
+  }>;
   caption_lines: string[];
   voiceover_file: string;
   hook_text: string;
@@ -39,4 +52,5 @@ export type ShortFormVideoData = {
   timestamps?: WordTimestamp[];
   /** Voiceover duration in seconds — used by calculateMetadata to set composition length */
   voiceover_duration_seconds?: number;
+  highlight_card?: HighlightCardData;
 };

@@ -15,6 +15,7 @@ import os
 import re
 import sys
 import json
+import math
 import shutil
 import hashlib
 import argparse
@@ -131,7 +132,7 @@ def _broll_queries_for_headline(headline: str, script_text: str, n: int = 6) -> 
 def _broll_for_headline(headline: str, script_text: str = "", n: int = 6) -> list:
     """
     Fetch `n` b-roll clips using BRollFetcher with LLM-generated semantic queries.
-    Returns list of {"file": abs_path, "duration": float} for Remotion.
+    Returns list of {"file": abs_path, "duration": float, "type": str, "label": str} for Remotion.
     """
     fetcher = BRollFetcher()
     queries = _broll_queries_for_headline(headline, script_text, n=n)
@@ -143,7 +144,12 @@ def _broll_for_headline(headline: str, script_text: str = "", n: int = 6) -> lis
             broll = fetcher.fetch_broll(q)
             fp = os.path.abspath(broll["file_path"])
             duration = min(float(broll.get("duration", 5.0)), 2.0)
-            clips.append({"file": fp, "duration": duration})
+            clips.append({
+                "file": fp,
+                "duration": duration,
+                "type": broll.get("type", "video"),
+                "label": q.title().strip()
+            })
         except Exception as e:
             print(f"[ShortsPipeline] B-roll fetch failed for '{q}': {e}")
 
@@ -151,6 +157,82 @@ def _broll_for_headline(headline: str, script_text: str = "", n: int = 6) -> lis
         print("[ShortsPipeline] WARNING: No b-roll fetched. Using empty clip list.")
 
     return clips
+
+
+def _generate_highlight_card(script_text: str, timestamps: list) -> dict | None:
+    """
+    Extracts a key data visual or text visual (like a key statistic, fact, or short quote)
+    from the script. Aligns it with the word timestamps to calculate start and end times in seconds.
+    """
+    if not timestamps:
+        return None
+
+    system_prompt = (
+        "You are a news video graphic designer. Analyze the news script and identify exactly ONE key "
+        "data point, statistic, fact, or statement that would be visually impactful to highlight as a card on screen. "
+        "Choose a core piece of information.\n"
+        "Return ONLY a JSON object with the following fields:\n"
+        "- 'label': e.g., 'THE VERDICT' or 'TOTAL DAMAGE' or 'CASUALTIES' or 'STOCK RISE' (2-3 words in ALL CAPS)\n"
+        "- 'value': e.g., 'Guilty' or '$4.5 Billion' or '85%' or '+12%' (1-3 words/numbers, NO emojis)\n"
+        "- 'description': e.g., 'Air France found liable' or 'Estimated cost of repairs' (short sentence, max 6 words)\n"
+        "- 'keyword': a specific word in the script that marks when this highlight is mentioned. Choose a word that is unique or appears exactly where this information is discussed.\n"
+        "- 'duration_words': integer, how many words' duration this card should stay visible (typically 6 to 12 words).\n\n"
+        "Return JSON only. No explanation, no markdown."
+    )
+    
+    user_prompt = (
+        f"Script: {script_text}\n\n"
+        "Identify the single most impactful fact or metric. Return JSON object."
+    )
+    
+    try:
+        raw = call_gemini(system_prompt, user_prompt, max_output_tokens=256)
+        raw = raw.strip()
+        if raw.startswith("```"):
+            raw = raw.split("\n", 1)[-1]
+            raw = raw.rsplit("```", 1)[0]
+        
+        card_data = json.loads(raw.strip())
+        keyword = str(card_data.get("keyword", "")).strip().lower()
+        duration_words = int(card_data.get("duration_words", 8))
+        
+        # Clean keyword (remove punctuation)
+        clean_keyword = re.sub(r"[^\w]", "", keyword)
+        
+        # Find the word index of the keyword in timestamps
+        keyword_idx = -1
+        for idx, entry in enumerate(timestamps):
+            entry_word = re.sub(r"[^\w]", "", entry["word"].lower())
+            if entry_word == clean_keyword:
+                keyword_idx = idx
+                break
+                
+        # If we couldn't find the keyword, look for a partial match
+        if keyword_idx == -1:
+            for idx, entry in enumerate(timestamps):
+                if clean_keyword in re.sub(r"[^\w]", "", entry["word"].lower()):
+                    keyword_idx = idx
+                    break
+        
+        # If still not found, default to 1/3 of the script duration
+        if keyword_idx == -1:
+            keyword_idx = max(0, len(timestamps) // 3)
+            
+        # Determine start and end times
+        start_time = float(timestamps[keyword_idx]["start"])
+        end_idx = min(keyword_idx + duration_words, len(timestamps) - 1)
+        end_time = float(timestamps[end_idx].get("end", start_time + 3.0))
+        
+        return {
+            "label": str(card_data.get("label", "HIGHLIGHT")).upper(),
+            "value": str(card_data.get("value", "")),
+            "description": str(card_data.get("description", "")),
+            "startTime": round(start_time, 2),
+            "endTime": round(end_time, 2)
+        }
+    except Exception as e:
+        print(f"[ShortsPipeline] Highlight card generation failed: {e}")
+        return None
 
 
 def _assemble_remotion_data(
@@ -163,6 +245,7 @@ def _assemble_remotion_data(
     music_path: str | None,
     timestamps: list | None = None,
     voiceover_duration_seconds: float | None = None,
+    highlight_card: dict | None = None,
 ) -> dict:
     """Build the ShortFormVideoData payload for Remotion."""
     words = script_text.split()
@@ -180,6 +263,7 @@ def _assemble_remotion_data(
         "audio_track": os.path.abspath(music_path) if music_path and os.path.exists(music_path) else "",
         "timestamps": timestamps or [],
         "voiceover_duration_seconds": voiceover_duration_seconds or 0,
+        "highlight_card": highlight_card,
     }
 
 
@@ -372,8 +456,17 @@ def _process_item(item: dict, dry_run: bool = False) -> bool:
             print(f"[ShortsPipeline] Timestamp estimation failed: {ts_err}. Captions may be inaccurate.")
             timestamps = []
 
-        # d. B-roll (6 clips, max 2s each) — uses LLM semantic queries
-        clips = _broll_for_headline(headline, script_text=script_text, n=6)
+        # Determine dynamic clip count: num_clips = max(4, min(15, ceil((vo_dur + 3.5) / 2.0)))
+        num_clips = max(4, min(15, int(math.ceil((vo_dur + 3.5) / 2.0))))
+        print(f"[ShortsPipeline] Voiceover duration: {vo_dur}s. Fetching {num_clips} clips.")
+
+        # d. B-roll (dynamic clips count) — uses LLM semantic queries
+        clips = _broll_for_headline(headline, script_text=script_text, n=num_clips)
+
+        # Generate highlight card if timestamps are available
+        highlight_card = _generate_highlight_card(script_text, timestamps)
+        if highlight_card:
+            print(f"[ShortsPipeline] Generated highlight card: {highlight_card}")
 
         # e. Caption chunks (already handled inside _assemble_remotion_data)
 
@@ -392,6 +485,7 @@ def _process_item(item: dict, dry_run: bool = False) -> bool:
             music_path=music_path,
             timestamps=timestamps,
             voiceover_duration_seconds=vo_dur,
+            highlight_card=highlight_card,
         )
 
         # Save data file

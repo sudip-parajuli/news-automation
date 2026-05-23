@@ -1,5 +1,5 @@
 import React from 'react';
-import { AbsoluteFill, Audio, Series, useVideoConfig } from 'remotion';
+import { AbsoluteFill, Audio, Series, useVideoConfig, useCurrentFrame } from 'remotion';
 import { ShortFormVideoData } from '../../types';
 import { resolveMediaPath } from '../../utils';
 import { HookOverlay } from './HookOverlay';
@@ -7,6 +7,7 @@ import { ClipReel } from './ClipReel';
 import { CaptionBurn } from './CaptionBurn';
 import { LoopHook } from './LoopHook';
 import { CTACard } from './CTACard';
+import { HighlightCard } from './HighlightCard';
 
 // Stub timestamps for the Remotion Studio preview only.
 // In production these are overridden by real word timestamps from the pipeline.
@@ -18,6 +19,7 @@ const STUB_TIMESTAMPS = [
 ];
 
 export const ShortFormNews: React.FC<{ data?: ShortFormVideoData }> = ({ data }) => {
+  const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
 
   // Use stub data if none provided (for Studio preview)
@@ -39,8 +41,24 @@ export const ShortFormNews: React.FC<{ data?: ShortFormVideoData }> = ({ data })
   const hasCTA = ctaWindowEnd > ctaWindowStart;
   const firstClipFile = clips[0]?.file ?? '';
 
+  const progressBarWidth = (frame / durationInFrames) * 100;
+
   return (
     <AbsoluteFill style={{ backgroundColor: 'black' }}>
+      {/* Dynamic gradient progress bar at the top */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: `${progressBarWidth}%`,
+          height: '10px',
+          background: 'linear-gradient(90deg, #E84545, #ec4899, #3b82f6)',
+          zIndex: 100,
+          boxShadow: '0 0 10px rgba(232, 69, 69, 0.6)',
+        }}
+      />
+
       {/* Audio layers */}
       {voiceover && <Audio src={resolveMediaPath(voiceover)} volume={1.0} />}
       {audioTrack && <Audio src={resolveMediaPath(audioTrack)} volume={0.12} />}
@@ -57,6 +75,9 @@ export const ShortFormNews: React.FC<{ data?: ShortFormVideoData }> = ({ data })
 
       {/* Caption burn — always visible */}
       <CaptionBurn timestamps={timestamps} />
+
+      {/* Highlight/Data Card overlay */}
+      <HighlightCard card={data?.highlight_card} />
 
       {/* CTA card — appears 10s before end, only if there's room */}
       {hasCTA && (

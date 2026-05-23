@@ -36,7 +36,8 @@ const shortFormStub: ShortFormVideoData = {
   headline: "Preview mode — no real data loaded",
   body_text: "This is a Remotion Studio preview. Real scripts are injected at render time.",
   clips: [
-    { file: `${publicDir}/hook.mp4`, duration: 5 },
+    { file: `${publicDir}/hook.mp4`, duration: 5, type: 'video', label: 'Newsroom Interior' },
+    { file: `${publicDir}/context.jpg`, duration: 5, type: 'still_image', label: 'Cityscape Skyline' },
   ],
   caption_lines: ["Breaking news preview only."],
   voiceover_file: `${publicDir}/voiceover.mp3`,
@@ -44,6 +45,13 @@ const shortFormStub: ShortFormVideoData = {
   loop_hook: "Stay updated.",
   audio_track: `${publicDir}/bgm.mp3`,
   voiceover_duration_seconds: 10,
+  highlight_card: {
+    label: "THE VERDICT",
+    value: "Guilty",
+    description: "Air France found liable for damages",
+    startTime: 2.0,
+    endTime: 7.0,
+  }
 };
 
 const TestShortComp: React.FC = () => {

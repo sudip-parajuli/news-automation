@@ -276,14 +276,19 @@ def _call_edge_tts(text: str, output_path: str) -> str:
 
 def _generate_chunk(text: str, output_path: str, provider: str, chunk_index: int = 1, total_chunks: int = 1) -> str:
     """Generate audio for a single text chunk using Hume AI, falling back to edge-tts if needed."""
+    hume_voice_id = os.getenv("HUME_VOICE_ID")
+    hume_api_keys = [os.getenv(f"HUME_API_KEY{i}") for i in ["", "2", "3", "4", "5", "6", "7", "8", "9", "10"]]
+    has_hume_keys = any(k for k in hume_api_keys if k)
+
+    if not hume_voice_id or not has_hume_keys:
+        print("WARNING: HUME_VOICE_ID or HUME_API_KEYs not set in environment. FALLBACK TTS: Using edge-tts.")
+        return _call_edge_tts(text, output_path)
+
     try:
         return _call_hume_tts(text, output_path, chunk_index, total_chunks)
     except Exception as e:
-        error_msg = str(e).lower()
-        if "out of credits" in error_msg or "permanently exhausted" in error_msg or "E0300" in error_msg or "zero_credits" in error_msg:
-            print("WARNING: All Hume keys out of credits. FALLBACK TTS: Using edge-tts (Microsoft Neural).")
-            return _call_edge_tts(text, output_path)
-        raise
+        print(f"WARNING: Hume TTS failed: {e}. FALLBACK TTS: Using edge-tts.")
+        return _call_edge_tts(text, output_path)
 
 
 def generate_voiceover_from_ssml(ssml: str, output_path: str) -> str:
@@ -315,10 +320,15 @@ def estimate_word_timestamps(
     section_id: str = "context",
 ) -> list[dict]:
     """
-    Estimates word-level timestamps using per-section WPM rates.
+    Estimates word-level timestamps using per-section WPM rates,
+    scaled proportionally to match the actual audio duration exactly.
     Returns [{word, start, end}, ...] — compatible with normalizeTimestamps() in utils.ts.
     """
-    duration = get_voiceover_duration(audio_path)
+    try:
+        duration = get_voiceover_duration(audio_path)
+    except Exception:
+        duration = 0.0
+
     words = script_text.split()
     if not words:
         return []
@@ -326,13 +336,30 @@ def estimate_word_timestamps(
     wpm = SECTION_WPM.get(section_id.lower(), DEFAULT_WPM)
     seconds_per_word = 60.0 / wpm
 
+    # 1. Compute raw durations for each word based on character length
+    raw_durations = []
+    total_raw_duration = 0.0
+    for word in words:
+        word_duration = seconds_per_word * (0.7 + 0.3 * min(len(word) / 6.0, 1.5))
+        raw_durations.append(word_duration)
+        total_raw_duration += word_duration
+
+    # 2. Scale factor to map total_raw_duration to the exact actual duration.
+    # Guard: if duration is 0 or None (dry run / silence), fall back to raw WPM estimation.
+    if duration and duration > 0.0 and total_raw_duration > 0.0:
+        scale_factor = duration / total_raw_duration
+    else:
+        scale_factor = 1.0
+
+    # 3. Generate timestamps with proportional scale factor applied
     timestamps = []
     cursor = 0.0
-
-    for word in words:
-        # Scale word duration by character length (longer words take slightly longer)
-        word_duration = seconds_per_word * (0.7 + 0.3 * min(len(word) / 6.0, 1.5))
-        end = min(cursor + word_duration, duration)
+    for word, raw_dur in zip(words, raw_durations):
+        scaled_dur = raw_dur * scale_factor
+        end = cursor + scaled_dur
+        # Cap end at duration only if we are using the scaled approach
+        if duration and duration > 0.0:
+            end = min(end, duration)
         timestamps.append({
             "word": word,
             "start": round(cursor, 3),
