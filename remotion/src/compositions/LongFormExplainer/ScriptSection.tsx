@@ -3,14 +3,20 @@ import { ScriptSectionData, BRollItem } from '../../types';
 import { resolveMediaPath } from '../../utils';
 import { LowerThird } from './LowerThird';
 import { KenBurnsImage } from '../../components/KenBurnsImage';
+import { StatCard } from './StatCard';
+import { NameTag } from './NameTag';
+import { KeyPoint } from './KeyPoint';
+import React from 'react';
 
 export const ScriptSection: React.FC<{
   section: ScriptSectionData;
   durationInFrames: number;
-}> = ({ section, durationInFrames }) => {
+  topicType?: string;
+  metadata?: any;
+}> = ({ section, durationInFrames, topicType, metadata }) => {
   const { fps } = useVideoConfig();
   
-  // Extract key facts from the script text for the lower third
+  // LowerThird facts (legacy)
   const sentences = section.text.split(/[.?!]/).filter(s => s.trim().length > 0).map(s => s.trim());
   const fallbackFact = [section.id.toUpperCase()];
   const factsToDisplay = sentences.length > 0 ? sentences : fallbackFact;
@@ -20,7 +26,7 @@ export const ScriptSection: React.FC<{
   if (totalClipFrames === 0) {
     return (
       <AbsoluteFill style={{backgroundColor: '#1a1a2e'}}>
-        <LowerThird facts={factsToDisplay} durationInFrames={durationInFrames} />
+        {topicType === 'narrative' && <LowerThird facts={factsToDisplay} durationInFrames={durationInFrames} />}
       </AbsoluteFill>
     );
   }
@@ -37,6 +43,19 @@ export const ScriptSection: React.FC<{
     return { ...clip, actualFrames };
   }).filter(c => c.actualFrames > 0);
 
+  // NameTag logic
+  let nameTag = null;
+  if (topicType === 'listicle' && section.id.startsWith("entry_")) {
+    const rank = parseInt(section.id.split("_")[1]);
+    const index = 10 - rank;
+    if (metadata && metadata.entries && metadata.entries[index]) {
+      nameTag = <NameTag name={metadata.entries[index]} rank={rank} />;
+    }
+  }
+
+  // KeyPhrases logic (cycle through them if any)
+  const keyPhrases = section.key_phrases || [];
+
   return (
     <div style={{ flex: 1, backgroundColor: 'black' }}>
       <Series>
@@ -47,6 +66,7 @@ export const ScriptSection: React.FC<{
                 <Video
                   src={resolveMediaPath(clip.file_path)}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  volume={0}
                 />
               ) : (
                 <KenBurnsImage src={resolveMediaPath(clip.file_path)} />
@@ -56,10 +76,33 @@ export const ScriptSection: React.FC<{
         })}
       </Series>
       
-      <LowerThird
-        facts={factsToDisplay}
-        durationInFrames={durationInFrames}
-      />
+      {topicType === 'narrative' && (
+        <LowerThird
+          facts={factsToDisplay}
+          durationInFrames={durationInFrames}
+        />
+      )}
+
+      {nameTag}
+
+      {section.stat_card && (
+        <StatCard label={section.stat_card.label} value={section.stat_card.value} />
+      )}
+
+      {keyPhrases.length > 0 && !section.stat_card && (
+        <AbsoluteFill>
+          <Series>
+            {keyPhrases.map((phrase, idx) => {
+              const phraseFrames = Math.floor(durationInFrames / keyPhrases.length);
+              return (
+                <Series.Sequence key={idx} durationInFrames={phraseFrames}>
+                  <KeyPoint phrase={phrase} />
+                </Series.Sequence>
+              );
+            })}
+          </Series>
+        </AbsoluteFill>
+      )}
     </div>
   );
 };

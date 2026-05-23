@@ -48,17 +48,37 @@ def build_ssml(sections: dict) -> str:
     - <break time="600ms"/> between all sections
     - First sentence of 'hook' wrapped in <emphasis level="strong">
     - 'cta' section wrapped in <prosody rate="fast">
+    - entry_N sections get a short <break time="800ms"/> before them (ranked reveal pacing)
     - All other sections use plain <p> tags
+
+    Supports both narrative (SECTION_ORDER) and listicle (entry_10 → entry_1) formats.
     """
     parts = ['<speak>']
 
-    for i, section_id in enumerate(SECTION_ORDER):
+    # Detect format: listicle has entry_N keys
+    entry_keys = sorted(
+        [k for k in sections if k.startswith("entry_")],
+        key=lambda k: -int(k.split("_")[1])  # descending: entry_10 first, entry_1 last
+    )
+    is_listicle = bool(entry_keys)
+
+    if is_listicle:
+        # Listicle order: hook → entry_10 → entry_9 → ... → entry_1 → cta
+        ordered_ids = ["hook"] + entry_keys + ["cta"]
+    else:
+        ordered_ids = SECTION_ORDER
+
+    for i, section_id in enumerate(ordered_ids):
         text = sections.get(section_id, "").strip()
         if not text:
             continue
 
         if i > 0:
-            parts.append('<break time="600ms"/>')
+            # Longer pause before each entry reveal for dramatic effect
+            if section_id.startswith("entry_"):
+                parts.append('<break time="800ms"/>')
+            else:
+                parts.append('<break time="600ms"/>')
 
         if section_id == "hook":
             # Emphasise the first sentence only
@@ -73,11 +93,16 @@ def build_ssml(sections: dict) -> str:
         elif section_id == "cta":
             parts.append(f'<prosody rate="fast"><p>{text}</p></prosody>')
 
+        elif section_id.startswith("entry_"):
+            # Slightly slower for ranked reveals — adds weight to each entry
+            parts.append(f'<prosody rate="95%"><p>{text}</p></prosody>')
+
         else:
             parts.append(f'<p>{text}</p>')
 
     parts.append('</speak>')
     return '\n'.join(parts)
+
 
 
 # ─── Hume AI TTS ─────────────────────────────────────────────────────────────

@@ -2,6 +2,7 @@ import os
 import hashlib
 import json
 import httpx
+import subprocess
 from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
 from scripts.llm_utils import call_gemini
 
@@ -27,17 +28,20 @@ class BRollFetcher:
     @llm_retry_decorator()
     def _extract_all_keywords(self, sections: dict) -> dict:
         system_prompt = """
-        For each of these 7 script sections, generate 5 visually DISTINCT 2-4 word video search queries.
-        Queries within the same section must show different visual subjects (e.g. don't give 5 queries about "people working" — vary between locations, subjects, and angles).
-        Return ONLY this JSON:
+        For each of the provided script sections, generate up to 8 visually DISTINCT 2-4 word video search queries.
+        Queries within the same section must show different visual subjects (e.g. don't give 8 queries about "people working" — vary between locations, subjects, and angles).
+        Also, extract 3-5 key phrases (max 8 words each) that summarize the most important points for text overlays. Include numbers when available.
+        Return ONLY this JSON structure (adapt section keys exactly to the input sections):
         {
-          "hook": ["query1", "query2", "query3", "query4", "query5"],
-          "context": ["query1", "query2", "query3", "query4", "query5"],
-          "conflict": ["query1", "query2", "query3", "query4", "query5"],
-          "evidence": ["query1", "query2", "query3", "query4", "query5"],
-          "twist": ["query1", "query2", "query3", "query4", "query5"],
-          "resolution": ["query1", "query2", "query3", "query4", "query5"],
-          "cta": ["query1", "query2", "query3", "query4", "query5"]
+          "hook": {
+            "queries": ["query1", "query2", "query3", "query4", "query5", "query6", "query7", "query8"],
+            "key_phrases": ["phrase1", "phrase2", "phrase3"]
+          },
+          "context": {
+            "queries": ["query1", "query2", ...],
+            "key_phrases": ["phrase1", "phrase2", ...]
+          },
+          ...
         }
         """
         
@@ -98,6 +102,20 @@ class BRollFetcher:
                                 "filter": None
                             }
                             
+                            # Audio stripping logic for videos
+                            muted_path = f"{base_path}_muted.mp4"
+                            if not os.path.exists(muted_path):
+                                try:
+                                    subprocess.run([
+                                        "ffmpeg", "-y", "-i", file_path,
+                                        "-c:v", "copy", "-an",
+                                        muted_path
+                                    ], check=True, capture_output=True)
+                                except subprocess.CalledProcessError as e:
+                                    print(f"Warning: Failed to strip audio from {file_path}, using original. Error: {e.stderr.decode()}")
+                                    muted_path = file_path # Fallback to original if stripping fails
+                            result["file_path"] = muted_path
+
                             with open(cached_info_path, 'w') as f:
                                 json.dump(result, f)
                             return result
@@ -159,22 +177,45 @@ class BRollFetcher:
                     f.write(chunk)
             return final_path
 
-    def fetch_broll_for_script(self, sections: dict) -> dict:
+    def fetch_broll_for_script(self, sections: dict, section_durations: dict = None) -> tuple[dict, dict]:
         results = {}
+        key_phrases = {}
+        if section_durations is None:
+            section_durations = {}
+
         try:
-            batched_queries = self._extract_all_keywords(sections)
+            batched_data = self._extract_all_keywords(sections)
         except Exception as e:
             print(f"Failed to extract batched keywords: {e}")
-            batched_queries = {}
+            batched_data = {}
             
         for section_name, section_text in sections.items():
             results[section_name] = []
-            queries = batched_queries.get(section_name)
+            
+            section_data = batched_data.get(section_name, {})
+            if isinstance(section_data, list):
+                queries = section_data
+                key_phrases[section_name] = []
+            elif isinstance(section_data, dict):
+                queries = section_data.get("queries", [])
+                key_phrases[section_name] = section_data.get("key_phrases", [])
+            else:
+                queries = ["news footage", "breaking news", "report"]
+                key_phrases[section_name] = []
+                
             if not queries or not isinstance(queries, list):
-                # Fallback to a basic extract if missing or not a list
                 queries = ["news footage", "breaking news", "report"]
                 
-            for query in queries[:5]:  # Up to 5 clips per section
+            # Dynamic clip calculation
+            duration_sec = section_durations.get(section_name, 30.0)
+            target_raw_coverage = duration_sec * 0.6
+            clips_needed = max(5, int(target_raw_coverage / 8))
+            
+            print(f"[{section_name}] Duration: {duration_sec:.1f}s, Target Clips: {clips_needed}")
+                
+            for query in queries:
+                if len(results[section_name]) >= clips_needed:
+                    break
                 try:
                     broll = self.fetch_broll(query)
                     results[section_name].append(broll)
@@ -189,4 +230,4 @@ class BRollFetcher:
                 except Exception as fallback_e:
                     print(f"CRITICAL: Failed to fetch fallback broll for {section_name}: {fallback_e}")
                 
-        return results
+        return results, key_phrases

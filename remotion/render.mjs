@@ -9,11 +9,12 @@ const { values } = parseArgs({
     data:        { type: "string" },
     output:      { type: "string" },
     bundle:      { type: "string" },
+    "dry-run":   { type: "boolean" },
   },
 });
 
 if (!values.composition || !values.data || !values.output || !values.bundle) {
-  console.error("Usage: node render.mjs --composition <id> --data <path> --output <path> --bundle <path>");
+  console.error("Usage: node render.mjs --composition <id> --data <path> --output <path> --bundle <path> [--dry-run]");
   process.exit(1);
 }
 
@@ -39,6 +40,7 @@ const main = async () => {
     chromiumOptions: {
       disableWebSecurity: true
     },
+    ...(values["dry-run"] ? { frameRange: [0, 150] } : {}),
     onProgress: ({ progress }) => {
       process.stdout.write(`\rRendering: ${Math.round(progress * 100)}%`);
     },

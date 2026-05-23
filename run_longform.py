@@ -32,7 +32,7 @@ def _generate_chapters(script_data: dict) -> str:
     # Always start with 00:00
     chapters.append("00:00 - Introduction")
     
-    section_order = ["hook", "context", "conflict", "evidence", "twist", "resolution", "cta"]
+    section_order = list(sections.keys())
     
     for i, section_id in enumerate(section_order):
         text = sections.get(section_id, "").strip()
@@ -53,9 +53,13 @@ def _generate_chapters(script_data: dict) -> str:
                 break
                 
         if next_section:
-            chapter_title = next_section.title()
-            if next_section == "cta":
-                chapter_title = "Conclusion"
+            if next_section.startswith("entry_"):
+                rank = next_section.split("_")[1]
+                chapter_title = f"Number {rank}"
+            else:
+                chapter_title = next_section.title()
+                if next_section == "cta":
+                    chapter_title = "Conclusion"
             
             m = int(cursor // 60)
             s = int(cursor % 60)
@@ -79,27 +83,31 @@ def _load_state(slug: str) -> dict:
         return json.load(f)
 
 
-def _assemble_description(resolution_text: str, search_keywords: list, topic: str, chapters: str = "") -> str:
-    sentences = re.split(r'(?<=[.!?])\s+', resolution_text.strip())
+def _assemble_description(summary_text: str, search_keywords: list, topic: str, chapters: str = "", topic_type: str = "narrative") -> str:
+    sentences = re.split(r'(?<=[.!?])\s+', summary_text.strip())
     first_two = " ".join(sentences[:2]).strip()
-    
-    desc = f"{first_two}\n\nWatch till the end for the twist.\n\n"
+
+    if topic_type == "listicle":
+        desc = f"{first_two}\n\nWatch the full countdown to find out who makes #1.\n\n"
+    else:
+        desc = f"{first_two}\n\nWatch till the end for the twist.\n\n"
+
     if chapters:
         desc += f"Chapters:\n{chapters}\n\n"
-        
+
     desc += f"Topics covered: {' | '.join(search_keywords)}\n\n"
-    
+
     slug_keywords = [k for k in _make_slug(topic).split('_') if len(k) > 3]
     tags = ["news", "explained"] + slug_keywords[:2]
     desc += " ".join([f"#{t}" for t in tags])
-    
+
     return desc
 
 
-def _build_remotion_data(script_data: dict, broll_dict: dict, voiceover_path: str, music_path: str, title: str, voiceover_duration: float) -> dict:
+def _build_remotion_data(script_data: dict, broll_dict: dict, key_phrases: dict, voiceover_path: str, music_path: str, title: str, voiceover_duration: float) -> dict:
     sections = []
-    for section_id in ["hook", "context", "conflict", "evidence", "twist", "resolution", "cta"]:
-        text = script_data.get("sections", {}).get(section_id, "")
+    
+    for section_id, text in script_data.get("sections", {}).items():
         if not text:
             continue
             
@@ -115,12 +123,24 @@ def _build_remotion_data(script_data: dict, broll_dict: dict, voiceover_path: st
                 b_copy["duration"] = b_copy.pop("duration_seconds")
                 
             abs_broll.append(b_copy)
-            
+
+        # Regex for StatCard
+        stats = re.findall(
+            r'\b(\d+(?:\.\d+)?(?:st|nd|rd|th)?)\s*(%|percent|million|billion|trillion|passengers|routes|aircraft|years?|hours?|km|miles?)\b',
+            text, re.IGNORECASE
+        )
+        stat_card = None
+        if stats:
+            val, label = stats[0]
+            stat_card = {"value": val + label if label.lower() in ["%", "percent"] else val, "label": label.strip()}
+
         sections.append({
             "id": section_id,
             "text": text,
             "word_count": len(text.split()),
-            "broll": abs_broll
+            "broll": abs_broll,
+            "key_phrases": key_phrases.get(section_id, []),
+            "stat_card": stat_card
         })
         
     abs_vo = os.path.abspath(voiceover_path) if voiceover_path and not os.path.isabs(voiceover_path) else voiceover_path
@@ -128,6 +148,8 @@ def _build_remotion_data(script_data: dict, broll_dict: dict, voiceover_path: st
         
     return {
         "title": title,
+        "topic_type": script_data.get("topic_type", "narrative"),
+        "metadata": script_data.get("metadata", {}),
         "sections": sections,
         "voiceover_file": abs_vo,
         "background_music": abs_music,
@@ -135,7 +157,7 @@ def _build_remotion_data(script_data: dict, broll_dict: dict, voiceover_path: st
     }
 
 
-def _stream_render(composition: str, data_path: str, output_path: str):
+def _stream_render(composition: str, data_path: str, output_path: str, dry_run: bool = False):
     node_path = shutil.which("node")
     if not node_path:
         raise RuntimeError("node not found in PATH. Install Node.js to enable Remotion rendering.")
@@ -233,6 +255,8 @@ def _stream_render(composition: str, data_path: str, output_path: str):
         "--output", output_path,
         "--bundle", bundle_path
     ]
+    if dry_run:
+        cmd.append("--dry-run")
     
     process = subprocess.Popen(
         cmd,
@@ -359,18 +383,26 @@ def run_pipeline(topic: str, dry_run: bool = False, slug: str = None, from_step:
             print("\n--- Step 2: B-Roll Fetch ---")
             fetcher = BRollFetcher()
             sections = script_data.get("sections", {})
-            broll_dict = fetcher.fetch_broll_for_script(sections)
+            
+            # Calculate section durations to pass to fetch_broll_for_script
+            section_durations = {}
+            for sec_id, txt in sections.items():
+                wpm = SECTION_WPM.get(sec_id, DEFAULT_WPM)
+                section_durations[sec_id] = (len(txt.split()) / wpm) * 60.0
+
+            broll_dict, key_phrases = fetcher.fetch_broll_for_script(sections, section_durations=section_durations)
             
             clip_count = sum(len(clips) for clips in broll_dict.values())
             vid_count = sum(1 for clips in broll_dict.values() for c in clips if c.get("type") == "video")
             img_count = sum(1 for clips in broll_dict.values() for c in clips if c.get("type") == "still_image")
             
-            state["step_outputs"]["2"] = {"broll": broll_dict}
+            state["step_outputs"]["2"] = {"broll": broll_dict, "key_phrases": key_phrases}
             state["completed_steps"].append(2)
             _save_state(state)
             summary[2] = ("B-roll fetch", "PASS", f"{clip_count} clips ({vid_count} video, {img_count} still)")
         else:
             broll_dict = state["step_outputs"]["2"]["broll"]
+            key_phrases = state["step_outputs"]["2"].get("key_phrases", {})
             summary[2] = ("B-roll fetch", "SKIP", "loaded from state")
 
         # Step 3: Voiceover Generation
@@ -510,7 +542,7 @@ def run_pipeline(topic: str, dry_run: bool = False, slug: str = None, from_step:
         # Step 6: Remotion Data File
         if from_step <= 6:
             print("\n--- Step 6: Remotion Data File ---")
-            remotion_data = _build_remotion_data(script_data, broll_dict, mixed_path, "", winning_title, vo_dur)
+            remotion_data = _build_remotion_data(script_data, broll_dict, key_phrases, mixed_path, "", winning_title, vo_dur)
             
             data_out = f"output/remotion_data/{slug}.json"
             os.makedirs("output/remotion_data", exist_ok=True)
@@ -531,7 +563,7 @@ def run_pipeline(topic: str, dry_run: bool = False, slug: str = None, from_step:
             video_out = f"output/videos/{slug}.mp4"
             
             try:
-                _stream_render("LongFormExplainer", data_out, video_out)
+                _stream_render("LongFormExplainer", data_out, video_out, dry_run=dry_run)
                 vsize = os.path.getsize(video_out)
                 state["step_outputs"]["7"] = {"video_path": video_out}
                 state["completed_steps"].append(7)
@@ -555,10 +587,16 @@ def run_pipeline(topic: str, dry_run: bool = False, slug: str = None, from_step:
         # Step 8: Upload
         if from_step <= 8:
             print("\n--- Step 8: YouTube Upload ---")
-            resolution_text = script_data.get("sections", {}).get("resolution", "")
+            topic_type = script_data.get("topic_type", "narrative")
+            sections_map = script_data.get("sections", {})
+            # For listicles use hook text as the summary; narrative uses resolution
+            if topic_type == "listicle":
+                summary_text = sections_map.get("hook", "")
+            else:
+                summary_text = sections_map.get("resolution", sections_map.get("hook", ""))
             search_kws = script_data.get("metadata", {}).get("search_keywords", [])
             chapters_text = _generate_chapters(script_data)
-            desc = _assemble_description(resolution_text, search_kws, topic, chapters_text)
+            desc = _assemble_description(summary_text, search_kws, topic, chapters_text, topic_type=topic_type)
             
             if dry_run:
                 payload = {
@@ -638,5 +676,12 @@ if __name__ == "__main__":
     # We need glob for step 1 path finding
     import glob
     
-    run_pipeline(args.topic, dry_run=args.dry_run, slug=args.slug, from_step=args.from_step)
+    topic = args.topic
+    if topic.lower() == "auto":
+        from scripts.topic_generator import TopicGenerator
+        generator = TopicGenerator()
+        topic = generator.get_trending_topic()
+        print(f"Auto-generated topic: {topic}")
+    
+    run_pipeline(topic, dry_run=args.dry_run, slug=args.slug, from_step=args.from_step)
 

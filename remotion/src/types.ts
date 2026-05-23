@@ -5,16 +5,25 @@ export type BRollItem = {
   duration: number; // in seconds
 };
 
+export type StatCardData = {
+  value: string;
+  label: string;
+};
+
 export type ScriptSectionData = {
-  id: string; // "hook" | "context" | "conflict" etc.
+  id: string; // "hook" | "context" | "conflict" | "entry_N" etc.
   text: string;
   word_count: number;
   broll: BRollItem[];
+  key_phrases?: string[];
+  stat_card?: StatCardData | null;
 };
 
 export type LongFormVideoData = {
-  sections: ScriptSectionData[];
   title: string;
+  topic_type?: string;
+  metadata?: any;
+  sections: ScriptSectionData[];
   voiceover_file: string;
   background_music: string;
   voiceover_duration_seconds: number;

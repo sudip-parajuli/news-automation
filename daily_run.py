@@ -34,6 +34,14 @@ def main():
     errors = []
     
     for item in due_items:
+        topic = item.get("topic", "auto")
+        if topic.lower() == "auto":
+            from scripts.topic_generator import TopicGenerator
+            generator = TopicGenerator()
+            topic = generator.get_trending_topic()
+            print(f"Auto-generated topic: {topic}")
+            item["topic"] = topic
+            
         print(f"Processing queued item ID {item['id']}: {item['topic']} ({item['type']})")
         
         video_path = item.get("video_path")
