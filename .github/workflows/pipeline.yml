@@ -57,6 +57,12 @@ jobs:
           cache: 'npm'
           cache-dependency-path: 'remotion/package-lock.json'
 
+      - name: Cache Remotion Chrome
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/puppeteer
+          key: remotion-chrome-${{ runner.os }}-v1
+
       - name: Install NPM dependencies
         working-directory: remotion
         run: npm install
