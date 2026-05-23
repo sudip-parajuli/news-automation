@@ -37,4 +37,6 @@ export type ShortFormVideoData = {
   loop_hook: string;
   audio_track?: string;
   timestamps?: WordTimestamp[];
+  /** Voiceover duration in seconds — used by calculateMetadata to set composition length */
+  voiceover_duration_seconds?: number;
 };

@@ -8,29 +8,28 @@ import { CaptionBurn } from './CaptionBurn';
 import { LoopHook } from './LoopHook';
 import { CTACard } from './CTACard';
 
-// Stub timestamps for the caption burn preview
+// Stub timestamps for the Remotion Studio preview only.
+// In production these are overridden by real word timestamps from the pipeline.
 const STUB_TIMESTAMPS = [
-  { word: 'OPEC', start: 0.0, end: 0.4 },
-  { word: 'just', start: 0.4, end: 0.65 },
-  { word: 'made', start: 0.65, end: 0.9 },
-  { word: 'a', start: 0.9, end: 1.0 },
-  { word: 'decision', start: 1.0, end: 1.5 },
-  { word: 'that', start: 1.5, end: 1.75 },
-  { word: 'will', start: 1.75, end: 2.0 },
-  { word: 'affect', start: 2.0, end: 2.4 },
-  { word: 'you.', start: 2.4, end: 2.9 },
+  { word: 'Breaking', start: 0.0, end: 0.4 },
+  { word: 'news', start: 0.4, end: 0.65 },
+  { word: 'preview', start: 0.65, end: 1.0 },
+  { word: 'only.', start: 1.0, end: 1.5 },
 ];
 
 export const ShortFormNews: React.FC<{ data?: ShortFormVideoData }> = ({ data }) => {
   const { fps, durationInFrames } = useVideoConfig();
 
   // Use stub data if none provided (for Studio preview)
-  const hookText = data?.hook_text ?? "Oil prices just spiked. Here's why.";
-  const loopText = data?.loop_hook ?? 'You need to see this.';
+  const hookText = data?.hook_text ?? "Breaking news preview.";
+  const loopText = data?.loop_hook ?? 'Stay updated.';
   const clips = data?.clips ?? [{ file: 'hook.mp4', duration: 5 }];
   const voiceover = data?.voiceover_file ?? '';
   const audioTrack = data?.audio_track ?? '';
-  const timestamps = STUB_TIMESTAMPS;
+  // Use real word timestamps from pipeline; fall back to stubs only in Studio preview
+  const timestamps = (data?.timestamps && data.timestamps.length > 0)
+    ? data.timestamps
+    : STUB_TIMESTAMPS;
 
   const HOOK_FRAMES = Math.round(1.5 * fps);
   const LOOP_FRAMES = Math.round(2 * fps);

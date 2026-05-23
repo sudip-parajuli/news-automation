@@ -33,16 +33,17 @@ const longFormStub: LongFormVideoData = {
 };
 
 const shortFormStub: ShortFormVideoData = {
-  headline: "Oil prices spiking globally",
-  body_text: "OPEC made a decision that affects everyone. Here is what you need to know.",
+  headline: "Preview mode — no real data loaded",
+  body_text: "This is a Remotion Studio preview. Real scripts are injected at render time.",
   clips: [
     { file: `${publicDir}/hook.mp4`, duration: 5 },
   ],
-  caption_lines: ["OPEC just made a decision that will affect you."],
+  caption_lines: ["Breaking news preview only."],
   voiceover_file: `${publicDir}/voiceover.mp3`,
-  hook_text: "Oil prices just spiked. Here's why.",
-  loop_hook: "You need to see this.",
+  hook_text: "Breaking news preview.",
+  loop_hook: "Stay updated.",
   audio_track: `${publicDir}/bgm.mp3`,
+  voiceover_duration_seconds: 10,
 };
 
 const TestShortComp: React.FC = () => {
@@ -87,6 +88,14 @@ export const RemotionRoot = () => {
 				width={1080}
 				height={1920}
 				defaultProps={{ data: shortFormStub }}
+				calculateMetadata={({ props }) => {
+					// 3.5s padding: 1.5s hook + 2s loop-hook
+					const voDuration = props.data?.voiceover_duration_seconds ?? 10;
+					const totalSeconds = voDuration + 3.5;
+					return {
+						durationInFrames: Math.max(90, Math.ceil(totalSeconds * 30))
+					};
+				}}
 			/>
 		</>
 	);

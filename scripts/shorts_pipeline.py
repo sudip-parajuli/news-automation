@@ -34,10 +34,11 @@ from fetchers.rss_fetcher import RSSFetcher
 from processors.classifier import NewsClassifier
 from processors.rewrite_breaking import ScriptRewriter
 from scripts.shorts_script_enhancer import enhance_shorts_script
-from scripts.voiceover_generator import generate_voiceover, get_voiceover_duration
+from scripts.voiceover_generator import generate_voiceover, get_voiceover_duration, estimate_word_timestamps
 from scripts.broll_fetcher import BRollFetcher
 from scripts.caption_utils import build_caption_chunks
 from scripts.music_selector import select_music, apply_music_ducking
+from scripts.llm_utils import call_gemini
 from uploader.youtube_uploader import YouTubeUploader
 
 # ─── Constants ────────────────────────────────────────────────────────────────
@@ -73,23 +74,70 @@ def _save_posted(hashes: list):
         json.dump(hashes[-200:], f)
 
 
-def _broll_for_headline(headline: str, n: int = 6) -> list:
+def _broll_queries_for_headline(headline: str, script_text: str, n: int = 6) -> list:
     """
-    Fetch `n` b-roll clips using BRollFetcher, seeded from the headline.
+    Use the LLM to generate n semantically meaningful, news-relevant Pexels video
+    search queries from the headline and script. Falls back to simple noun extraction.
+    Each query should be 2-4 concrete words that describe a real-world visual directly
+    related to this specific news story.
+    """
+    system_prompt = (
+        "You are a news video editor. Given a news headline and script, generate visually "
+        "concrete Pexels search queries. Each query MUST be directly related to the story — "
+        "use real locations, people types, organisations, or objects mentioned. "
+        "NEVER use generic queries like 'breaking news', 'news report', or 'people talking'. "
+        "Return ONLY a JSON array of strings, no markdown, no explanation."
+    )
+    user_prompt = (
+        f"Headline: {headline}\n"
+        f"Script: {script_text[:400]}\n\n"
+        f"Generate exactly {n} distinct 2-4 word Pexels video search queries for b-roll. "
+        f"Example for 'Air France crash verdict': "
+        f'["airplane cockpit interior", "Paris courthouse exterior", "aircraft wreckage", '
+        f'"courtroom judge", "airline passengers boarding", "family grief memorial"]\n'
+        f"Return JSON array only."
+    )
+    try:
+        raw = call_gemini(system_prompt, user_prompt, max_output_tokens=256)
+        raw = raw.strip()
+        # Strip markdown fences if present
+        if raw.startswith("```"):
+            raw = raw.split("\n", 1)[-1]
+            raw = raw.rsplit("```", 1)[0]
+        import json as _json
+        queries = _json.loads(raw.strip())
+        if isinstance(queries, list) and len(queries) >= 1:
+            # Ensure we have exactly n queries
+            if len(queries) < n:
+                queries = (queries * ((n // len(queries)) + 1))[:n]
+            return [str(q).strip() for q in queries[:n]]
+    except Exception as e:
+        print(f"[ShortsPipeline] LLM b-roll query generation failed: {e}. Using fallback.")
+
+    # Fallback: extract meaningful nouns/phrases from the headline
+    stop_words = {"the", "a", "an", "and", "or", "but", "of", "in", "on",
+                  "at", "to", "for", "is", "was", "are", "were", "over",
+                  "with", "from", "that", "this", "about", "just", "found",
+                  "what", "how", "why", "who", "they", "their", "have", "has"}
+    words = [w for w in headline.split() if w.lower() not in stop_words and len(w) > 3]
+    queries = []
+    for i in range(n):
+        start = (i * 2) % max(len(words), 1)
+        phrase = " ".join(words[start : start + 3]) if len(words) >= 3 else headline[:40]
+        queries.append(phrase)
+    return queries
+
+
+def _broll_for_headline(headline: str, script_text: str = "", n: int = 6) -> list:
+    """
+    Fetch `n` b-roll clips using BRollFetcher with LLM-generated semantic queries.
     Returns list of {"file": abs_path, "duration": float} for Remotion.
     """
     fetcher = BRollFetcher()
+    queries = _broll_queries_for_headline(headline, script_text, n=n)
+    print(f"[ShortsPipeline] B-roll queries: {queries}")
+
     clips = []
-
-    # Generate n keyword variants from the headline words
-    words = headline.split()
-    queries = []
-    step = max(1, len(words) // n)
-    for i in range(n):
-        start = (i * step) % len(words)
-        phrase = " ".join(words[start : start + 3]) if len(words) >= 3 else headline
-        queries.append(phrase)
-
     for q in queries:
         try:
             broll = fetcher.fetch_broll(q)
@@ -100,7 +148,6 @@ def _broll_for_headline(headline: str, n: int = 6) -> list:
             print(f"[ShortsPipeline] B-roll fetch failed for '{q}': {e}")
 
     if not clips:
-        # Absolute minimum — return a 2-second placeholder entry
         print("[ShortsPipeline] WARNING: No b-roll fetched. Using empty clip list.")
 
     return clips
@@ -114,6 +161,8 @@ def _assemble_remotion_data(
     hook_text: str,
     loop_hook: str,
     music_path: str | None,
+    timestamps: list | None = None,
+    voiceover_duration_seconds: float | None = None,
 ) -> dict:
     """Build the ShortFormVideoData payload for Remotion."""
     words = script_text.split()
@@ -129,6 +178,8 @@ def _assemble_remotion_data(
         "hook_text": hook_text,
         "loop_hook": loop_hook,
         "audio_track": os.path.abspath(music_path) if music_path and os.path.exists(music_path) else "",
+        "timestamps": timestamps or [],
+        "voiceover_duration_seconds": voiceover_duration_seconds or 0,
     }
 
 
@@ -314,8 +365,15 @@ def _process_item(item: dict, dry_run: bool = False) -> bool:
         vo_path = generate_voiceover(script_text, vo_out, provider="hume")
         vo_dur = get_voiceover_duration(vo_path)
 
-        # d. B-roll (6 clips, max 2s each)
-        clips = _broll_for_headline(headline, n=6)
+        # c2. Word-level timestamps for caption burn-in
+        try:
+            timestamps = estimate_word_timestamps(vo_path, script_text)
+        except Exception as ts_err:
+            print(f"[ShortsPipeline] Timestamp estimation failed: {ts_err}. Captions may be inaccurate.")
+            timestamps = []
+
+        # d. B-roll (6 clips, max 2s each) — uses LLM semantic queries
+        clips = _broll_for_headline(headline, script_text=script_text, n=6)
 
         # e. Caption chunks (already handled inside _assemble_remotion_data)
 
@@ -332,6 +390,8 @@ def _process_item(item: dict, dry_run: bool = False) -> bool:
             hook_text=hook_text,
             loop_hook=loop_hook,
             music_path=music_path,
+            timestamps=timestamps,
+            voiceover_duration_seconds=vo_dur,
         )
 
         # Save data file
