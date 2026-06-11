@@ -6,6 +6,7 @@ import { KenBurnsImage } from '../../components/KenBurnsImage';
 import { StatCard } from './StatCard';
 import { NameTag } from './NameTag';
 import { KeyPoint } from './KeyPoint';
+import { ChartCard } from './ChartCard';
 import React from 'react';
 
 export const ScriptSection: React.FC<{
@@ -89,7 +90,11 @@ export const ScriptSection: React.FC<{
         <StatCard label={section.stat_card.label} value={section.stat_card.value} />
       )}
 
-      {keyPhrases.length > 0 && !section.stat_card && (
+      {section.chart_data && (
+        <ChartCard chartData={section.chart_data} durationInFrames={durationInFrames} />
+      )}
+
+      {keyPhrases.length > 0 && !section.stat_card && !section.chart_data && (
         <AbsoluteFill>
           <Series>
             {keyPhrases.map((phrase, idx) => {

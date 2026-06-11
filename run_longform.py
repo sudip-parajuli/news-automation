@@ -118,13 +118,11 @@ def _build_remotion_data(script_data: dict, broll_dict: dict, key_phrases: dict,
             if not os.path.isabs(b_copy["file_path"]):
                 b_copy["file_path"] = os.path.abspath(b_copy["file_path"])
                 
-            # Rename duration_seconds to duration for Remotion TypeScript interface
             if "duration_seconds" in b_copy:
                 b_copy["duration"] = b_copy.pop("duration_seconds")
                 
             abs_broll.append(b_copy)
 
-        # Regex for StatCard
         stats = re.findall(
             r'\b(\d+(?:\.\d+)?(?:st|nd|rd|th)?)\s*(%|percent|million|billion|trillion|passengers|routes|aircraft|years?|hours?|km|miles?)\b',
             text, re.IGNORECASE
@@ -134,13 +132,21 @@ def _build_remotion_data(script_data: dict, broll_dict: dict, key_phrases: dict,
             val, label = stats[0]
             stat_card = {"value": val + label if label.lower() in ["%", "percent"] else val, "label": label.strip()}
 
+        chart_data = None
+        chart_key = section_id + "_chart"
+        if chart_key in script_data.get("sections", {}):
+            chart_candidate = script_data["sections"][chart_key]
+            if isinstance(chart_candidate, dict) and "data" in chart_candidate:
+                chart_data = chart_candidate
+            
         sections.append({
             "id": section_id,
             "text": text,
             "word_count": len(text.split()),
             "broll": abs_broll,
-            "key_phrases": key_phrases.get(section_id, []),
-            "stat_card": stat_card
+            "key_phrases": key_phrases.get(section_id, []) if isinstance(key_phrases, dict) else (key_phrases or []),
+            "stat_card": stat_card,
+            "chart_data": chart_data
         })
         
     abs_vo = os.path.abspath(voiceover_path) if voiceover_path and not os.path.isabs(voiceover_path) else voiceover_path

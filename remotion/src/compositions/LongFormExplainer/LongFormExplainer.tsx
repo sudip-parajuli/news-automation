@@ -54,7 +54,7 @@ export const LongFormExplainer: React.FC<{ data: LongFormVideoData }> = ({ data 
           return (
             <React.Fragment key={section.id}>
               {showChapterCard && (
-                <Series.Sequence durationInFrames={15}>
+                <Series.Sequence durationInFrames={90}>
                   <ChapterCard title={chapterTitle} number={index} rank={chapterRank} />
                 </Series.Sequence>
               )}

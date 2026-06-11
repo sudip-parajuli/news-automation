@@ -11,6 +11,8 @@ REQUIRED_SECTIONS = [
     "[TWIST]", "[RESOLUTION]", "[CTA]"
 ]
 
+CHART_PATTERN = r'\[CHART:type=(bar|line)\|title=([^|]+)\|data=([^\]]+)\]'
+
 class LLMGenerationError(Exception):
     pass
 
@@ -159,6 +161,11 @@ The entries array must list the ranked items in countdown order (ENTRY_10 item f
             
             Total target: 1,400–1,800 words minimum. Do NOT output a short summary. Write full, lengthy paragraphs.
             
+            IMPORTANT - If any section contains 3 or more comparable data points (numbers with units), also include a chart block at the END of that section using this exact format:
+            [CHART:type=bar|line|title=Your Chart Title|data=LabelA:Value:unit,LabelB:Value:unit,...]
+            Example: [CHART:type=bar|title=Market Share 2024|data=Apple:25:%,Samsung:20:%,Others:55:%]
+            Only add chart blocks when you have 3+ comparable numeric data points. Units can be %, $, M, B, km, years, etc.
+            
             After the script, on a new line, output a JSON block in this exact format:
             {{"title_options": ["...", "...", "..."], "thumbnail_keywords": ["...", "...", "..."],
              "search_keywords": ["...", "...", "..."], "estimated_duration_minutes": 0,
@@ -209,12 +216,30 @@ The entries array must list the ranked items in countdown order (ENTRY_10 item f
         def _flush(sec_key, fragments):
             """Clean and store accumulated text for a section."""
             combined = " ".join(fragments)
-            # Strip out the JSON block if it leaked into the last section
+            
+            chart_match = re.search(CHART_PATTERN, combined)
+            chart_data = None
+            if chart_match:
+                chart_type = chart_match.group(1)
+                chart_title = chart_match.group(2).strip()
+                data_str = chart_match.group(3).strip()
+                chart_data = {"type": chart_type, "title": chart_title, "data": []}
+                for item in data_str.split(","):
+                    parts = item.strip().split(":")
+                    if len(parts) >= 2:
+                        label = parts[0].strip()
+                        value = float(parts[1].strip())
+                        unit = parts[2].strip() if len(parts) > 2 else None
+                        chart_data["data"].append({"label": label, "value": value, "unit": unit})
+                combined = combined[:chart_match.start()] + combined[chart_match.end():]
+            
             combined = re.sub(r'```json.*?```', '', combined, flags=re.DOTALL)
             combined = re.sub(r'\{[\s\S]*?"title_options"[\s\S]*?\}', '', combined, flags=re.DOTALL)
             combined = combined.strip()
             if combined:
                 sections[sec_key] = combined
+                if chart_data and chart_data["data"]:
+                    sections[sec_key + "_chart"] = chart_data
 
         for part in parts:
             stripped = part.strip()

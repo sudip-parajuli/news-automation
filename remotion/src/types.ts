@@ -10,6 +10,18 @@ export type StatCardData = {
   label: string;
 };
 
+export type ChartDataPoint = {
+  label: string;
+  value: number;
+  unit?: string;
+};
+
+export type ChartData = {
+  type: "bar" | "line";
+  title: string;
+  data: ChartDataPoint[];
+};
+
 export type ScriptSectionData = {
   id: string; // "hook" | "context" | "conflict" | "entry_N" etc.
   text: string;
@@ -17,6 +29,7 @@ export type ScriptSectionData = {
   broll: BRollItem[];
   key_phrases?: string[];
   stat_card?: StatCardData | null;
+  chart_data?: ChartData | null;
 };
 
 export type LongFormVideoData = {

@@ -18,7 +18,6 @@ export const StatCard: React.FC<{
     <AbsoluteFill style={{ justifyContent: 'center', alignItems: 'center' }}>
       <div
         style={{
-          width: 'calc(100% - 40px)',
           padding: '16px 20px',
           backgroundColor: 'rgba(0, 0, 0, 0.45)',
           backdropFilter: 'blur(12px)',
@@ -27,7 +26,9 @@ export const StatCard: React.FC<{
           borderRadius: '16px',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'flex-start',
+          alignItems: 'center',
+          maxWidth: '50%',
+          width: 'fit-content',
           transform: `scale(${entrance})`,
           opacity: entrance,
         }}

@@ -7,30 +7,23 @@ export const LowerThird: React.FC<{
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Determine which fact to show based on 8-second rotation
-  const framesPerFact = 8 * fps;
+  const totalFacts = facts.length;
+  const framesPerFact = totalFacts > 0 ? Math.floor(durationInFrames / totalFacts) : durationInFrames;
   let currentFactIndex = Math.floor(frame / framesPerFact);
   
-  // Cap the index so we don't go out of bounds if the section is very long
-  if (currentFactIndex >= facts.length) {
-    currentFactIndex = currentFactIndex % facts.length;
+  if (currentFactIndex >= totalFacts) {
+    currentFactIndex = currentFactIndex % totalFacts;
   }
   
   let currentFact = facts[currentFactIndex] || "";
-  // Truncate if too long to fit nicely
-  if (currentFact.length > 100) {
-    currentFact = currentFact.substring(0, 100) + '...';
-  }
 
-  // Animate slide-in at the very beginning of the section
   const slideIn = spring({
     fps,
-    frame,
+    frame: Math.max(0, frame - currentFactIndex * framesPerFact),
     config: { damping: 14 },
     durationInFrames: 20,
   });
 
-  // Fade out only at the very end of the section
   const fadeOut = interpolate(
     frame,
     [durationInFrames - 20, durationInFrames],
@@ -44,17 +37,20 @@ export const LowerThird: React.FC<{
         position: 'absolute',
         bottom: '80px',
         left: '80px',
+        right: '80px',
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        padding: '20px 40px',
+        padding: '24px 40px',
         borderRadius: '8px',
         fontFamily: 'Inter, sans-serif',
         color: 'white',
         transform: `translateX(${(1 - slideIn) * -100}%)`,
         opacity: fadeOut,
-        maxWidth: '70%',
+        maxWidth: 'calc(100% - 160px)',
+        wordBreak: 'break-word',
+        overflowWrap: 'break-word',
       }}
     >
-      <div style={{ fontSize: '28px', fontWeight: 'bold' }}>{currentFact}</div>
+      <div style={{ fontSize: '28px', fontWeight: 'bold', lineHeight: 1.4 }}>{currentFact}</div>
     </div>
   );
 };

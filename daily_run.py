@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from scripts.scheduler_db import get_next_upload, mark_status
+from scripts.scheduler_db import get_next_upload, mark_status, enqueue
+from scripts.topic_generator import TopicGenerator
 from run_longform import run_pipeline, _make_slug, _load_state
 from uploader.youtube_uploader import YouTubeUploader
 
@@ -24,6 +25,23 @@ def main():
     print(f"=== Daily Run Started at {datetime.now()} ===")
     
     due_items = get_next_upload()
+    
+    if not due_items:
+        print("No uploads due. Auto-generating a trending topic and enqueuing it...")
+        try:
+            topic_gen = TopicGenerator()
+            topic = topic_gen.get_trending_topic()
+            print(f"Auto-generated topic: {topic}")
+            slot = enqueue(topic, "longform")
+            print(f"Enqueued '{topic}' for {slot.strftime('%Y-%m-%d %H:%M UTC')}")
+            due_items = get_next_upload()
+        except Exception as e:
+            err_msg = f"Failed to auto-enqueue topic: {str(e)}"
+            print(err_msg)
+            send_webhook({"date": str(datetime.now()), "uploaded": [], "skipped": [], "errors": [err_msg]})
+            print("=== Daily Run Complete ===")
+            return
+        
     if not due_items:
         print("No uploads due.")
         send_webhook({"date": str(datetime.now()), "uploaded": [], "skipped": [], "errors": ["No uploads due"]})
