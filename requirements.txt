@@ -1,15 +1,6 @@
 feedparser
-edge-tts
-moviepy<2.0.0
 requests
-beautifulsoup4
+Pillow
 google-genai
-telethon
-python-dotenv
-duckduckgo-search
-google-api-python-client
-google-auth-oauthlib
 groq
-Pillow<10.0.0
-httpx
-tenacity
+python-dotenv
