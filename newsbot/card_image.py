@@ -3,21 +3,25 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 
 WIDTH, HEIGHT = 1080, 1350
-BG_COLOR = (17, 20, 28)
-ACCENT_COLOR = (230, 57, 70)
-TEXT_COLOR = (255, 255, 255)
-MUTED_COLOR = (170, 176, 190)
 
-# fonts-noto-core (installed by the workflow via apt) ships Devanagari-capable
-# Noto Sans fonts at these paths on Ubuntu runners.
+ASSETS_DIR = os.path.join(os.path.dirname(__file__), "assets")
+TEMPLATE_PATH = os.path.join(ASSETS_DIR, "card_template.jpg")
+
+TITLE_COLOR = (20, 20, 20)
+SUBTITLE_COLOR = (70, 70, 70)
+
+# The template's blank area sits roughly in the top 40% of the image, above
+# the Kathmandu-skyline watermark and the footer bar with the social icons.
+TEXT_TOP = 130
+TEXT_BOTTOM = 560
+TEXT_MAX_WIDTH = WIDTH - 140
+
+# Roman (Latin) script only -- DejaVu Sans has full coverage, so there's no
+# more "missing glyph" tofu-box problem like there was with Devanagari.
 FONT_BOLD_CANDIDATES = [
-    "/usr/share/fonts/truetype/noto/NotoSansDevanagari-Bold.ttf",
-    "/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf",
     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
 ]
 FONT_REGULAR_CANDIDATES = [
-    "/usr/share/fonts/truetype/noto/NotoSansDevanagari-Regular.ttf",
-    "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf",
     "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
 ]
 
@@ -45,31 +49,60 @@ def _wrap_text(draw, text, font, max_width):
     return lines or [text]
 
 
-def generate_card(headline_ne, source, category_label, output_path):
-    img = Image.new("RGB", (WIDTH, HEIGHT), BG_COLOR)
+def _fit_block(draw, text, max_width, max_height, bold, start_size, min_size, line_gap_ratio=1.25):
+    """Shrink the font size until the wrapped text block fits max_height."""
+    candidates = FONT_BOLD_CANDIDATES if bold else FONT_REGULAR_CANDIDATES
+    size = start_size
+    while size >= min_size:
+        font = _load_font(candidates, size)
+        lines = _wrap_text(draw, text, font, max_width)
+        line_height = int(size * line_gap_ratio)
+        block_height = line_height * len(lines)
+        if block_height <= max_height:
+            return font, lines, line_height
+        size -= 4
+    font = _load_font(candidates, min_size)
+    lines = _wrap_text(draw, text, font, max_width)
+    return font, lines, int(min_size * line_gap_ratio)
+
+
+def generate_card(title_roman, subtitle_roman, output_path):
+    base = Image.open(TEMPLATE_PATH).convert("RGB")
+    if base.size != (WIDTH, HEIGHT):
+        base = base.resize((WIDTH, HEIGHT))
+    img = base.copy()
     draw = ImageDraw.Draw(img)
 
-    draw.rectangle([0, 0, WIDTH, 14], fill=ACCENT_COLOR)
-    draw.rectangle([0, HEIGHT - 14, WIDTH, HEIGHT], fill=ACCENT_COLOR)
+    available_height = TEXT_BOTTOM - TEXT_TOP
+    title_budget = int(available_height * 0.62)
+    subtitle_budget = available_height - title_budget - 30
 
-    brand_font = _load_font(FONT_BOLD_CANDIDATES, 40)
-    draw.text((60, 60), "TRENDING TODAY", font=brand_font, fill=ACCENT_COLOR)
+    title_font, title_lines, title_line_h = _fit_block(
+        draw, title_roman.upper(), TEXT_MAX_WIDTH, title_budget, bold=True,
+        start_size=84, min_size=44,
+    )
+    subtitle_font, subtitle_lines, subtitle_line_h = _fit_block(
+        draw, subtitle_roman, TEXT_MAX_WIDTH, subtitle_budget, bold=False,
+        start_size=42, min_size=26,
+    )
 
-    tag_font = _load_font(FONT_BOLD_CANDIDATES, 30)
-    draw.text((60, 128), category_label.upper(), font=tag_font, fill=MUTED_COLOR)
+    title_block_h = title_line_h * len(title_lines)
+    subtitle_block_h = subtitle_line_h * len(subtitle_lines)
+    total_h = title_block_h + 30 + subtitle_block_h
+    y = TEXT_TOP + max(0, (available_height - total_h) // 2)
 
-    headline_font = _load_font(FONT_BOLD_CANDIDATES, 62)
-    max_text_width = WIDTH - 120
-    lines = _wrap_text(draw, headline_ne, headline_font, max_text_width)
-    line_height = 80
-    total_height = line_height * len(lines)
-    start_y = max(220, (HEIGHT - total_height) // 2)
-    for i, line in enumerate(lines):
-        draw.text((60, start_y + i * line_height), line, font=headline_font, fill=TEXT_COLOR)
+    for line in title_lines:
+        w = draw.textlength(line, font=title_font)
+        draw.text(((WIDTH - w) / 2, y), line, font=title_font, fill=TITLE_COLOR)
+        y += title_line_h
 
-    source_font = _load_font(FONT_REGULAR_CANDIDATES, 28)
-    draw.text((60, HEIGHT - 90), f"Source: {source}", font=source_font, fill=MUTED_COLOR)
+    y += 30
+
+    for line in subtitle_lines:
+        w = draw.textlength(line, font=subtitle_font)
+        draw.text(((WIDTH - w) / 2, y), line, font=subtitle_font, fill=SUBTITLE_COLOR)
+        y += subtitle_line_h
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    img.save(output_path, "JPEG", quality=90)
+    img.save(output_path, "JPEG", quality=92)
     return output_path
