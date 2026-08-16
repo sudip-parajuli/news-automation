@@ -2,11 +2,9 @@
 .env
 .env.local
 .env.*
+!.env.example
 
 # Secrets and credentials
-client_secret.json
-client_secrets.json
-token.pickle
 *.pem
 *.key
 
@@ -14,46 +12,18 @@ token.pickle
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
 .Python
 env/
+venv/
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
-
-# Media and Storage
-storage/*
-!storage/*.json
-media/*.mp4
-media/*.mp3
-media/*.jpg
-media/*.png
-
-# Block all audio/video by default but allow assets/music folder
-*.mp3
-*.mp4
-!assets/music/*.mp3
-!assets/music/*.wav
-*.log
 
 # IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
-.remotion/
-remotion/node_modules/
-output/
-node_modules/
+
+# Logs
+*.log
