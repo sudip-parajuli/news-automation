@@ -1,0 +1,78 @@
+name: Nepali News Social Poster
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "*/30 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: news-social-poster
+  cancel-in-progress: false
+
+jobs:
+  post-news:
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_API_KEY2: ${{ secrets.GEMINI_API_KEY2 }}
+      GEMINI_API_KEY3: ${{ secrets.GEMINI_API_KEY3 }}
+      GEMINI_API_KEY4: ${{ secrets.GEMINI_API_KEY4 }}
+      GEMINI_API_KEY5: ${{ secrets.GEMINI_API_KEY5 }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_API_KEY2: ${{ secrets.GROQ_API_KEY2 }}
+      GROQ_API_KEY3: ${{ secrets.GROQ_API_KEY3 }}
+      GROQ_API_KEY4: ${{ secrets.GROQ_API_KEY4 }}
+      META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+      FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+      IG_ACCOUNT_ID: ${{ secrets.IG_ACCOUNT_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Devanagari (Nepali) fonts
+        run: sudo apt-get update && sudo apt-get install -y fonts-noto-core
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Configure git identity
+        run: |
+          git config user.name "trending-today-bot"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: Prepare posts (fetch news, write Nepali captions, render card images)
+        run: python -m newsbot.main --phase prepare
+
+      - name: Commit + push generated card images
+        run: |
+          git add newsbot/data/cards newsbot/data/pending.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: prepare news cards [skip ci]"
+            git pull --rebase
+            git push
+          else
+            echo "No new cards to commit"
+          fi
+
+      - name: Publish to Facebook + Instagram
+        run: python -m newsbot.main --phase publish
+
+      - name: Commit + push updated post history
+        run: |
+          git add newsbot/data/posted_history.json newsbot/data/pending.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update posted history [skip ci]"
+            git pull --rebase
+            git push
+          else
+            echo "No history changes to commit"
+          fi
