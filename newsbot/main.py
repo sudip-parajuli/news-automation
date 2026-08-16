@@ -7,9 +7,9 @@ Runs in two phases (see .github/workflows/news_social.yml):
                     (workflow then commits+pushes the card images so they are
                     reachable at a public raw.githubusercontent.com URL)
 
-  --phase publish   read pending.json -> post text to Facebook -> post image
-                    to Instagram (using the now-live raw URL) -> update
-                    newsbot/data/posted_history.json
+  --phase publish   read pending.json -> post the card image + caption to
+                    Facebook and Instagram (using the now-live raw URL) ->
+                    update newsbot/data/posted_history.json
                     (workflow then commits+pushes the history file)
 """
 
@@ -26,10 +26,9 @@ from .card_image import generate_card
 from .dedupe import already_posted, item_hash, load_history, save_history
 from .fetch_news import fetch_all
 from .caption import write_caption
-from .poster_facebook import post_text
-from .poster_instagram import post_image
+from .poster_facebook import post_image as post_facebook_image
+from .poster_instagram import post_image as post_instagram_image
 
-CATEGORY_LABELS = {"politics": "राजनीति", "sports": "खेलकुद", "general": "समाचार"}
 REGION_PRIORITY = {"nepal": 0, "nepal_sports": 0, "intl": 1, "intl_sports": 1}
 CATEGORY_PRIORITY = {"politics": 0, "sports": 0, "general": 1}
 
@@ -81,12 +80,13 @@ def prepare():
             written = write_caption(item)
             headline = written["headline_ne"]
             caption_text = written["caption_ne"]
+            title_roman = written["image_title_roman"]
+            subtitle_roman = written["image_subtitle_roman"]
             hashtags = written.get("hashtags", [])
-            category_label = CATEGORY_LABELS.get(item["category"], "समाचार")
 
             slug = item_hash(item)[:16]
             card_path = f"{config.CARDS_DIR}/{slug}.jpg"
-            generate_card(headline, item["source"], category_label, card_path)
+            generate_card(title_roman, subtitle_roman, card_path)
 
             message = build_message(headline, caption_text, hashtags, item["link"])
             pending.append({
@@ -133,9 +133,11 @@ def publish():
     posted = 0
 
     for entry in pending:
+        image_url = build_raw_url(entry["card_path"])
+
         fb_id = None
         try:
-            fb_id = post_text(entry["message"])
+            fb_id = post_facebook_image(image_url, entry["message"])
             print(f"[publish] Posted to Facebook: {fb_id}")
         except Exception:
             print(f"[publish] Facebook post failed for: {entry['title']}")
@@ -143,8 +145,7 @@ def publish():
 
         ig_id = None
         try:
-            image_url = build_raw_url(entry["card_path"])
-            ig_id = post_image(image_url, entry["message"])
+            ig_id = post_instagram_image(image_url, entry["message"])
             print(f"[publish] Posted to Instagram: {ig_id}")
         except Exception:
             print(f"[publish] Instagram post failed for: {entry['title']}")
