@@ -8,9 +8,8 @@ Rewrite the following news item as an ORIGINAL short news post written in the NE
 language (Devanagari script). Do not translate word-for-word -- write it naturally, the \
 way a Nepali news page would: factual, neutral, no clickbait, no emoji spam.
 
-Also write a short ROMANIZED NEPALI version (Nepali words spelled out using English/Roman \
-letters, NOT an English translation) of the headline and a one-line summary. These are for \
-overlaying as text on a social media graphic, so keep them SHORT and punchy.
+The headline must stay faithful to the ORIGINAL TITLE below -- adapt it into natural \
+Nepali, but do not invent a different angle or add facts that aren't in the source.
 
 Source: {source}
 Original title: {title}
@@ -19,10 +18,8 @@ Link: {link}
 
 Return ONLY a JSON object with these exact keys, and nothing else:
 {{
-  "headline_ne": "a short punchy Nepali headline in Devanagari script, max 12 words, no hashtags, no emoji",
-  "caption_ne": "a 2-4 sentence Nepali caption/summary in Devanagari script for a social media post",
-  "image_title_roman": "the headline in Romanized Nepali (Latin letters), max 8 words, no ending punctuation",
-  "image_subtitle_roman": "a one-line Romanized Nepali summary of the news, max 14 words",
+  "headline_ne": "a short Nepali headline in Devanagari script, faithful to the original title above, max 12 words, no hashtags, no emoji",
+  "caption_ne": "a factual Nepali news summary in Devanagari script, 2 to 3 sentences (never more than 3), longer and more detailed than the headline",
   "hashtags": ["3 to 5 relevant hashtags without the # symbol"]
 }}
 """
