@@ -5,6 +5,7 @@
 #   "nepal_sports" -> Nepal-focused sports coverage
 #   "intl"         -> International news (English, gets translated to Nepali)
 #   "intl_sports"  -> International sports (English, gets translated to Nepali)
+#   "tech"         -> Technology news (English, gets translated to Nepali)
 #
 # If a feed URL goes stale or changes, just edit/remove it here -- fetch_news.py
 # skips any feed that fails to parse instead of crashing the whole run.
@@ -25,4 +26,9 @@ FEEDS = [
 
     # --- International sports ---
     {"name": "BBC Sport", "url": "http://feeds.bbci.co.uk/sport/rss.xml", "lang": "en", "region": "intl_sports"},
+
+    # --- Technology (drives the new "tech" focus area) ---
+    {"name": "TechCrunch", "url": "https://techcrunch.com/feed/", "lang": "en", "region": "tech"},
+    {"name": "The Verge", "url": "https://www.theverge.com/rss/index.xml", "lang": "en", "region": "tech"},
+    {"name": "Wired", "url": "https://www.wired.com/feed/rss", "lang": "en", "region": "tech"},
 ]
