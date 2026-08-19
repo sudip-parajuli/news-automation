@@ -17,9 +17,31 @@ POLITICS_KEYWORDS = [
     "संसद", "मन्त्री", "सरकार", "निर्वाचन", "राजनीति", "प्रधानमन्त्री", "पार्टी", "मन्त्रिपरिषद",
 ]
 
+TECH_KEYWORDS = [
+    "technology", "tech ", "artificial intelligence", " ai ", "smartphone", "startup",
+    "software", "gadget", "iphone", "android", "chatgpt", "openai", "app store",
+    "प्रविधि", "एआई", "स्मार्टफोन", "एप",
+]
 
-def classify(title, summary):
+VIRAL_KEYWORDS = [
+    "viral", "trending", "goes viral", "internet reacts", "social media reacts",
+    "भाइरल", "ट्रेन्डिङ",
+]
+
+FAKE_NEWS_KEYWORDS = [
+    "fake news", "misinformation", "disinformation", "hoax", "fact check", "fact-check", "debunk",
+    "भ्रामक", "फेक न्युज", "हल्ला", "तथ्याङ्क जाँच",
+]
+
+
+def classify(title, summary, region=None):
     text = f"{title} {summary}".lower()
+    if region == "tech" or any(k in text for k in TECH_KEYWORDS):
+        return "tech"
+    if any(k in text for k in FAKE_NEWS_KEYWORDS):
+        return "fake_news"
+    if any(k in text for k in VIRAL_KEYWORDS):
+        return "viral"
     if any(k in text for k in SPORTS_KEYWORDS):
         return "sports"
     if any(k in text for k in POLITICS_KEYWORDS):
@@ -58,7 +80,7 @@ def fetch_all(max_age_hours=None):
                     "summary": summary,
                     "link": link,
                     "published_ts": ts,
-                    "category": classify(title, summary),
+                    "category": classify(title, summary, feed["region"]),
                 })
         except Exception as exc:  # noqa: BLE001 - one bad feed must not kill the run
             print(f"[fetch_news] Failed to fetch {feed['name']}: {exc}")
