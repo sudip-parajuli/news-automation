@@ -1,0 +1,52 @@
+name: Nepali News Daily Digest
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "15 16 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: news-daily-digest
+  cancel-in-progress: false
+
+jobs:
+  post-digest:
+    runs-on: ubuntu-latest
+    env:
+      META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+      FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Configure git identity
+        run: |
+          git config user.name "trending-today-bot"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: Post end-of-day digest to Facebook
+        run: python -m newsbot.main --phase digest
+
+      - name: Commit + push digest reset
+        run: |
+          git add newsbot/data/digest_today.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: reset daily digest [skip ci]"
+            git pull --rebase
+            git push
+          else
+            echo "No digest changes to commit"
+          fi
+
