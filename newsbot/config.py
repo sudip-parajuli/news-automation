@@ -41,10 +41,18 @@ IG_ACCOUNT_ID = os.environ.get("IG_ACCOUNT_ID", "")
 GITHUB_REPOSITORY = os.environ.get("GITHUB_REPOSITORY", "sudip-parajuli/news-automation")
 GITHUB_REF_NAME = os.environ.get("GITHUB_REF_NAME", "main")
 
-# How many new stories to post in a single workflow run. The workflow runs
-# every 30 minutes, so this caps the max posting rate without hard-limiting
-# daily volume.
+# How many new stories to run through the caption/significance model in a
+# single workflow run (cost control -- the workflow runs every 30 minutes).
+MAX_ITEMS_PER_RUN = int(os.environ.get("MAX_ITEMS_PER_RUN", "15"))
+
+# Safety cap on card (photo) posts queued in a single run.
 MAX_POSTS_PER_RUN = int(os.environ.get("MAX_POSTS_PER_RUN", "6"))
+
+# Only stories the model judges "significant" get a graphic card post to
+# Facebook + Instagram, and even then only up to this many per rolling
+# 24-hour period -- everything else still appears in the once-daily text
+# digest. Keeps the page from over-posting and losing reach per post.
+MAX_CARD_POSTS_PER_DAY = int(os.environ.get("MAX_CARD_POSTS_PER_DAY", "5"))
 
 # Only consider RSS items published within this many hours.
 MAX_ITEM_AGE_HOURS = int(os.environ.get("MAX_ITEM_AGE_HOURS", "36"))
@@ -52,5 +60,6 @@ MAX_ITEM_AGE_HOURS = int(os.environ.get("MAX_ITEM_AGE_HOURS", "36"))
 HISTORY_FILE = "newsbot/data/posted_history.json"
 CARDS_DIR = "newsbot/data/cards"
 PENDING_FILE = "newsbot/data/pending.json"
+DIGEST_FILE = "newsbot/data/digest_today.json"
 MAX_HISTORY_ENTRIES = 4000
 MAX_CARD_FILES = 500
