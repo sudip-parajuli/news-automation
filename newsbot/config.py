@@ -29,8 +29,18 @@ GROQ_API_KEYS = _collect_keys("GROQ_API_KEY")
 GEMINI_API_KEY = GEMINI_API_KEYS[0] if GEMINI_API_KEYS else ""
 GROQ_API_KEY = GROQ_API_KEYS[0] if GROQ_API_KEYS else ""
 
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
-GROQ_MODEL = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
+# Model providers deprecate/retire model names fairly often, which has broken
+# this bot before (a dead model name makes every single caption call fail).
+# So each provider gets a primary model AND a fallback model -- caption.py
+# tries every key against the primary model first, then every key against
+# the fallback, before giving up on that provider entirely.
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
+GEMINI_MODEL_FALLBACK = os.environ.get("GEMINI_MODEL_FALLBACK", "gemini-2.5-flash")
+GEMINI_MODELS = [m for m in [GEMINI_MODEL, GEMINI_MODEL_FALLBACK] if m]
+
+GROQ_MODEL = os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b")
+GROQ_MODEL_FALLBACK = os.environ.get("GROQ_MODEL_FALLBACK", "openai/gpt-oss-20b")
+GROQ_MODELS = [m for m in [GROQ_MODEL, GROQ_MODEL_FALLBACK] if m]
 
 META_ACCESS_TOKEN = os.environ.get("META_ACCESS_TOKEN", "")
 FB_PAGE_ID = os.environ.get("FB_PAGE_ID", "")
