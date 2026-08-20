@@ -35,20 +35,20 @@ def _extract_json(text):
     return json.loads(match.group(0))
 
 
-def _call_gemini(prompt, api_key):
+def _call_gemini(prompt, api_key, model):
     from google import genai
 
     client = genai.Client(api_key=api_key)
-    resp = client.models.generate_content(model=config.GEMINI_MODEL, contents=prompt)
+    resp = client.models.generate_content(model=model, contents=prompt)
     return resp.text
 
 
-def _call_groq(prompt, api_key):
+def _call_groq(prompt, api_key, model):
     from groq import Groq
 
     client = Groq(api_key=api_key)
     resp = client.chat.completions.create(
-        model=config.GROQ_MODEL,
+        model=model,
         messages=[{"role": "user", "content": prompt}],
     )
     return resp.choices[0].message.content
@@ -65,21 +65,24 @@ def write_caption(item):
 
     last_err = None
 
-    # Try every configured Gemini key first (GEMINI_API_KEY, GEMINI_API_KEY2, ...),
-    # then every configured Groq key, before giving up. This way a single
-    # rate-limited/expired key doesn't stop the whole run.
-    for i, key in enumerate(config.GEMINI_API_KEYS, start=1):
-        try:
-            return _extract_json(_call_gemini(prompt, key))
-        except Exception as exc:  # noqa: BLE001
-            last_err = exc
-            print(f"[caption] Gemini key #{i} failed, trying next: {exc}")
+    # Try every configured Gemini key against the primary model first, then
+    # every key against the fallback model, then do the same for Groq. This
+    # way neither a single rate-limited/expired key NOR a single retired
+    # model name can stop the whole run.
+    for model in config.GEMINI_MODELS:
+        for i, key in enumerate(config.GEMINI_API_KEYS, start=1):
+            try:
+                return _extract_json(_call_gemini(prompt, key, model))
+            except Exception as exc:  # noqa: BLE001
+                last_err = exc
+                print(f"[caption] Gemini {model} key #{i} failed, trying next: {exc}")
 
-    for i, key in enumerate(config.GROQ_API_KEYS, start=1):
-        try:
-            return _extract_json(_call_groq(prompt, key))
-        except Exception as exc:  # noqa: BLE001
-            last_err = exc
-            print(f"[caption] Groq key #{i} failed, trying next: {exc}")
+    for model in config.GROQ_MODELS:
+        for i, key in enumerate(config.GROQ_API_KEYS, start=1):
+            try:
+                return _extract_json(_call_groq(prompt, key, model))
+            except Exception as exc:  # noqa: BLE001
+                last_err = exc
+                print(f"[caption] Groq {model} key #{i} failed, trying next: {exc}")
 
-    raise RuntimeError(f"All caption providers/keys failed: {last_err}")
+    raise RuntimeError(f"All caption providers/keys/models failed: {last_err}")
