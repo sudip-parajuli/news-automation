@@ -733,5 +733,110 @@
     "source": "Al Jazeera",
     "category": "politics",
     "link": "https://www.aljazeera.com/news/2026/8/20/fbi-raids-ex-us-representative-swalwells-home-amid-sexual-misconduct-probe?traffic_source=rss"
+  },
+  {
+    "hash": "5139cb7756590ae9be3293d16b6342235b0cea4dc1dfaf616282a23090379c6d",
+    "digest_line_ne": "एप्पल म्यासेजको नयाँ प्लगइनमार्फत च्याटजीपीटीले अब स्वचालित रूपमा प्रयोगकर्ताका तर्फबाट म्यासेज पठाउन सक्ने सुविधा ल्याएको छ।",
+    "source": "TechCrunch",
+    "category": "tech",
+    "link": "https://techcrunch.com/2026/08/20/chatgpt-can-now-send-texts-for-you-with-new-apple-messages-plugin/"
+  },
+  {
+    "hash": "bdb698ec663c3ddc49e95de324b6893f82fa6817ab1ad97686af841a5324c170",
+    "digest_line_ne": "गुगलले प्रयोगकर्तालाई एआईमार्फत आफूले हेर्न चाहेको सामग्री अनुसार 'डिस्कभर' फिड अनुकूलन गर्न दिने नयाँ फिचर ल्याउँदैछ।",
+    "source": "The Verge",
+    "category": "tech",
+    "link": "https://www.theverge.com/tech/983088/google-discover-ai-chatbot-feed"
+  },
+  {
+    "hash": "0a267a0cc2cf9165bf1bcd0afa0bc9e22981ab785c9c8900219d84bd2ff003c0",
+    "digest_line_ne": "अमेरिकाबाट देश निकाला गरिएका अनुमानित १२ सय जनामध्ये पहिलो टोली लाइबेरिया पुगेको छ।",
+    "source": "Al Jazeera",
+    "category": "politics",
+    "link": "https://www.aljazeera.com/news/2026/8/20/first-group-of-us-deportees-out-of-an-expected-1200-arrive-in-liberia?traffic_source=rss"
+  },
+  {
+    "hash": "161fa86044d10b9dd62d1c75ead49300614e876572d9381373fa65998875f7fc",
+    "digest_line_ne": "लिङ्कडिजले एआई मील प्लानरसहित घरको समग्र व्यवस्थापन गर्न सघाउने नयाँ स्मार्ट क्यालेन्डर सार्वजनिक गरेको छ।",
+    "source": "TechCrunch",
+    "category": "tech",
+    "link": "https://techcrunch.com/2026/08/20/linkdazes-smart-calendar-is-built-to-run-a-household-not-just-track-a-schedule/"
+  },
+  {
+    "hash": "d6c36ead996fbe3f3921ac27e830c3e9484fc9903631879fe1c1ca7dbb20803d",
+    "digest_line_ne": "अस्ट्रेलियाको नियामक निकायले गेमिङ प्लेटफर्म रोब्लक्सले बालबालिका सुरक्षासम्बन्धी समस्याहरू अझै पूर्ण रूपमा समाधान नगरेको जनाएको छ।",
+    "source": "The Verge",
+    "category": "tech",
+    "link": "https://www.theverge.com/games/982885/roblox-australia-safety-regulator-child-safety"
+  },
+  {
+    "hash": "530365b58f66e783186fd41cfb9f95c030f17b8aa4e7ad348be2527858cedcee",
+    "digest_line_ne": "अमेरिकी नियामक निकाय एफसीसीले १ गिगाबिट ब्रोडब्यान्ड इन्टरनेट विस्तार गर्ने दीर्घकालीन लक्ष्य खारेज गरेको छ।",
+    "source": "The Verge",
+    "category": "tech",
+    "link": "https://www.theverge.com/policy/982863/fcc-kills-gigabit-goal"
+  },
+  {
+    "hash": "3e25c33330e7022b45977557aef7bcf3532ff26e9edc62e34aa05baac7640229",
+    "digest_line_ne": "एआई च्याटबोट 'ग्रोक'ले प्रयोगकर्ताहरूलाई अर्थहीन उत्तर पठाउन थालेपछि ग्रोक लाइटका प्रयोगकर्ता प्रभावित भएका छन्।",
+    "source": "TechCrunch",
+    "category": "tech",
+    "link": "https://techcrunch.com/2026/08/20/grok-keeps-sending-gibberish-responses-to-users/"
+  },
+  {
+    "hash": "88adb9c0d59a7e8b19f783b61eb4ae486df791f90c5c3ee0c16f176ad988037f",
+    "digest_line_ne": "विश्वप्रसिद्ध प्रविधि सम्मेलन 'टेक्रन्च डिसरप्ट २०२६' मा सहभागी हुने लगानीकर्ताहरूका लागि नयाँ निर्देशिका सार्वजनिक गरिएको छ।",
+    "source": "TechCrunch",
+    "category": "tech",
+    "link": "https://techcrunch.com/2026/08/20/the-investors-guide-to-techcrunch-disrupt-2026-everything-you-need-to-know/"
+  },
+  {
+    "hash": "57b344cf3390de696c19928e886f2968f5268527477fa2909f10359834f3b726",
+    "digest_line_ne": "ChatGPT सार्वजनिक भएयता इन्टरनेटमा प्रकाशित एक तिहाइ वेब पेजमा एआई (AI) को प्रयोग पाइएको एक अध्ययनले देखाएको छ।",
+    "source": "TechCrunch",
+    "category": "tech",
+    "link": "https://techcrunch.com/2026/08/20/a-third-of-webpages-published-since-chatgpts-launch-show-signs-of-ai-authorship-study-finds/"
+  },
+  {
+    "hash": "2bc21926f4ed2d345c0e848793ea4d033ff00b8c238e8f882e532f4845c71652",
+    "digest_line_ne": "केही पुराना ल्यापटप बिग्रिने समस्या ल्याएको बायोस अपडेटको विषयमा फ्रेमवर्कले समाधान खोजिरहेको छ।",
+    "source": "The Verge",
+    "category": "tech",
+    "link": "https://www.theverge.com/gadgets/982800/framework-laptop-13-amd-7040-bios-320-bricking-warranty"
+  },
+  {
+    "hash": "d5ed7b69894d4aa7982925444b9f0f560abcc54496403e9d6874690cf7e23feb",
+    "digest_line_ne": "सेरेब्रासका प्रारम्भिक लगानीकर्ता अदित सिंह लगानी कम्पनी मेफिल्डमा इन्फ्रास्ट्रक्चर पार्टनरका रूपमा आबद्ध भएका छन्।",
+    "source": "TechCrunch",
+    "category": "tech",
+    "link": "https://techcrunch.com/2026/08/20/early-cerebras-investor-adit-singh-joins-mayfield-as-infrastructure-partner/"
+  },
+  {
+    "hash": "3766519138678db67479a9dd78b265077494c381a437956c1e5998a0d33f3797",
+    "digest_line_ne": "Ramp ले Router नामक AI मोडेल राउटर सेवा सार्वजनिक गर्‍यो, जसले API मार्फत विभिन्न LLM हरू बीच स्विच गर्न सम्भव बनाउँछ।",
+    "source": "TechCrunch",
+    "category": "tech",
+    "link": "https://techcrunch.com/2026/08/20/ramp-launches-its-own-ai-model-router-called-router/"
+  },
+  {
+    "hash": "e0140118a3d911b045fec70ca38c463c933de99687220a721551ae290bcf4751",
+    "digest_line_ne": "इंग्ल्याण्ड महिला हॉकी टोलीको ०‑० बराबराले समूह चरणमै विश्वकपबाट बाहर गरायो।",
+    "source": "BBC Sport",
+    "category": "sports",
+    "link": "https://www.bbc.co.uk/sport/hockey/articles/cvg82elx4d1o?at_medium=RSS&at_campaign=rss"
+  },
+  {
+    "hash": "929605b707cfcd506d640ca18fc0cf0c0faa0d4221734b8f7ecdb792f65d6f2e",
+    "digest_line_ne": "सेनेटले टिकटकको सुरक्षा उपाय हटाउने प्रयोगको कारण र असरको बारेमा स्पष्ट जवाफको माग गरेको छ।",
+    "source": "TechCrunch",
+    "category": "tech",
+    "link": "https://techcrunch.com/2026/08/20/senators-demand-answers-from-tiktok-over-experiment-that-disabled-safeguards/"
+  },
+  {
+    "hash": "30ed338aa1befde7ba5753342c042ff3cdde49eb0087d7cab3d38674244fb3ac",
+    "digest_line_ne": "मेताले एआईको मद्दतले सहजै गेम बनाउन र सेयर गर्न सकिने नयाँ एप 'पकेट' अमेरिकामा सार्वजनिक गरेको छ।",
+    "source": "TechCrunch",
+    "category": "tech",
+    "link": "https://techcrunch.com/2026/08/20/meta-brings-pocket-an-app-that-lets-you-vibe-code-and-share-games-to-us-users/"
   }
 ]
