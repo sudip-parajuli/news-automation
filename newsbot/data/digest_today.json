@@ -943,5 +943,110 @@
     "source": "Wired",
     "category": "tech",
     "link": "https://www.wired.com/story/early-tech-labor-day-sales-2026/"
+  },
+  {
+    "hash": "d422d4b35ac4edcd001689cfa9f716dfd362b26c51bba49050b68bb79c9c8f63",
+    "digest_line_ne": "Rillet ले 48 घण्टामा $100 मिलियन उठाएर युनिकर्न बन्यो; प्रमुख भेंचर फर्महरू फन्डिङमा सहभागी भए।",
+    "source": "TechCrunch",
+    "category": "tech",
+    "link": "https://techcrunch.com/2026/08/21/how-ai-accounting-startup-rillet-raised-100m-and-became-a-unicorn-in-48-hours/"
+  },
+  {
+    "hash": "264d5e6b1344300a959787772a661e7916cb6531bd0582c9824ece50baf4453f",
+    "digest_line_ne": "TikTok ले $400 मिलियन तिर्‍यो र बाल गोपनीयता मुद्दा समाधान गर्‍यो।",
+    "source": "Al Jazeera",
+    "category": "politics",
+    "link": "https://www.aljazeera.com/economy/2026/8/21/tiktok-settles-with-us-justice-department-for-400m-over-child-privacy-laws?traffic_source=rss"
+  },
+  {
+    "hash": "40b3678b5e47a4e3de1283a17a468c8b7d17d692ea15acbbd72549266dd556ea",
+    "digest_line_ne": "टेस्लाले सोलार रूफ टाइल उत्पादन समाप्त गर्‍यो, अब केवल सामान्य सौर्य प्यानलहरू उपलब्ध हुनेछन्।",
+    "source": "The Verge",
+    "category": "tech",
+    "link": "https://www.theverge.com/tech/983167/tesla-solar-roof-tiles-discontinued"
+  },
+  {
+    "hash": "11951a045d2c30e95e859b07e562ae0286d93ce0514ed131502f88f83cc06035",
+    "digest_line_ne": "बिरालाहरूको झगडा र नयाँ शिशुका कारण खाना दिने समस्या समाधान गर्यो अटोमेटिक फिडर।",
+    "source": "The Verge",
+    "category": "tech",
+    "link": "https://www.theverge.com/gadgets/982897/automatic-feeder-cat-enemies"
+  },
+  {
+    "hash": "df88e7b8d4bbde4c66dbf18f1b42ee422b00bb05b38756196f65c2a8c22a27d1",
+    "digest_line_ne": "BBC Sport ले हप्ताको EFL मा देखिने पाँच मुख्य विषयहरू, विशेष गरी West Ham र Leicester को पुनरागमन लक्ष्य, उजागर गरेको छ।",
+    "source": "BBC Sport",
+    "category": "sports",
+    "link": "https://www.bbc.co.uk/sport/football/articles/cx2ldd3yyy0o?at_medium=RSS&at_campaign=rss"
+  },
+  {
+    "hash": "391c5df93be897d397581dffca8f9934548494768df59124a55af93627ba2046",
+    "digest_line_ne": "ओलम्पियन जेन्नी सिम्पसनले कार्डियाक अरेस्टपछि दौडन छोड्ने घोषणा गरेकी छिन्।",
+    "source": "BBC Sport",
+    "category": "sports",
+    "link": "https://www.bbc.co.uk/sport/athletics/articles/cy8e6jjwnp8o?at_medium=RSS&at_campaign=rss"
+  },
+  {
+    "hash": "85b5d99d0f5a1b3d5da7243518d6eb9d0b42e01ccb02ca06a47416e426e5d937",
+    "digest_line_ne": "अमान्डा सरेन्नो टिकटकमा प्रचार गर्दै महिला बक्सिङको नोकआउट रेकर्ड लक्ष्य बनाइरहेकी छन्।",
+    "source": "BBC Sport",
+    "category": "sports",
+    "link": "https://www.bbc.co.uk/sport/boxing/articles/c2el98w4peyo?at_medium=RSS&at_campaign=rss"
+  },
+  {
+    "hash": "f54ab31c552fadd9bf88454d4988a481d83e97f7ce06eab6c50a138dd5a7d050",
+    "digest_line_ne": "क्रिस सटनले लियाम फ्रे, पाठक र AI संग मिलेर प्रिमियर लिगको खुल्ने हप्ता म्याचहरूको पूर्वानुमान गरे।",
+    "source": "BBC Sport",
+    "category": "tech",
+    "link": "https://www.bbc.co.uk/sport/football/articles/cn9nqzny7n7o?at_medium=RSS&at_campaign=rss"
+  },
+  {
+    "hash": "1118c1b2a5c45cd68d6c63cc1f4ee5e426fa82dfe593606d39149d046e746b9c",
+    "digest_line_ne": "ग्रेटर म्यान्चेस्टर काउन्टीले पलेन्टिरको स्वास्थ्य‑सेवा ठेक्का रद्द गर्न आग्रह गर्दै आफ्नो क्षमता प्रमाणित गर्न चाहन्छ।",
+    "source": "Wired",
+    "category": "tech",
+    "link": "https://www.wired.com/story/the-single-english-county-saying-no-to-palantir/"
+  },
+  {
+    "hash": "335042b1cd7308dbb149419aa42b71fa20708953e8b6e3f03ffbe8d74ed59f00",
+    "digest_line_ne": "डोना रोसेले रग्बीलाई आफ्नो बोर्डरलाइन पर्सनालिटी डिसअर्डरको व्यवस्थापनको सुपरपावर बताएकी छन्।",
+    "source": "BBC Sport",
+    "category": "sports",
+    "link": "https://www.bbc.co.uk/sport/rugby-union/articles/c3w0vw7530no?at_medium=RSS&at_campaign=rss"
+  },
+  {
+    "hash": "08a9f48e269de635488a288635f54591fd1c29ffb537b7a8bae0f3d81d843916",
+    "digest_line_ne": "अन्तर्राष्ट्रिय विरोधका बाबजुद इजरायलले वेस्ट बैंकमा पहिले बन्द गरिएको एक बस्ती पुनः स्थापना गरेको छ।",
+    "source": "BBC World",
+    "category": "politics",
+    "link": "https://www.bbc.co.uk/news/articles/cn7n0l4p0kzo?at_medium=RSS&at_campaign=rss"
+  },
+  {
+    "hash": "32665a611b41bfc6108888c794c04ccdaabab7b32400c6679ef57c615a3d4ce4",
+    "digest_line_ne": "रे-ब्यानका क्लासिक तथा कस्टम चश्माहरूमा प्रोमो कोडमार्फत ५० प्रतिशतसम्म छुट उपलब्ध गराइएको छ।",
+    "source": "Wired",
+    "category": "tech",
+    "link": "https://www.wired.com/story/ray-ban-promo-code/"
+  },
+  {
+    "hash": "361f07e09a3f7ed4b4b1535c278a6c0e94610d1c65c3f0a8ae2e217f6250e346",
+    "digest_line_ne": "Meta ले अगस्ट २०२६ मा VR हेडसेट र सम्बन्धित उत्पादनहरूमा २०% सम्म छुट दिने प्रोमो कोड जारी गरेको छ।",
+    "source": "Wired",
+    "category": "tech",
+    "link": "https://www.wired.com/story/meta-quest-promo-code/"
+  },
+  {
+    "hash": "294609c5df4cb766063cc2c9362d958ee587fb67e6881dc699e4f32f2790c9af",
+    "digest_line_ne": "Paramount+ ले अगस्ट २०२६ मा ५०% छुट र नि:शुल्क ट्रायल सहित कुपन कोडहरू प्रस्तुत गरेको छ।",
+    "source": "Wired",
+    "category": "tech",
+    "link": "https://www.wired.com/story/paramount-plus-coupon-code/"
+  },
+  {
+    "hash": "199ea7a214a4f6efd5c4bf9f93f8cae7b369e6f803373c0019a4815440a49027",
+    "digest_line_ne": "Zoro ले अगस्टमा उद्योग उपकरणमा 55% सम्मको छुट दिने कुपन कोड र निःशुल्क शिपिङ्ग अफर ल्याएको छ।",
+    "source": "Wired",
+    "category": "tech",
+    "link": "https://www.wired.com/story/zoro-promo-code/"
   }
 ]
