@@ -1,1 +1,107 @@
-[]
+[
+  {
+    "hash": "2b1f79df07b430a69480e83943ab02f3d823b4f368e837bf170c572a484c6871",
+    "digest_line_ne": "भोटेकोशी बाढीसम्बन्धी आचारसंहिता विपरीतका सामग्री सम्प्रेषण गर्ने सञ्चारमाध्यम र सामाजिक सञ्जाललाई प्रेस काउन्सिल नेपालले कारबाही गरेको छ।",
+    "source": "Ratopati",
+    "category": "tech",
+    "link": "https://www.ratopati.com/story/589448/bhotekoshi-flood-council-takes-action-against-those-who-disseminate-content-that-violates-the-code-of-conduct"
+  },
+  {
+    "hash": "e66807c545aaccd90139d6435395040814f65e0dfa70df3796664f6434c0299b",
+    "digest_line_ne": "जापान सरकारले भोटेकोशी बाढी प्रभावितका लागि आपत्कालीन मानवीय सहायता सामग्री नेपाललाई हस्तान्तरण गरेको छ।",
+    "source": "Ratopati",
+    "category": "tech",
+    "link": "https://www.ratopati.com/story/589446/emergency-assistance-from-the-japanese-government-to-nepal"
+  },
+  {
+    "hash": "f04c262142ce342751fab66f7fb3d21261e2b9bf0c31f2d2072294f24258ec32",
+    "digest_line_ne": "प्रतिनिधि सभा बैठक स्थगित हुनुका साथै दिनभरका मुख्य राजनीतिक र सामाजिक घटनाक्रमहरू सार्वजनिक भएका छन्।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/589444/12-news-at-12-these-are-todays-top-news-stories"
+  },
+  {
+    "hash": "db88840a142a963fa5ea94ebee7bd3bd2fdbbcb7321094727c39ea7a0676d16d",
+    "digest_line_ne": "मुग्लिन–थानकोट सडक अवरुद्ध भएपछि काठमाडौं उपत्यकाका ग्यास उद्योगहरूलाई उपत्यकाबाहिरबाटै रिफिलिङको व्यवस्था गरिएको छ।",
+    "source": "Nagarik News",
+    "category": "tech",
+    "link": "https://nagariknews.nagariknetwork.com/economy/this-is-the-refilling-system-of-gas-industries-in-the-kathmandu-valley-98-45.html"
+  },
+  {
+    "hash": "03e7c1e6baf1ca6e3f86f614d4ba7bbfc789fb76ba73462f7f94a91e56336ed2",
+    "digest_line_ne": "श्रम संस्कृति पार्टीका अध्यक्ष हर्क साम्पाङले आफ्नो पार्टीमा भर्खरै प्रवेश गरेको सुदन किराती समूहलाई अनुशासनमा रहन चेतावनी दिएका छन्।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/589428/harak-sampang-warns-sudan-kirati-group-not-to-disrespect"
+  },
+  {
+    "hash": "3867aea6114678b37ac2557e3b02b89c2ff79d092c71f6f0876188a2358a00d4",
+    "digest_line_ne": "डोटीको शिखर नगरपालिकाले बाढीपीडितको राहतका लागि प्रधानमन्त्री दैवी प्रकोप उद्धार कोषमा थप २० लाख रुपैयाँ जम्मा गर्ने निर्णय गरेको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2009588/dotis-shikhar-municipality-to-provide-additional-rs-2-million-assistance-to-flood-victims"
+  },
+  {
+    "hash": "aa642cd3c703c9e350a644be997d33f3d530912a162cb13ca464373fc78719c2",
+    "digest_line_ne": "२१ वर्षको अन्तर्राष्ट्रिय करिअर र कीर्तिमानी गोलहरूसहित लियोनल मेस्सीले सङ्घर्ष पार गर्दै आफूलाई सर्वकालीन महान् फुटबलरका रूपमा स्थापित गरेका छन्।",
+    "source": "Ratopati",
+    "category": "sports",
+    "link": "https://www.ratopati.com/story/589419/lionel-messi-the-constant-struggle-to-prove-his-greatness"
+  },
+  {
+    "hash": "b092e256f686f068148aac130206c367eed604486076c6088c54983e69038335",
+    "digest_line_ne": "बाजुराको बडिमालिका मन्दिरमा पूजाआजा सम्पन्न गरी १८ दिनपछि सरकारी टोली भव्य स्वागतका साथ जुम्ला फर्किएको छ।",
+    "source": "Nagarik News",
+    "category": "politics",
+    "link": "https://nagariknews.nagariknetwork.com/Dharma-Saskriti/government-team-returns-to-jumla-18-days-after-badimalika-puja-61-40.html"
+  },
+  {
+    "hash": "64cbb60ee9dc3cdb65f9fa15cbb6c9cd6010b58db471354f0b4604646c60c37c",
+    "digest_line_ne": "विपत्तिका समयमा सामाजिक सञ्जालमा अपुष्ट सूचना फैलने क्रम बढेकाले राज्य र समाजको जिम्मेवार भूमिकामाथि बहस सुरु भएको छ।",
+    "source": "Nagarik News",
+    "category": "politics",
+    "link": "https://nagariknews.nagariknetwork.com/blog/the-meaning-of-the-state-and-the-role-of-society-in-disasters-62-18.html"
+  },
+  {
+    "hash": "1489f0475b4e5c6a2096595a53313c650216f2509c7000e6965617da25501445",
+    "digest_line_ne": "रसुवा बाढीपीडितको राहतका लागि भुटान सरकारले नेपालको प्रधानमन्त्री राहत कोषमा १६ करोड रुपैयाँ सहयोग जम्मा गरेको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2009538/rasuwa-flood-bhutan-provides-rs-160-million-assistance-to-nepal"
+  },
+  {
+    "hash": "b093d98ec50bcd20ade7f71812689891fe02fb7bd3d8eaa2d98d9d26e929b15b",
+    "digest_line_ne": "भोटेकोशी बाढीपछि शव व्यवस्थापनमा खटिएका सुरक्षाकर्मी र स्वयंसेवकहरूलाई 'प्रारम्भ नेपाल'ले पीपीई र संक्रमण नियन्त्रण सामग्री हस्तान्तरण गरेको छ।",
+    "source": "OnlineKhabar",
+    "category": "tech",
+    "link": "https://www.onlinekhabar.com/2026/09/2009439/handover-of-ppe-and-infection-control-materials-to-those-involved-in-corpse-management"
+  },
+  {
+    "hash": "77244adea400f71dddb595a7d70e03d3fe2af3f49fda802bb7f6ec73ac76b5b0",
+    "digest_line_ne": "गण्डकी प्रदेशमा मन्त्रिमण्डल हेरफेर गर्दै ऊर्जा मन्त्रीमा नियुक्त फणीन्द्र देवकोटाले पद तथा गोपनीयताको शपथ लिएका छन्।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2009421/cabinet-reshuffle-in-gandaki-province-phanindra-devkota-in-charge-of-energy"
+  },
+  {
+    "hash": "542d539f57915bf8df0adbc8ba413e4feab22a81268cc2daa517f679b5b791b2",
+    "digest_line_ne": "नेपाल ए १९३ लक्ष्य राखी तास्मानियाले अन्तिम ओभरमा २ विकेटले जित्यो।",
+    "source": "OnlineKhabar",
+    "category": "sports",
+    "link": "https://www.onlinekhabar.com/2026/09/2009404/nepal-a-lost-to-tasmania-in-the-odi-match"
+  },
+  {
+    "hash": "2589c2456de8ea1c6476d7913020e4ea4ff8387a7468507eaeb6e264fa9ed2c2",
+    "digest_line_ne": "भोटेकोशी बाढीपछि सभामुखले सरकारलाई महिला‑बालबालिकाको सुरक्षा सुनिश्चित गर्न आह्वान गरे।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2009408/speaker-draws-attention-to-government-ensure-safety-of-women-and-children"
+  },
+  {
+    "hash": "ab6c69f7349b6f3230c902c29ef55314a33512f41f47cdb1b38301434e46fe74",
+    "digest_line_ne": "भोटेकोशी बाढी प्रभावितको राहत तथा उद्धारका लागि विद्युत् नियमन आयोगले दैवी प्रकोप उद्धार कोषमा एक करोड रुपैयाँ सहयोग गरेको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2009398/electricity-regulatory-commission-donates-rs-10-million-to-natural-disaster-relief-fund"
+  }
+]
