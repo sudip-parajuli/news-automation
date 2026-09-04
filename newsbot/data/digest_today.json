@@ -1,1 +1,107 @@
-[]
+[
+  {
+    "hash": "df6f782154510df2885cd39731054f02e5a736d6295b80371b3a74b38837462f",
+    "digest_line_ne": "दिनभरका प्रमुख घटनाक्रमहरू समेटेर रातोपाटीले आजका मुख्य समाचारहरूको ब्रिफिङ सार्वजनिक गरेको छ।",
+    "source": "Ratopati",
+    "category": "tech",
+    "link": "https://www.ratopati.com/story/589932/12-news-at-12-these-are-todays-top-news-stories"
+  },
+  {
+    "hash": "d53542ca7e4ec9f7c56a74b6b6da9e163a961729d4f8b287ceaf1a2434528df2",
+    "digest_line_ne": "बाढीपहिरोबाट प्रभावित नुवाकोटका अवरुद्ध सडक सञ्चालनमा ल्याउन पूर्वाधार मर्मत कार्यलाई तीव्रता दिइएको छ।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/589931/road-and-infrastructure-repairs-gain-momentum-in-nuwakot"
+  },
+  {
+    "hash": "8c6e909dacc5692e2a40d50079e55a4f357fc70202f41cf776ea3b8928db816c",
+    "digest_line_ne": "रसुवा बाढीपछिको खोज, उद्धार तथा राहतको अवस्थाबारे जानकारी गराउन रास्वपाले दैनिक भिडियो बुलेटिन सुरु गरेको छ।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/589928/rasuwa-flood-rsp-launches-daily-bulletin-to-provide-information-on-rescue-relief-and-rehabilitation"
+  },
+  {
+    "hash": "44e42f86dd4012344896c712b26c121cb825eb70320ceb9b93c9421e434635be",
+    "digest_line_ne": "बर्जर पेन्ट्स नेपालले बाढी प्रभावितको उद्धार तथा राहतका लागि प्रधानमन्त्री दैवी प्रकोप उद्धार कोषमा ५० लाख रुपैयाँ सहयोग गरेको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2010890/berger-paints-nepal-donates-5-million-to-the-rescue-fund"
+  },
+  {
+    "hash": "50113c3deec07fe4a7851c8af1a7234d2229d498d75b884bd2cbb259cb416d64",
+    "digest_line_ne": "बाढीले नारायणी नदी किनारमा बगाएर ल्याएका मृत पशुको भरतपुर महानगरपालिकाले व्यवस्थापन सुरु गरेको छ।",
+    "source": "OnlineKhabar",
+    "category": "tech",
+    "link": "https://www.onlinekhabar.com/2026/09/2010775/bharatpur-managing-dead-animals-washed-away-by-floods"
+  },
+  {
+    "hash": "5245c7d4f6bdfad3eb87abe390715cb92bdc66dcd0482b99b3e86d02180cfea1",
+    "digest_line_ne": "नेपाली राष्ट्रिय फुटबल टोलीका फरवार्ड भरत खवास नेपाली सेनाको मेजर पदमा बढुवा भएका छन्।",
+    "source": "OnlineKhabar",
+    "category": "sports",
+    "link": "https://www.onlinekhabar.com/2026/09/2010754/footballer-bharat-khawas-promoted-to-the-rank-of-major"
+  },
+  {
+    "hash": "48c6aa5a338a9aaa8b13686ae0c04155af6ade14b8754b2b13e3caa97c8d6c48",
+    "digest_line_ne": "भोटेकोशी बाढीमा बुवा बेपत्ता भएपछि ११ वर्षीया खुश्वु कार्की बुवाको किरियामा बसेकी छन्।",
+    "source": "OnlineKhabar",
+    "category": "sports",
+    "link": "https://www.onlinekhabar.com/2026/09/2010730/father-washed-away-in-flood-11-year-old-daughter-is-working-as-a-maid"
+  },
+  {
+    "hash": "95ba3ea46ae6767cd39a6f57188db886ab4c255f18ce988c0e8e9879ee00d156",
+    "digest_line_ne": "माथिल्लो क्षेत्रमा वर्षाको सम्भावनासँगै रसुवा र नुवाकोट क्षेत्र भई बहने भोटेकोशी र त्रिशूली नदीमा आकस्मिक बाढीको जोखिम उच्च रहेको छ।",
+    "source": "The Kathmandu Post",
+    "category": "general",
+    "link": "https://kathmandupost.com/national/2026/09/03/flash-flood-risk-remains-high-in-nepal-s-bhotekoshi-trishuli-rivers"
+  },
+  {
+    "hash": "4d1dde33225dd647e4a0e0efa8d6eda651e2cdbd5893e6a4cdf122689e189ac4",
+    "digest_line_ne": "नेपालमा बाढीका कारण मृत्यु हुनेको संख्या १,२५२ पुगेको छ भने कम्तीमा ४,२१६ जना अझै बेपत्ता छन्।",
+    "source": "The Kathmandu Post",
+    "category": "general",
+    "link": "https://kathmandupost.com/national/2026/09/03/nepal-flood-toll-rises-to-1-252-as-at-least-4-216-remain-unaccounted-for"
+  },
+  {
+    "hash": "8e222da7219931b1b913d2411421f68da2e168bf7c71d88b92373456f14f79b9",
+    "digest_line_ne": "सतहमा विनाश भए पनि जमिनमुनि लामो समयसम्म मानिस जीवितै रहन सक्ने भएकाले मौनताको अर्थ मृत्यु नभएको सुरुङविज्ञ आर्नोल्ड डिक्सले बताएका छन्।",
+    "source": "The Kathmandu Post",
+    "category": "general",
+    "link": "https://kathmandupost.com/national/2026/09/03/silence-underground-does-not-mean-death-says-tunnel-expert-dix"
+  },
+  {
+    "hash": "bf899e56e6579eb7922adfd181261587e6fa19338a0679531022fcc20597baa1",
+    "digest_line_ne": "फोरेंसिक क्षमताको कमीका बाबजुद बाढीमा ज्यान गुमाएका अज्ञात व्यक्तिहरूको पहिचान अझै गर्न सकिने फोरेंसिक विज्ञ लता गौतमले बताएकी छन्।",
+    "source": "The Kathmandu Post",
+    "category": "general",
+    "link": "https://kathmandupost.com/interviews/2026/09/03/q-a-how-nepal-can-still-identify-those-who-died-in-the-flood"
+  },
+  {
+    "hash": "995761018119ff8a5dc4dde3d776c3d58febbce01a8db1d03e9553781a21340b",
+    "digest_line_ne": "भोटेकोशीको बाढीका कारण चीनतर्फ अलपत्र परेका १४७ नेपालीमध्ये ११४ जना तातोपानी नाका हुँदै स्वदेश फर्किएका छन्।",
+    "source": "The Kathmandu Post",
+    "category": "general",
+    "link": "https://kathmandupost.com/province-no-3/2026/09/03/114-nepalis-stranded-in-china-return-through-tatopani-border"
+  },
+  {
+    "hash": "cf9417a3394f7e927d70a71448f392e861b8182e46aa1b6aebe37e6c50f1a9fc",
+    "digest_line_ne": "बाढीपहिरोका कारण पर्यटकीय बुकिङ रद्द हुने क्रम बढेपछि त्यसलाई रोक्न नेपालले '#NepalCalling' अभियान सुरु गरेको छ।",
+    "source": "The Kathmandu Post",
+    "category": "general",
+    "link": "https://kathmandupost.com/national/2026/09/03/nepal-launches-nepalcalling-campaign-to-counter-flood-driven-tourism-cancellations"
+  },
+  {
+    "hash": "3c4f28656b4419ad241d2e1a166da38de1a3920fc5c9215405547317f7c9fb18",
+    "digest_line_ne": "युरोपेली संघले बागमती प्रदेशका करिब २० हजार बाढीपीडितको राहतका लागि थप ८ करोड ९० लाख रुपैयाँ सहयोगको घोषणा गरेको छ।",
+    "source": "The Kathmandu Post",
+    "category": "general",
+    "link": "https://kathmandupost.com/national/2026/09/03/eu-provides-additional-rs89-million-in-aid-for-nepal-flood-victims"
+  },
+  {
+    "hash": "806d53c5a29ac86244016dfd348252207fdf500be09ac723fdd1fba3ed1a254b",
+    "digest_line_ne": "सबै थोक गुमाए पनि नेपाल-तिब्बत सीमाका बासिन्दाहरू एक-आपसमा सहयोग गर्दै पुनःनिर्माणमा जुटेका छन्।",
+    "source": "The Kathmandu Post",
+    "category": "general",
+    "link": "https://kathmandupost.com/columns/2026/09/03/resilience-in-the-face-of-catastrophe"
+  }
+]
