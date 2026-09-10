@@ -1,1 +1,107 @@
-[]
+[
+  {
+    "hash": "92959db1db92e72f08d4e209144f1ef7f52a2ce675fe627777245488cd27c379",
+    "digest_line_ne": "राष्ट्रिय पाठ्यक्रम प्रारूप परिमार्जनका लागि आयोजित कार्यशालाहरूबाट पाठ्यभार घटाउन र एआईलगायत नयाँ प्रविधि समेट्न सुझाव प्राप्त भएको छ।",
+    "source": "Ratopati",
+    "category": "tech",
+    "link": "https://www.ratopati.com/story/591360/curriculum-revision-suggestions-from-reducing-course-load-to-incorporating-ai"
+  },
+  {
+    "hash": "70b5199d7ab79f6958541157e358293571d5ce1967b98e96b64736e1e9bfd324",
+    "digest_line_ne": "नेपालमा प्राप्त वैदेशिक लगानीका १,११६ परियोजनामध्ये ७२७ वटा सूचना प्रविधि क्षेत्रका रहेका छन्।",
+    "source": "Ratopati",
+    "category": "tech",
+    "link": "https://www.ratopati.com/story/591358/foreign-investors-attraction-to-information-technology-projects"
+  },
+  {
+    "hash": "dd14a3dcae317cee7ec016af96d9c7234c3ec698bc1483dffb6e04bf1c1b6e39",
+    "digest_line_ne": "रातोपाटीको '१२ बजे १२ समाचार' मा प्रधानमन्त्रीको भ्रमण स्वीकृति र नयाँ मन्त्रीको नियुक्तिसहितका खबरहरू समेटिएका छन्।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/591355/12-news-at-12-these-are-todays-top-news-stories"
+  },
+  {
+    "hash": "0b5241c20766eb0e4bc38ad0c71bacb2614e60ce4239a9acfda8c0e2eebc940c",
+    "digest_line_ne": "निर्वाचित र स्वतन्त्र सञ्चालकहरूलाई नबोलाइ सञ्चालक समितिको बैठक बोलाइएपछि अपर तामाकोशी हाइड्रोपावरमा विवाद उत्पन्न भएको छ।",
+    "source": "OnlineKhabar",
+    "category": "tech",
+    "link": "https://www.onlinekhabar.com/2026/09/2014774/controversy-after-board-meeting-called-without-elected-directors-in-upper-tamakoshi"
+  },
+  {
+    "hash": "a6bc8a353f9e7d2a15ceb12b10ae5ba9819ee78d238608f09096597ff3966aa3",
+    "digest_line_ne": "एफएटीएफको कार्ययोजना अनुसार सरकारले गरेको अध्ययनमा डिजिटल मुद्राबाट सम्पत्ति शुद्धीकरण हुने जोखिम उच्च रहेको पाइएको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2014770/government-report-risk-of-money-laundering-from-digital-currencies-is-high"
+  },
+  {
+    "hash": "d530f39cc676986e4c769b3182762d0e360cb0de06e62256647303404281e01f",
+    "digest_line_ne": "सरकारमा कानुनी शासनको सट्टा धम्कीको भाषा हाबी भएको भन्दै नेपाली कांग्रेसका नेता भीष्मराज आङ्देम्बेले सरकारको कार्यशैलीप्रति प्रश्न उठाएका छन्।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/591331/as-the-language-of-threats-increased-angdembe-asked-what-path-is-the-government-trying-to-take"
+  },
+  {
+    "hash": "d839ad2c652c2e9915006d55e1ffbb82c9758ac210a04a915b6fe8e86e40a24a",
+    "digest_line_ne": "जापानमा हुने २०औँ एसियाली खेलकुदका लागि नेपाली टोलीलाई सरकारले औपचारिक रूपमा विदाइ गरेको छ।",
+    "source": "Setopati",
+    "category": "sports",
+    "link": "https://www.setopati.com/sports/noc/398101"
+  },
+  {
+    "hash": "bc71c2678234245f94abeb81dfdeaafebd5deed9aafb0a07bc4ff0692099f2b5",
+    "digest_line_ne": "गगन थापा कांग्रेसको सभापति बनेपछि एमाले निर्वाचनमा जानुपरेको निष्कर्ष नेता रामबहादुर थापा 'बादल'ले निकालेका छन्।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2014753/badals-conclusion-uml-had-to-go-to-the-elections-when-gagan-was-the-president-of-the-congress"
+  },
+  {
+    "hash": "6b28fabb49c62fe2c0a5e2c830368bf738cdae554dc29e71fa9a7a0c4a259b9d",
+    "digest_line_ne": "सिंगापुरस्थित नेपाली समुदायले भोटेकोशीका बाढीपीडितका लागि प्रधानमन्त्री राहत कोषमार्फत १७ लाख रुपैयाँभन्दा बढी सहयोग हस्तान्तरण गरेका छन्।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2014747/nepali-community-in-singapore-donates-rs-1-7-million-to-flood-victims"
+  },
+  {
+    "hash": "48a92024a94a2282bca5c8dad23c5ae2827150b7e53bb75a8bcdd57d2b8d9de6",
+    "digest_line_ne": "आगामी असोज ३ देखि हुने एसियन गेम्सका लागि मन्त्री पोखरेल २११ सदस्यीय नेपाली टोलीसँगै जापान जाने भएका छन्।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2014731/minister-pokharel-to-travel-to-japan-to-participate-in-asian-games"
+  },
+  {
+    "hash": "907e61492234dd6b9753a0d7d8375a520caaf8eb03c72b56089e83c73e1d336a",
+    "digest_line_ne": "नवनियुक्त उद्योगमन्त्रीले पदभार ग्रहण गर्दै जनताको आवश्यकता अनुसार ग्यास उपलब्ध गराउन मन्त्रालयमा छलफल गरेर ठोस निर्णय लिने बताएका छन्।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2014723/taking-office-the-minister-of-industry-said-we-must-provide-as-much-gas-as-the-people-need"
+  },
+  {
+    "hash": "87e7568283348f9018e9db27c38475f2776507eb2b1c8c0e244087f400b29b6d",
+    "digest_line_ne": "बागमती प्रदेश सरकारले कर्मचारीहरूको नयाँ तलबमान स्वीकृत गर्दै बाख्रा र मत्स्य विकास केन्द्रलाई पुनः अलग गर्ने निर्णय गरेको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2014687/bagmati-province-new-salary-scale-for-employees-approved-goat-and-fisheries-development-centers-separated-again"
+  },
+  {
+    "hash": "d0d1943ad1db0cb1a9c1388f83189c481c7bc6996c7035276b5ce37731e9760a",
+    "digest_line_ne": "बाढीपहिरो प्रभावितको राहत तथा उद्धारका लागि आह्वान गरिएको प्रधानमन्त्री राहत कोषमा १२ अर्ब ६३ करोड ९२ लाख रुपैयाँभन्दा बढी रकम संकलन भएको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2014681/rs-12-63-billion-collected-in-prime-ministers-relief-fund"
+  },
+  {
+    "hash": "f23750c174137737912ebc4f801c0996272590fae1d1a36e09ee3d867fd2cf5f",
+    "digest_line_ne": "प्रहरीकै स्वामित्वको जग्गामा बनेको प्रहरी चौकीको घेरबार गृहमन्त्रीको ठाडो निर्देशनमा भत्काइएको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2014682/police-office-fence-demolished-on-direct-instructions-of-home-minister"
+  },
+  {
+    "hash": "4bb8e2b113293d00367b59098d9c4f3385ef559d3aad023a3a0c173ab25bcaea",
+    "digest_line_ne": "ब्लुमबर्गका अनुसार क्यामेरा जडित नयाँ एयरपोड्सको सार्वजनिक गर्ने योजना सन् २०२७ सम्मका लागि पछि सारिएको छ।",
+    "source": "OnlineKhabar",
+    "category": "tech",
+    "link": "https://www.onlinekhabar.com/2026/09/2014668/why-werent-airpods-with-cameras-released-with-the-iphone-duo"
+  }
+]
