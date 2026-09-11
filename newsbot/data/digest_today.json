@@ -103,5 +103,110 @@
     "source": "Nagarik News",
     "category": "politics",
     "link": "https://nagariknews.nagariknetwork.com/politics/nepal-law-commission-unanimously-approved-by-house-of-representatives-br-77-13.html"
+  },
+  {
+    "hash": "87834a3a2f1f5aac52450deb7ba2f5ac5cf4e3e37cd25ab9f23c6fa8396fe426",
+    "digest_line_ne": "एसिसी प्रिमियर कपको फाइनलमा आज नेपाल र युएई प्रतिस्पर्धा गर्दैछन्।",
+    "source": "Ratopati",
+    "category": "sports",
+    "link": "https://www.ratopati.com/story/591605/nepal-aims-to-repeat-history-faces-uae-in-acc-premier-cup-final-today"
+  },
+  {
+    "hash": "554e9f9bc6d480bdc813bdfd8ee4ed23fe1ddb83855ded2a29a9857d179a46ab",
+    "digest_line_ne": "स्पेनिस ला लिगा फुटबलमा जुआन इग्लेसियसको निर्णायक गोलमा सेभियाले भ्यालेन्सियालाई १-० ले पराजित गरेको छ।",
+    "source": "Ratopati",
+    "category": "sports",
+    "link": "https://www.ratopati.com/story/591598/sevillas-tough-win-over-valencia"
+  },
+  {
+    "hash": "4cf5df997ab41db4cdce33ce96d0f64eef27232064f004880519da73e71fe4e8",
+    "digest_line_ne": "सेवा सञ्चालनमा नरहेको र सक्रिय ग्राहक नभएको भन्दै दूरसञ्चार प्राधिकरणले यूटीएलको लाइसेन्स खारेज गर्दै सम्पत्ति लिलामीको तयारी अघि बढाएको छ।",
+    "source": "Nagarik News",
+    "category": "tech",
+    "link": "https://nagariknews.nagariknetwork.com/economy/utl-s-telecommunications-license-revoked-assets-to-be-auctioned-74-78.html"
+  },
+  {
+    "hash": "f789a4c036858fec536fc7add0aea64d6bc3ea536319095b3c1ae86fa344e110",
+    "digest_line_ne": "बजेट निर्माण प्रभावित हुने भन्दै सुदूरपश्चिम प्रदेशको मुख्यमन्त्री कार्यालयले मन्त्रालयहरूलाई तत्काल कर्मचारी सरुवा नगर्न निर्देशन दिएको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2015384/far-west-chief-ministers-office-prohibits-ministries-from-transferring-employees"
+  },
+  {
+    "hash": "69fa7dad009bd264ba45db62cd083d1b09172910f9e565ca2fa36d45a53f3ea4",
+    "digest_line_ne": "चिनियाँ कम्पनी अलिबाबाले 'क्लड'बाट डाटा चोरेर आफ्नो एआईलाई तालिम दिएको अमेरिकी कम्पनी एन्थ्रोपिकले दाबी गरेको छ।",
+    "source": "OnlineKhabar",
+    "category": "tech",
+    "link": "https://www.onlinekhabar.com/2026/09/2015372/anthropic-claims-alibaba-trained-its-ai-by-stealing-data-from-the-cloud"
+  },
+  {
+    "hash": "45331cfbf3d9b6239137aa3429f9878fc19834978c659bc433bcd18dd69e0da4",
+    "digest_line_ne": "ब्रिक्स शिखर सम्मेलनमा भाग लिन इरानका राष्ट्रपति मसूद पेजेस्कियान नयाँ दिल्ली पुगेका छन्।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2015355/iranian-president-in-delhi-to-attend-brics-summit"
+  },
+  {
+    "hash": "0ca17dfcbe400fe2dbcd95375f18d8caf192ace2aad4299d47d65e9bb1570993",
+    "digest_line_ne": "अस्थायी आवासमा बस्न नचाहने बाढीपीडित परिवारलाई सरकारले प्रतिपरिवार १५ हजार रुपैयाँ उपलब्ध गराउने भएको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2015346/government-to-provide-rs-15000-to-flood-affected-families-who-do-not-want-to-live-in-temporary-housing"
+  },
+  {
+    "hash": "379d2e058db50bb8f8dc08504373b93adb08bdc0686b10bf572fd0a755702bee",
+    "digest_line_ne": "भारतीय प्रधानमन्त्री नरेन्द्र मोदी र रुसी राष्ट्रपति भ्लादिमिर पुटिनबीच नयाँ दिल्लीमा द्विपक्षीय भेटवार्ता भएको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2015328/indian-prime-minister-modi-and-russian-president-putin-meet"
+  },
+  {
+    "hash": "3fbd2c0d9a1b21df1c5f18fb9b55e3aae895cd5a735fbaebea89336383f184e0",
+    "digest_line_ne": "वर्षाका कारण एसीसी प्रिमियर कपको नेपाल र यूएईबीचको फाइनल खेल रद्द भएमा समूह चरणको अंकका आधारमा यूएईले उपाधि जित्नेछ।",
+    "source": "OnlineKhabar",
+    "category": "tech",
+    "link": "https://www.onlinekhabar.com/2026/09/2015296/fear-of-rain-in-the-final-between-nepal-and-uae-if-it-is-canceled-uae-will-win-the-title"
+  },
+  {
+    "hash": "a4350fc4cec9160883ac29de322c6031a830863a579302c17bdeb49d35504042",
+    "digest_line_ne": "कानुनमन्त्रीलाई अध्यक्ष बनाउँदा नेपाल कानुन आयोग स्वतन्त्र संस्था नभई मन्त्रालयको विभागजस्तै बन्ने सांसद शर्माले बताएकी छन्।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2015316/making-a-minister-the-chairman-will-make-the-law-commission-like-a-department-of-the-ministry-mp-sharma"
+  },
+  {
+    "hash": "246d9492ddf3bdfee91e87dcbdfaaa08734511406fed6d2375ec0f0ff999583b",
+    "digest_line_ne": "बाराही हस्पिटालिटी ग्रुपले प्रधानमन्त्री दैवी प्रकोप राहत कोषमा २० लाख ५५ हजार रुपैयाँ सहयोग गरेको छ।",
+    "source": "Nagarik News",
+    "category": "politics",
+    "link": "https://nagariknews.nagariknetwork.com/economy/barahi-group-s-2-million-55-thousand-in-the-relief-fund-86-51.html"
+  },
+  {
+    "hash": "503fa3809a1a8165c37f96db11b44d0891ec578a4c73e3f5c9d0073e58b12742",
+    "digest_line_ne": "राष्ट्र बैंकको स्वायत्ततामाथि संसदमा उठेको प्रश्नको जवाफ दिँदै अर्थमन्त्रीले केन्द्रीय बैंकको काममा सरकारले हस्तक्षेप नगर्ने स्पष्ट पारेका छन्।",
+    "source": "Nagarik News",
+    "category": "politics",
+    "link": "https://nagariknews.nagariknetwork.com/economy/question-in-parliament-on-the-autonomy-of-the-national-bank-finance-minister-says-there-will-be-no-interference-95-15.html"
+  },
+  {
+    "hash": "7011c1b724a416fe87723ac0730ae0daf8c860a38a75411e463f6c6d67c89808",
+    "digest_line_ne": "मुलुकको अर्थतन्त्रलाई चलायमान बनाउन सरकारले पाँचवटा विशेष प्याकेज अघि बढाउने भएको छ।",
+    "source": "Nagarik News",
+    "category": "politics",
+    "link": "https://nagariknews.nagariknetwork.com/economy/government-is-moving-forward-with-five-special-packages-to-make-the-economy-dynamic-61-43.html"
+  },
+  {
+    "hash": "b0a89a60d5b283e81e57afd69f925fb334ac415ed8b97d82401ecb88196b88df",
+    "digest_line_ne": "नेपालको सूचना प्रविधि (आईटी) क्षेत्रमा पछिल्लो समय वैदेशिक लगानीकर्ताको आकर्षण बढेको छ।",
+    "source": "Nagarik News",
+    "category": "tech",
+    "link": "https://nagariknews.nagariknetwork.com/economy/attraction-of-foreign-investors-in-information-technology-36-18.html"
+  },
+  {
+    "hash": "40d70efa9ef10aaa75199975a8daef02bc1cebbbafea1c128f311950cbe8b8cf",
+    "digest_line_ne": "जलविद्युत् तथा प्रसारण लाइन आयोजनाले सरकारी वन प्रयोग गरेबापत राजस्व तिर्दा डिभिजन वन कार्यालयको आम्दानी चार गुणाभन्दा बढीले बढेको छ।",
+    "source": "Nagarik News",
+    "category": "politics",
+    "link": "https://nagariknews.nagariknetwork.com/economy/hydropower-projects-increase-forest-revenue-93-72.html"
   }
 ]
