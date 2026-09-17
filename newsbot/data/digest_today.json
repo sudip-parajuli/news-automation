@@ -1,1 +1,107 @@
-[]
+[
+  {
+    "hash": "8b1a857a9abcdc0912fbadfd0e9c43e2370d4e6f918222174e6d382aa195c1b9",
+    "digest_line_ne": "स्पेनिस ला लिगामा अब्दे एज्जाउजूलिको निर्णायक गोलको मद्दतले रियल बेटिसले गेटाफेलाई १-० ले पराजित गरेको छ।",
+    "source": "Ratopati",
+    "category": "sports",
+    "link": "https://www.ratopati.com/story/592902/real-betis-struggles-to-win-getafe-loses"
+  },
+  {
+    "hash": "f461f94c77e2220f5476aae9650aad86bb89a67da9a4f2b31cc81373f4555865",
+    "digest_line_ne": "राष्ट्र बैंकको स्वायत्ततामाथि बहस र काठमाडौँमा ग्यासको मूल्य घट्नु आजका प्रमुख घटनाक्रम बनेका छन्।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/592900/12-oclock-12-news-attack-on-the-autonomy-of-the-national-bank-gas-prices-drop-in-the-kathmandu-valley"
+  },
+  {
+    "hash": "4d0d554f1ba84ed1ab7385be2993d49472938bdaf00d0c977fef7db2e0408cf0",
+    "digest_line_ne": "सप्तरीको अस्पताल अगाडि सडक पेटीमा शिशु जन्माएकी बबिता पासवानको घर पुगेर मन्त्री रामजी यादवले दोषीलाई कारबाही गर्ने प्रतिबद्धता जनाएका छन्।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/592899/action-will-be-taken-against-those-found-guilty-in-the-incident-minister-yadav"
+  },
+  {
+    "hash": "6689890741de9509715c67fbbda59401095e403f1b79eee12d8a85354105ea19",
+    "digest_line_ne": "कर्णाली प्रदेशका मुख्यमन्त्री मङ्गलबहादुर शाहीले प्रदेशलाई अर्ग्यानिक उत्पादनमार्फत आत्मनिर्भर बनाउने अभियानमा सरकार लागिपरेको बताएका छन्।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/592890/we-are-on-a-campaign-to-create-agricultural-production-and-a-self-reliant-province-chief-minister-shahi"
+  },
+  {
+    "hash": "3aa35880a5256fee54e28ecd6b98e5adcbc93e4c21b9aaf3beca173af2d23f42",
+    "digest_line_ne": "कर्णाली प्रदेशका मुख्यमन्त्री मङ्गलबहादुर शाहीले अर्गानिक कृषि उत्पादन बढाएर प्रदेशलाई आत्मनिर्भर बनाउने बताएका छन्।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2019560/we-will-make-karnali-a-self-reliant-province-with-organic-production-chief-minister-shahi"
+  },
+  {
+    "hash": "c89cb721629834217b1559112c0243d383221fc1b0c26d01f8ce854b3e81de97",
+    "digest_line_ne": "प्रधानमन्त्री दैवी प्रकोप उद्धार कोषमा पछिल्लो २४ घण्टामा थप करिब २३ करोड रुपैयाँ सङ्कलन भएको छ।",
+    "source": "Nagarik News",
+    "category": "politics",
+    "link": "https://nagariknews.nagariknetwork.com/social-affairs/nearly-230-million-rupees-added-to-the-prime-minister-s-disaster-relief-fund-in-24-hours-76-28.html"
+  },
+  {
+    "hash": "0f16df97e9e0e7d573fd22c9fdaa7d5c0ca26ae98483074cd637d530590219d6",
+    "digest_line_ne": "अविनास स्याङताङको गोलको मद्दतमा सूर्यपुर एफसी तेस्रो चितवन गोल्डकपको फाइनलमा प्रवेश गरेको छ।",
+    "source": "Nagarik News",
+    "category": "tech",
+    "link": "https://nagariknews.nagariknetwork.com/sports/avinash-s-brilliant-goal-sends-suryapur-into-the-final-of-the-chitwan-gold-cup-93-95.html"
+  },
+  {
+    "hash": "1f620fb96b80194a84ca324ae684f5ed99b2fc671b6cdf2163dd97c2127d324b",
+    "digest_line_ne": "नेपाली कांग्रेसको देउवा समूहले १५ औं महाधिवेशनलाई लक्षित गरी दोलखाको चरिकोटमा तयारी समितिको कार्यालय स्थापना गरेको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2019552/congress-deuba-groups-general-convention-preparation-office-established-in-dolakha"
+  },
+  {
+    "hash": "377b25ade62ab46ffe4bd6eba67e6e75c049a09f1bdcdaf57bc8d9f4e9b535ec",
+    "digest_line_ne": "नेपाली कांग्रेसको देउवा पक्षले केन्द्रीय सदस्य कुन्दनराज काफ्लेको उपस्थितिमा दोलखामा सम्पर्क कार्यालय उद्घाटन गरेको छ।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/592885/congress-deuba-group-inaugurates-liaison-office-in-dolakha"
+  },
+  {
+    "hash": "2cdfd387e5996bcaecb06ac3354ee49325ba398dbc62a77ff1d06207cfb219bd",
+    "digest_line_ne": "कर्णाली प्रदेश अस्पतालमा जनशक्ति अभावले उपचार प्रभावित भएको भन्दै सांसद विष्णुबहादुर खड्काले तत्काल विशेषज्ञ चिकित्सक खटाउन सरकारको ध्यानाकर्षण गराएका छन्।",
+    "source": "Nagarik News",
+    "category": "politics",
+    "link": "https://nagariknews.nagariknetwork.com/health/demand-to-send-specialist-doctors-to-karnali-81-79.html"
+  },
+  {
+    "hash": "abba90e9b25d8ad2f30cd4fc1871345c1e0cc9bea845c7cf9ad11e5cc820b15c",
+    "digest_line_ne": "बागमती प्रदेश सरकारले ओएन्डएम स्वीकृत गर्दै प्रदेश मातहतका कार्यालयको संख्या १८० मा सीमित गर्ने र दरबन्दी कटौती गर्ने निर्णय गरेको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2019542/bagmati-province-government-now-has-180-offices-staff-posts-cut"
+  },
+  {
+    "hash": "643309ee1783b43d0aee9cea9db49e769f15c81ddff95a7738d9d95bf147bb1d",
+    "digest_line_ne": "भारतीय ब्याटर अभिषेक शर्माले अफगानिस्तानविरुद्ध मात्र ३० बलमा शतक हान्दै रोहित शर्माको नाममा रहेको भारतका लागि सबैभन्दा छिटो टी–२० शतकको कीर्तिमान तोडेका छन्।",
+    "source": "OnlineKhabar",
+    "category": "sports",
+    "link": "https://www.onlinekhabar.com/2026/09/2019535/abhishek-breaks-rohits-record-by-scoring-a-century-in-30-balls"
+  },
+  {
+    "hash": "32aa954c402ddd2d60f30cf1a2f70fcca3301cdac5222837beecd26bee682821",
+    "digest_line_ne": "संसदले फोहोरजथाभावी फाल्नेहरूलाई १० लाखसम्म जरिवाना र जेल सजायको प्रस्ताव पेश गर्‍यो।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/592880/new-bill-in-parliament-to-impose-fines-of-up-to-1-million-and-imprisonment-for-littering"
+  },
+  {
+    "hash": "895136fdb78f8ed2ec7c9021a4164f867926aeef05630d9a096d6e67b543f4d8",
+    "digest_line_ne": "नयाँ दिल्लीमा भएको भेटमा भारतीय अर्थमन्त्री निर्मला सीतारमणले अर्थमन्त्रीलाई नेपालको विपद्पछिको पुनर्निर्माणमा सहयोग गर्ने आश्वासन दिएकी छन्।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2019519/indian-counterpart-in-delhi-assures-finance-minister-of-assistance-in-reconstruction"
+  },
+  {
+    "hash": "fba4a1fedb0e0cecb9f1552dbc2274d07b7480201604ce6493d5d7daba91933e",
+    "digest_line_ne": "बागमती प्रदेश सरकारले मन्त्रालय तथा मातहतका निकायहरूको ओएण्डएम स्वीकृत गर्दै १३४ वटा दरबन्दी कटौती गरेको छ।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/592878/134-posts-reduced-in-bagmati-province"
+  }
+]
