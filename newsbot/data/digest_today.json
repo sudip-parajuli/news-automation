@@ -1,1 +1,107 @@
-[]
+[
+  {
+    "hash": "2ff1fc32c04206d36d898866957fd703b76bd7f9b198466c84c4641e303a6608",
+    "digest_line_ne": "प्रतिनिधिसभाको बैठक आज अपराह्न १ बजे बस्दै छ, जहाँ विभिन्न विधेयकहरूमाथि छलफल र पारित गर्ने कार्यसूची रहेको छ।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/595932/house-of-representatives-meeting-to-be-held-today-here-is-the-possible-agenda"
+  },
+  {
+    "hash": "5291d9c2e41cf5ffa10f5b5eb33697d46dd93be1d9e85ef4b4a70b57fdcfab1a",
+    "digest_line_ne": "नेसन्स लिगमा एन्थोनी गोर्डन र ह्यारी केनको गोल प्रेरित इंग्ल्यान्डले १० खेलाडीमा सीमित चेकियालाई २–० ले पराजित गरेको छ।",
+    "source": "Ratopati",
+    "category": "sports",
+    "link": "https://www.ratopati.com/story/595926/england-beat-10-man-czech-republic-2-0"
+  },
+  {
+    "hash": "3b262939593c63c159da68d1b0d22e934e8ceea1c006a58da80904d98fc93e18",
+    "digest_line_ne": "स्पेन ४-१ ले क्रोएसिया हरायो, यामालले दुई गोल गरे।",
+    "source": "Ratopati",
+    "category": "sports",
+    "link": "https://www.ratopati.com/story/595925/yamal-scores-two-goals-to-give-spain-easy-win-over-croatia"
+  },
+  {
+    "hash": "1e29e262e709fd9c3463eaedbbd096c692d321e40b3edfb13a3387785388eefb",
+    "digest_line_ne": "बाढीपहिरोले अवरुद्ध नेपाल टेलिकमका १३० टावर शीघ्र सञ्चालनमा ल्याउन सञ्चारमन्त्रीले निर्देशन दिएका छन्।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2028774/communications-minister-directs-to-quickly-restore-nepal-telecom-services-disrupted-by-floods-and-landslides"
+  },
+  {
+    "hash": "2742157c2b87f6cda5a85097cee8a10c2e8a0117d56ce97477081e8b6d17da70",
+    "digest_line_ne": "बागमती र कर्णाली प्रदेशका मुख्यमन्त्रीहरूले बजेट कार्यान्वयनका लागि मन्त्री र सचिवहरूसँग कार्यसम्पादन सम्झौता गरे।",
+    "source": "Nagarik News",
+    "category": "politics",
+    "link": "https://nagariknews.nagariknetwork.com/politics/chief-minister-signs-performance-agreement-with-ministers-and-chief-secretaries-of-bagmati-and-karnali-69-37.html"
+  },
+  {
+    "hash": "732389df15dc85839a900e50f9641cf4b8a625bc52d906134559219d6b6efceb",
+    "digest_line_ne": "मन्त्रिपरिषद्‌ले संघीय निजामती सेवा विधेयकलाई संसद्‌मा पेस गर्न स्वीकृति दिएको छ।",
+    "source": "OnlineKhabar",
+    "category": "tech",
+    "link": "https://www.onlinekhabar.com/2026/09/2028766/cabinet-approves-submission-of-federal-civil-service-bill-to-parliament"
+  },
+  {
+    "hash": "1c854d6b710c83ebc16ff8c809985b214f82457c8ae5cf56b34dc569f19c2f60",
+    "digest_line_ne": "अपेनले प्रधानमन्त्री दैवी प्रकोप उद्धार कोषमा ११ लाख रुपैयाँ सहयोग रकम हस्तान्तरण गरेको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2028758/apen-donated-rs-1-1-million-to-the-prime-ministers-disaster-relief-fund"
+  },
+  {
+    "hash": "b50902fa17238271f5d0243e899eebbc8832a66d05f4b7e9715f899872e7fe9d",
+    "digest_line_ne": "एन्फा छानबिनका क्रममा थप नयाँ तथ्यहरू भेटिएकाले सीआईबीले अनुसन्धान जारी राखेको खेलकुदमन्त्री पोखरेलले बताएका छन्।",
+    "source": "OnlineKhabar",
+    "category": "sports",
+    "link": "https://www.onlinekhabar.com/2026/09/2028737/more-news-about-anfa-cib-is-investigating-minister-pokharel"
+  },
+  {
+    "hash": "4b7a90a81a1830cf59c8724217ea5b73c35b825d69014694c379f7d3ec7aab5e",
+    "digest_line_ne": "एमाले नेता ऐन महरले वर्तमान सरकारको छ महिनाको कार्यकाल असफल रहेको र कार्यशैली पञ्चायतको पुनरावृत्ति जस्तै देखिएको आरोप लगाएका छन्।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2028719/ain-mahars-allegation-the-governments-working-style-began-to-look-like-a-repetition-of-the-panchayat"
+  },
+  {
+    "hash": "1e7fa2971e4e4a31187cfd737131c400292e1491fbda1095ec37c87a60714d6d",
+    "digest_line_ne": "कर्णालीका मुख्यमन्त्री शाहीले मन्त्रीहरूसँग कार्यसम्पादन सम्झौता गरी सेवा प्रवाह सुधार गर्ने प्रतिबद्धता जनाएको।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2028725/karnali-chief-minister-signs-performance-agreement-with-ministers"
+  },
+  {
+    "hash": "35d7df3273f76f9ed679d918cd6861d1fe762d2cce998a2a62d9ca8fff8569fb",
+    "digest_line_ne": "सर्वसम्मतिको नाममा प्रतिनिधि चयन गर्न खोजिएको आरोप लगाउँदै दैलेख कांग्रेसका असन्तुष्ट उम्मेदवारहरूले निर्वाचन कार्यालयमा तालाबन्दी गरेका छन्।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2028694/dailekh-2-congress-convention-lockdown-over-preparations-to-post-a-notice-of-consensus-without-consensus"
+  },
+  {
+    "hash": "181e337f7dc3c76318c12c969117b5cc226adc3691728f0e32b13d36974f241f",
+    "digest_line_ne": "रम लामाले सरकार परिवर्तनसँगै विश्वविद्यालयका पदाधिकारी बदल्ने परम्परा अन्त्य गर्न माग गरे।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2028698/demand-to-end-the-tradition-of-changing-university-officials-with-the-change-of-government"
+  },
+  {
+    "hash": "88ab300d42d4d11df3adf3a794ad85bcf13ff848950c003dc48dc8aa9e33da68",
+    "digest_line_ne": "मोरङ-१ कांग्रेस अधिवेशनमा पूर्व मन्त्रीलाई सभापति उम्मेदवारले स्टेजमै धकेले, जसले नेताबीच बहस निम्त्यायो।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2028686/morang-1-congress-convention-district-president-himself-intervened"
+  },
+  {
+    "hash": "ad21e9a0b87d0bbc37070678b07f58af79a9089372a6c4f3be78757e5daa38ee",
+    "digest_line_ne": "गण्डकीले भुटानलाई ९७ रनको लक्ष्य ११ ओभरमा २ विकेट गुमाउँदै सजिलै हरायो।",
+    "source": "OnlineKhabar",
+    "category": "sports",
+    "link": "https://www.onlinekhabar.com/2026/09/2028684/gandakis-easy-victory-over-bhutan"
+  },
+  {
+    "hash": "ccfa1f76533d8dacc622d2239b8bfb9f160c6d12fcc8a4e39d79ae74cec3bcfd",
+    "digest_line_ne": "भारतीय निर्वाचन आयोगअघि वामपन्थी दलहरूले गरेको प्रदर्शनका क्रममा प्रहरीले केही नेताहरूलाई नियन्त्रणमा लिएको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/09/2028675/left-parties-protest-in-front-of-election-commission-of-india-some-leaders-arrested"
+  }
+]
