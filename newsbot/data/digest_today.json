@@ -1,1 +1,107 @@
-[]
+[
+  {
+    "hash": "29d8bd34744f5c848b41dbd1794bb0384141cf4768e9810051b0052456392030",
+    "digest_line_ne": "जुम्ला निर्वाचन कार्यालयले १,०९६ नयाँ मतदाता दर्ता गरेको छ।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/596219/1906-new-voters-added-in-jumla"
+  },
+  {
+    "hash": "e5c4409e23eb809ac215f3e6b6de776c0a92cfee98a2fd1fe2e228267409afae",
+    "digest_line_ne": "वीरगन्जका उद्योगी‑व्यवसायीले आज प्रचण्ड र माधवकुमारसँग उद्योग‑सम्बन्धी समस्याबारे छलफल गरे।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/596216/birgunj-industrialists-and-businessmen-hold-discussions-with-former-prime-ministers"
+  },
+  {
+    "hash": "1718b2d4ce451ce84807ce888d479ba9742f807ced67a473f5546fdd225bfaa3",
+    "digest_line_ne": "नेपाली कांग्रेसका महामन्त्री पौडेलले आर्थिक विकासलाई प्रमुख प्राथमिकता बनाउनु आवश्यक भन्दै बक्तव्य दिएका छन्।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/596217/lets-prioritize-economic-issues-general-secretary-poudel"
+  },
+  {
+    "hash": "3db0465cd7da4aff32a9e6795275357c2d6c7f890846f0ee27f811c4c01f6437",
+    "digest_line_ne": "शुभमन गिलको दोहोरो शतक र रोहित शर्माको शतकको मद्दतमा भारतले वेस्ट इन्डिजलाई ८ विकेटले हराउँदै एकदिवसीय शृङ्खला २-० ले जितेको छ।",
+    "source": "Ratopati",
+    "category": "sports",
+    "link": "https://www.ratopati.com/story/596215/shubman-gills-double-century-helps-india-defeat-west-indies-clinch-series-2-0"
+  },
+  {
+    "hash": "ae62e012d87bbac6a7e8794df58fead6647f1c525e6c8efaef50cc89c20fc618",
+    "digest_line_ne": "शुभमन गिलले 117 बलमा दोहोरो शतक बनाइ भारतलाई 406 रनको लक्ष्य हासिल गराए।",
+    "source": "OnlineKhabar",
+    "category": "sports",
+    "link": "https://www.onlinekhabar.com/2026/09/2029693/shubman-gill-who-scored-a-double-century-created-these-records"
+  },
+  {
+    "hash": "361f637bbe7496732d6221f005e6b6d8d1f9bb702c29228646399f018606a35f",
+    "digest_line_ne": "UAE‑Israel मार्गको विमान आपत्कालीन संकेतपछि साउदी अरबमा अवतरण गर्यो, यात्रुहरूको सहयोगले ठूलो दुर्घटना टर्‍यो।",
+    "source": "Ratopati",
+    "category": "tech",
+    "link": "https://www.ratopati.com/story/596214/terror-in-the-sky-passengers-courage-averts-major-accident"
+  },
+  {
+    "hash": "920679ed73daf2ef83940332521a4fd998db7eb21a5d3644104fb566d5a4ddd2",
+    "digest_line_ne": "गिलको दोहोरो शतक र रोहितको शतकले भारतलाई वेस्ट इन्डिज विरुद्ध कीर्तिमानी जीत दिलायो।",
+    "source": "OnlineKhabar",
+    "category": "sports",
+    "link": "https://www.onlinekhabar.com/2026/09/2029660/gills-double-century-rohits-century-leads-india-to-record-win"
+  },
+  {
+    "hash": "5ba0adcfe2703ac2ccdda7665ed64fa4dd49a5c301c839d0a8ae69e4f1a57cc8",
+    "digest_line_ne": "वनमन्त्री चौधरीलाई ४०‑plus संघसंस्थाबाट जलवायु नीति २०८३ सम्बन्धी सुझावहरू पेश गरियो।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/596211/suggestions-for-a-new-climate-policy-presented-to-forest-minister-chaudhary"
+  },
+  {
+    "hash": "11a27c7ef1ade2e2cf5eb23dbd5b6c47a1ddb63558bd178f2f55197767c31c9c",
+    "digest_line_ne": "भोटेकोशी नदी बाढिपछि प्रधानमन्त्री उद्धार र राहत कोषको मौज्दात १६ अर्ब १५ करोड रुपैयाँ नाघ्यो।",
+    "source": "Nagarik News",
+    "category": "politics",
+    "link": "https://nagariknews.nagariknetwork.com/politics/prime-minister-s-fund-balance-exceeds-rs-16-15-billion-62-58.html"
+  },
+  {
+    "hash": "1155c77bbe2e80d4eb35c8fb791533c3a7efc18a271385a8d8c0af7965b73851",
+    "digest_line_ne": "सरकारले २१‑३५ वर्षका सरकारी कर्मचारीहरूका लागि प्रजनन दर बढाउन डेटिङ सेवा सुरु गरेको छ।",
+    "source": "Nagarik News",
+    "category": "politics",
+    "link": "https://nagariknews.nagariknetwork.com/others/this-country-launched-a-dating-service-for-employees-to-increase-fertility-rates-40-21.html"
+  },
+  {
+    "hash": "ab98ce72075b279de627d2cbd659ab829e5b61c29d06a6bb216f36966a82ea4e",
+    "digest_line_ne": "मोरङ‑४ र पाँचथरका निर्वाचनमा कांग्रेसका महामन्त्री घिमिरे र नेता आङ्देम्बे सर्वाधिक मतले विजयी भएका छन्।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/596199/general-secretary-gururaj-ghimire-and-leader-bhishmaraj-angdembe-won-with-the-highest-number-of-votes"
+  },
+  {
+    "hash": "66e8a913d0c0de8264dc38d74332498bb44e79fef2fc361240996b2919147198",
+    "digest_line_ne": "रोहित शर्माले वेस्टइन्डिजविरुद्धको खेलमा 12,000 ODI रन र 35औँ शतक हासिल गरे।",
+    "source": "Ratopati",
+    "category": "sports",
+    "link": "https://www.ratopati.com/story/596198/rohit-completes-12000-odi-runs-also-scores-35th-odi-century"
+  },
+  {
+    "hash": "f9e31c1f20e58536397c00091fe84e9962da407e7fd49d37b1112c08b9eff9e4",
+    "digest_line_ne": "मन्त्रिले सुधारलाई रूपान्तरणको लक्ष्यमा सीमित गर्न र संरचनाको अन्तिम रूप निर्धारण चरणमा मन्त्रालयको अभाव जनाए।",
+    "source": "Nagarik News",
+    "category": "politics",
+    "link": "https://nagariknews.nagariknetwork.com/politics/reforms-should-be-for-transformation-not-distortion-minister-mehta-18-18.html"
+  },
+  {
+    "hash": "c0573817654e61afde3cead8f22211de715e7c590a577ba98855867df6b23756",
+    "digest_line_ne": "आयल निगमले बाढी‑पहरी असर र चाडपर्वलाई ध्यानमा राखी पेट्रोलियमको मूल्य स्थिर राख्यो।",
+    "source": "OnlineKhabar",
+    "category": "tech",
+    "link": "https://www.onlinekhabar.com/2026/09/2029666/petroleum-prices-remain-unchanged-considering-festivals-and-consumer-interests-oil-corporation"
+  },
+  {
+    "hash": "8a4a7948f4e278157bd3448505917ac7c70ec8a6d205722324dbac776f75c515",
+    "digest_line_ne": "नेपाली कांग्रेसका नेता डा. शशांक कोइरालाले बालेन शाहको सत्ता आरोहणमा रअ, चीन वा अमेरिका जस्ता बाह्य शक्तिको हात हुन सक्ने आशंका व्यक्त गरेका छन्।",
+    "source": "Nagarik News",
+    "category": "politics",
+    "link": "https://nagariknews.nagariknetwork.com/politics/how-did-he-become-prime-minister-which-forces-supported-him-82-55.html"
+  }
+]
