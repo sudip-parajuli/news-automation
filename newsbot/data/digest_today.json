@@ -1,1 +1,107 @@
-[]
+[
+  {
+    "hash": "49cd56fe7ce1490298fdbc6571eeeae6baa9770b02c7ca705ec9c42317c137be",
+    "digest_line_ne": "प्रतिस्पर्धी श्यामकृष्ण खड्गीलाई पराजित गर्दै गगनकुमार थापा नेपाली कांग्रेसको नयाँ सभापतिमा निर्वाचित भएका छन्।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/598538/who-is-the-newly-elected-nepali-congress-president-gagan-thapa"
+  },
+  {
+    "hash": "828f39ff781b80043c5815ba2ed6cf9cbbbf53ac6045b4d739069c3ae43670b2",
+    "digest_line_ne": "नेपाली कांग्रेसको १५औँ महाधिवेशनबाट ६ हजार ५८४ मत ल्याउँदै गगनकुमार थापा पार्टी सभापतिमा विजयी भएका छन्।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/598537/gagan-kumar-thapa-elected-as-nepali-congress-president"
+  },
+  {
+    "hash": "0117a1cb5ea4ba424b038ebb628621df7b8813f6971392d5851817e379a06554",
+    "digest_line_ne": "नेपाली कांग्रेसको १५औँ महाधिवेशनबाट गगनकुमार थापा नयाँ सभापतिमा निर्वाचित भएका छन्।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/598532/counting-of-votes-for-the-post-of-congress-president-continues"
+  },
+  {
+    "hash": "46456873630f88567dcaf63cb20a82a081f1a9c578f2f0fb075bc99bd39d483d",
+    "digest_line_ne": "नेपाली कांग्रेस महाधिवेशनमा सभापति पदको मतगणना राष्ट्रिय सभागृहमा गर्ने तयारी भइरहँदा अन्य पदका मतपेटिका सानेपा लगिँदै छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/10/2036183/congress-general-convention-ballot-boxes-for-positions-other-than-the-president-are-being-taken-to-sanepa"
+  },
+  {
+    "hash": "f59bbed20610155f32b49ebea7be762ac7920568d2e22627b990b34ed6e6a71d",
+    "digest_line_ne": "वर्षाका कारण प्रभावित बनेको नेपाली कांग्रेसको सभापति पदको मतगणना मतपेटिकाहरू राष्ट्रिय सभा गृहमा सारेर पुनः सुरु गरिएको छ।",
+    "source": "Ratopati",
+    "category": "tech",
+    "link": "https://www.ratopati.com/story/598530/counting-of-votes-for-the-congress-president-which-was-halted-due-to-rain-begins-ballot-boxes-brought-from-the-open-platform"
+  },
+  {
+    "hash": "baa0ca02c2f987e145bb43ede29302fbd05ec117299577631daedeaa2d1764a3",
+    "digest_line_ne": "जापानमा हुने पाँचौँ एसियाली पारा खेलकुदमा नेपालका ८ खेलका १९ खेलाडीले प्रतिस्पर्धा गर्ने भएका छन् र टोलीलाई बिदाइ गरिएको छ।",
+    "source": "OnlineKhabar",
+    "category": "sports",
+    "link": "https://www.onlinekhabar.com/2026/10/2036148/nepali-team-bids-farewell-to-paralympics-19-players-from-8-sports-to-compete"
+  },
+  {
+    "hash": "27f3e71d2e0f083e58b37bdcbd586419a0ea4cf29ffe298acffae89e7567b4ea",
+    "digest_line_ne": "निजामती ऐन संशोधन अध्यादेशको त्रासका कारण संघीय संसद् सचिवालयका ७ जना कर्मचारीले राजीनामा दिएका छन्।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/10/2035833/ordinance-scare-in-parliament-secretariat-7-employees-resign"
+  },
+  {
+    "hash": "ef9606081a5ede1c1d1e16b628a19a6b5641737ac11de588957ceaa6a42bf513",
+    "digest_line_ne": "मापदण्डको विषय उठेपछि नेकपा एमालेको स्थायी कमिटी बैठकमा केन्द्रीय सदस्य मनोनयनको प्रस्ताव रोकिएको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/10/2036062/the-nomination-proposal-was-stopped-after-the-issue-of-criteria-was-raised-in-the-uml-standing-committee"
+  },
+  {
+    "hash": "3708acdb8bf0e6d71bfa5c2d22c96fe9321f1e0d586c352bb881a23c530a34ae",
+    "digest_line_ne": "२०औं एसियाडमा कांस्य पदक जितेका कराते खेलाडी तेन्जिङ शेर्पा र महिला कबड्डी टोलीलाई सरकारले नगद पुरस्कार दिने निर्णय गरेको छ।",
+    "source": "OnlineKhabar",
+    "category": "sports",
+    "link": "https://www.onlinekhabar.com/2026/10/2036129/how-much-prize-money-do-tenzing-and-the-kabaddi-players-who-won-medals-at-the-20th-asian-games-receive"
+  },
+  {
+    "hash": "8c5a2f0632119c0e481c45e3b70c17b847e08d251c64718009e05fd225482f88",
+    "digest_line_ne": "कांग्रेसको सभापति मतदान राति ९:३० सम्म नपुग्यो, मतगणनामा अनिश्चितता छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/10/2036135/congress-voting-not-completed-by-930-pm-confusion-in-vote-counting"
+  },
+  {
+    "hash": "4cbf9cb32c2ea34a4ac7673741c5b829b752cdc1b8cc8371486d038667348b2e",
+    "digest_line_ne": "कर्णालीका मुख्यमन्त्री मङ्गलबहादुर शाहीले मानसिक स्वास्थ्य समस्या गम्भीर जनस्वास्थ्यको विषय भएको भन्दै यसका चुनौती घटाउन प्रदेश सरकार प्रतिबद्ध रहेको बताएका छन्।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/10/2036128/karnali-government-committed-to-reducing-mental-health-challenges-chief-minister-shahi"
+  },
+  {
+    "hash": "aa769e0bae8dbf40db660ada29d0b85719ab5be6c22a0be3c5a6a2e8807bdddb",
+    "digest_line_ne": "एन्फाका अध्यक्ष पंकज विक्रम नेम्वाङ र महासचिव किरण राईविरुद्ध पक्राउ पुर्जी जारी भएको छ भने कोषाध्यक्ष र लेखापाल धरौटीमा रिहा भएका छन्।",
+    "source": "Setopati",
+    "category": "sports",
+    "link": "https://www.setopati.com/sports/football/400488"
+  },
+  {
+    "hash": "1f59567f359a60892d95e2e76f4d1544d9d8e5ef53ae4bb51c70ce97ac2451b7",
+    "digest_line_ne": "परराष्ट्रमन्त्री शिशिर खनाल र अष्ट्रेलियाकी गभर्नर-जनरल साम मोस्टिनबीच द्विपक्षीय सम्बन्ध, नेपाली विद्यार्थीको हित र जलवायु सहकार्यबारे भेटवार्ता भएको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/10/2036125/foreign-minister-khanal-meets-with-governor-general-mostyn-of-canberra-australia"
+  },
+  {
+    "hash": "df2758643ae2994d26b8165636fa18179f8111a036f20631acd2480634efd370",
+    "digest_line_ne": "गृह मन्त्रालयले पदीय आचरण विपरीत कार्य गर्ने र सूचना चुहावटमा संलग्न प्रहरी कर्मचारीहरूमाथि सूक्ष्म निगरानी भइरहेको जनाएको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/10/2036123/every-police-officer-who-commits-misconduct-is-being-monitored-ministry-of-home-affairs"
+  },
+  {
+    "hash": "c8c02fc6ab88260fc76630112f5f43ad2edc1fe0484260166568dbe70a7d3e2a",
+    "digest_line_ne": "ककरोच पार्टीको प्रदर्शनलाई ध्यानमा राख्दै भारत सरकारले दिल्लीमा २४ घण्टाका लागि इन्टरनेट सेवा बन्द गर्ने निर्णय गरेको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/10/2036121/indian-government-shuts-down-internet-in-delhi-ahead-of-cockroach-party-protest"
+  }
+]
