@@ -103,5 +103,110 @@
     "source": "OnlineKhabar",
     "category": "politics",
     "link": "https://www.onlinekhabar.com/2026/10/2036121/indian-government-shuts-down-internet-in-delhi-ahead-of-cockroach-party-protest"
+  },
+  {
+    "hash": "9cf805aee4ee1ce211ac81c5c6f38b2303a617f82af44afc09a0fe3e9b7d1ef2",
+    "digest_line_ne": "मुद्दा सेटिङ छानबिनका क्रममा पूर्वप्रधानन्यायाधीश चोलेन्द्रशमशेर राणा र उच्च प्रहरी अधिकारीहरूसँग इनाम सापकोटाको फोन सम्पर्क जोडिएको पाइएको छ।",
+    "source": "The Kathmandu Post",
+    "category": "politics",
+    "link": "https://kathmandupost.com/national/2026/10/10/who-is-inam-sapkota-the-man-linked-to-cholendra-rana-and-top-police-officials"
+  },
+  {
+    "hash": "08573fcb99f5c82b7d88d8310359b1e36eb9e1c680f4632460ec8560ad9c7659",
+    "digest_line_ne": "प्रतिद्वन्द्वी श्यामकृष्ण खड्गीलाई पराजित गर्दै ९४ प्रतिशत मतका साथ गगन थापा नेपाली कांग्रेसको सभापतिमा निर्वाचित।",
+    "source": "The Kathmandu Post",
+    "category": "politics",
+    "link": "https://kathmandupost.com/politics/2026/10/10/gagan-thapa-wins-congress-presidency-with-94-percent-of-the-vote"
+  },
+  {
+    "hash": "7c434c77a437eb85c748c756808b40a7a6af7063cd4458efd669992aa6313555",
+    "digest_line_ne": "नेपाली कांग्रेसका वरिष्ठ नेता विश्वप्रकाश शर्माले नवनिर्वाचित सभापति गगन थापालाई शुभकामना दिँदै पार्टीभित्रका भिन्न मतहरूलाई जोडेर अघि बढ्न आग्रह गरेका छन्।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/10/2036236/wishing-gagan-well-bishwaprakash-said-it-is-the-beginning-of-a-journey-not-the-achievement-of-a-goal"
+  },
+  {
+    "hash": "8382d104d13fb4ae09a168986e76d8eff7de80abe14bfadb98476b4ee10ccb8c",
+    "digest_line_ne": "अमेरिकामा इन्धनको मूल्य नियन्त्रण गर्न रुसबाट डिजेल आयात गर्ने राष्ट्रपति ट्रम्पको घोषणाप्रति युक्रेन र युरोपेली देशहरूले आपत्ति जनाएका छन्।",
+    "source": "Ratopati",
+    "category": "tech",
+    "link": "https://www.ratopati.com/story/598549/trump-signs-deal-to-import-diesel-from-russia-zelensky-objects-europe-worries-putin-will-become-stronger"
+  },
+  {
+    "hash": "d089ab6f2b579f20cfac3fc5eafb28ad949d18c7883d17b6656e4242310fc3f1",
+    "digest_line_ne": "कर्णाली प्रदेश सरकारले अलपत्र परेका पुराना खानेपानी आयोजना पूरा गर्न चालु आर्थिक वर्षमा ११ करोड ८० लाख रुपैयाँ विनियोजन गरेको छ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/10/2036233/budget-of-rs-118-million-to-complete-old-drinking-water-projects-in-karnali"
+  },
+  {
+    "hash": "3ea560d547b15fffc44d78802ad194d4a81b0f62aa2565db83960dd76fa78b1c",
+    "digest_line_ne": "सीजेपीको प्रदर्शन रोक्न नयाँ दिल्लीमा ४५ वटा मेट्रो स्टेसन बन्द गर्दै सुरक्षा व्यवस्था कडा पारिएको छ।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/598548/tight-security-in-delhi-to-prevent-cjps-protest-45-metro-stations-closed"
+  },
+  {
+    "hash": "d1cffa4972fd7a7b6de61069f3ff3d9a8f3ac50107bce8a5c258d080507c76f5",
+    "digest_line_ne": "कोशी प्रदेशमा बजेट र नीतिगत घोषणाको प्रभावकारी कार्यान्वयन जाँच्न निजी क्षेत्र र सेजनले ‘बजेट वाच’ अभियान सुरु गरेका छन्।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/598546/industrialists-launch-budget-watch"
+  },
+  {
+    "hash": "2574f3a00b29ba7ef5c3e5461bc1d18697d01699a7cdf78f69133f2410289c3c",
+    "digest_line_ne": "साहिबजादा फरहानको आक्रामक ब्याटिङको मद्दतले पाकिस्तानले श्रीलंकाविरुद्धको टी-२० अन्तर्राष्ट्रिय खेलमा सानदार जित हात पारेको छ।",
+    "source": "Nagarik News",
+    "category": "sports",
+    "link": "https://nagariknews.nagariknetwork.com/sports/sahibzada-farhan-s-explosive-batting-leads-pakistan-to-a-stunning-victory-over-sri-lanka-69-69.html"
+  },
+  {
+    "hash": "5b1d79c96ab9be3c0d0efb97344966d5146710a8de40c3a3adf04fe8c2f9de75",
+    "digest_line_ne": "आइसिसी विश्वकप लिग-२ मा ओमानको जितसँगै नेपालको शीर्ष चारभित्र पर्ने सम्भावना समाप्त भएको छ।",
+    "source": "Nagarik News",
+    "category": "sports",
+    "link": "https://nagariknews.nagariknetwork.com/sports/nepal-s-top-four-prospects-are-over-br-49-57.html"
+  },
+  {
+    "hash": "1d40411d932dfdb85260db3b11498affec4d882dbe2cc50688c84a00fafbc05b",
+    "digest_line_ne": "सुदूरपश्चिम प्रदेशको मुख्य न्यायाधिवक्तामा निरञ्जन विष्ट नियुक्त भई आजै शपथ लिएका छन्।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/598545/niranjan-bista-appointed-as-chief-advocate-of-sudurpaschim"
+  },
+  {
+    "hash": "e2829c3ca2348807564952c957f72200a281b2fdceab1e0af43c363803338502",
+    "digest_line_ne": "दसैं नजिकिँदै गर्दा उपत्यकाका बजारहरूमा सामानको मूल्य ५० प्रतिशतसम्म बढेपछि उपभोक्ता मारमा परेका छन्।",
+    "source": "Nagarik News",
+    "category": "sports",
+    "link": "https://nagariknews.nagariknetwork.com/economy/price-hikes-of-up-to-50-percent-consumers-hit-hard-ahead-of-dashain-br-98-91.html"
+  },
+  {
+    "hash": "2ecc8068d63e6c32c2a7c19e99fc79cf19aeb4a095a33fdebbe1850615c8bee1",
+    "digest_line_ne": "शाइ होपको विस्फोटक शतकको मद्दतमा वेस्ट इन्डिजले दोस्रो टी-२० खेलमा भारतमाथि ऐतिहासिक जित हासिल गरेको छ।",
+    "source": "Nagarik News",
+    "category": "sports",
+    "link": "https://nagariknews.nagariknetwork.com/sports/shai-hope-s-century-leads-west-indies-to-historic-win-over-india-73-16.html"
+  },
+  {
+    "hash": "653d922c33eda6faeffa8f5d786219b3d530a97a2f8eede719c548abad5389e8",
+    "digest_line_ne": "परराष्ट्रमन्त्री शिशिर खनाल र अष्ट्रेलियाका गभर्नर-जनरल साम मोस्टिनबिच द्विपक्षीय सम्बन्ध र नेपाली विद्यार्थीको हितबारे भेटवार्ता भएको छ।",
+    "source": "Ratopati",
+    "category": "politics",
+    "link": "https://www.ratopati.com/story/598542/foreign-minister-khanal-meets-with-australian-governor-general-mostyn"
+  },
+  {
+    "hash": "1bb5ecd3d67283b2e0dba116fd66d4f02b8828b79d1390c51b4dd1b0b21875a5",
+    "digest_line_ne": "नेपाली कांग्रेसको १५औँ महाधिवेशनबाट गगनकुमार थापा भारी मतान्तरसहित पार्टी सभापतिमा निर्वाचित भएका छन्।",
+    "source": "Nagarik News",
+    "category": "politics",
+    "link": "https://nagariknews.nagariknetwork.com/politics/gagan-thapa-elected-as-nepali-congress-president-with-a-huge-margin-62-51.html"
+  },
+  {
+    "hash": "764b5646c9bdb3ab8aae15bfd2ca0972461d0740c6cfdecb6038e549dd138bd0",
+    "digest_line_ne": "नेपाली कांग्रेसको १५औँ महाधिवेशनअन्तर्गत सभापतिबाहेकका अन्य पदाधिकारीहरूको मतगणना आज दिउँसोदेखि सानेपास्थित पार्टी कार्यालयमा सुरु हुँदैछ।",
+    "source": "OnlineKhabar",
+    "category": "politics",
+    "link": "https://www.onlinekhabar.com/2026/10/2036194/nepali-congress-general-convention-counting-of-votes-for-all-remaining-office-bearers-to-begin-this-afternoon"
   }
 ]
