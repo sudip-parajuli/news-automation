@@ -1,40 +1,60 @@
-# Trending Today — Nepali News Social Poster
+# Trending Today — Nepali News Automation
 
-Automated news poster for the **Trending Today** Facebook and Instagram pages:
+RSS collection, Nepali caption preparation and scheduled social publishing for
+[Trending Today on Facebook](https://www.facebook.com/ontrending24) and
+[Instagram](https://www.instagram.com/ontrendingtoday/).
 
-- Facebook: https://www.facebook.com/ontrending24
-- Instagram: https://www.instagram.com/ontrendingtoday/
+The current implementation prepares branded image cards and a grouped daily
+digest. Older video-generation code is no longer part of this repository's
+current application.
 
-This repo used to generate and upload YouTube videos. YouTube banned the channel, so the
-video pipeline (Remotion, MoviePy, TTS, YouTube upload, etc.) has been removed. The repo
-now does one thing: pull real news from RSS feeds, write an original short **Nepali**
-caption for each story, and post it as **text** to Facebook and as a **text card image**
-to Instagram (Instagram's API does not support pure text posts). No videos, no audio.
+## How the current pipeline works
 
-## How it works
+| Phase | Responsibility |
+| --- | --- |
+| `prepare` | Fetch feeds, skip recorded items, prioritize stories, generate captions/digest lines and queue selected image cards |
+| `publish` | Publish queued cards through configured Meta accounts and update recorded publication state |
+| `digest` | Group the day's prepared items into a Facebook text digest |
 
-A GitHub Actions workflow (`.github/workflows/news_social.yml`) runs every 30 minutes:
+Daily/per-run caps and card retention are configured in `newsbot/config.py`.
+Source references are retained alongside prepared content. Hash-based history
+reduces repeat processing; it is not a guarantee that paraphrases or concurrent
+runs can never create duplicate coverage.
 
-1. **Fetch** — pull recent items from Nepali RSS feeds (OnlineKhabar, Setopati, Ratopati,
-   Nagarik News, Annapurna Post, The Kathmandu Post) and international feeds (BBC, Al
-   Jazeera), see `newsbot/rss_sources.py`.
-2. **Dedupe** — skip anything already posted before, tracked by hash in
-   `newsbot/data/posted_history.json`. The same story is never posted twice.
-3. **Prioritize** — Nepal politics and sports first, then other Nepal news, then
-   international news.
-4. **Write** — Gemini rewrites each story as an original, factual Nepali caption +
-   headline + hashtags (`newsbot/caption.py`). If a Gemini key fails or is rate-limited,
-   it automatically tries the next `GEMINI_API_KEY2/3/4/5`, then falls back to
-   `GROQ_API_KEY` and its extra keys the same way — one working key is enough to keep
-   the run going.
-5. **Render** — a branded 1080×1350 text card image is generated for Instagram with
-   Pillow (`newsbot/card_image.py`). Facebook gets a plain text post.
-6. **Publish** — posts the text to the Facebook Page feed, and the card image + caption
-   to Instagram via the Graph API two-step container flow (`newsbot/poster_facebook.py`,
-   `newsbot/poster_instagram.py`).
+## Local preparation
 
-There's no fixed number of posts per day — every run posts whatever unseen stories it
-finds, capped at `MAX_POSTS_PER_RUN` (default 6) per run to avoid bursts.
+Use Python 3 and a virtual environment. Install `requirements.txt`, copy
+`.env.example` to `.env`, and supply development provider configuration.
+
+```sh
+python -m pip install -r requirements.txt
+python -m newsbot.main --phase prepare
+```
+
+Preparation can call an LLM and write generated files, but it does not itself
+request social publication. `publish` and `digest` are external publishing
+actions. Images must be reachable at the configured public URL before Meta can
+fetch them; the GitHub workflows handle their commit/push stage.
+
+## Source map and operating limits
+
+- `newsbot/rss_sources.py`, `fetch_news.py` — source collection.
+- `newsbot/dedupe.py` — history and duplicate tracking.
+- `newsbot/caption.py`, `card_image.py` — captions and branded cards.
+- `newsbot/main.py` — phase orchestration.
+- `.github/workflows/` — scheduled preparation, publication and digest jobs.
+
+Generated summaries require factual and editorial review. Source attribution,
+publication rights, model errors, provider quotas and partial platform failures
+remain operational responsibilities. No comprehensive automated regression suite
+is included; successful workflow runs alone do not verify news accuracy.
+
+## Integration configuration
+
+The retained setup below describes the existing provider and Meta configuration.
+Credentials stay in environment variables/GitHub secrets; keep generated content
+and history under review when enabling a scheduled run.
+
 
 ## Required GitHub secrets
 
@@ -46,8 +66,9 @@ finds, capped at `MAX_POSTS_PER_RUN` (default 6) per run to avoid bursts.
 | `FB_PAGE_ID` | Facebook Page ID for Trending Today |
 | `IG_ACCOUNT_ID` | Instagram Business Account ID linked to that Page |
 
-Only `GEMINI_API_KEY` and `GROQ_API_KEY` are required; the numbered extras (`2`, `3`, ...)
-are optional fallbacks — add as many or as few as you have.
+Configure the model provider keys for caption generation. The numbered extras
+(`2`, `3`, ...) are optional fallbacks. Social publication additionally requires
+the Meta access token and the relevant account IDs listed above.
 
 ### Getting `META_ACCESS_TOKEN`, `FB_PAGE_ID`, `IG_ACCOUNT_ID`
 
@@ -57,11 +78,9 @@ are optional fallbacks — add as many or as few as you have.
 2. Call `GET /me/accounts` to find the Trending Today Page and its **Page access token**
    and `id` (this `id` is `FB_PAGE_ID`).
 3. Call `GET /{FB_PAGE_ID}?fields=instagram_business_account` to get `IG_ACCOUNT_ID`.
-4. Exchange the Page access token for a **long-lived** token (Meta's
-   [access token guide](https://developers.facebook.com/docs/facebook-login/guides/access-tokens/get-long-lived))
-   so it doesn't expire every ~60 days, or generate it from a System User in a Meta
-   Business Portfolio for a token that effectively doesn't expire. Use that value as
-   `META_ACCESS_TOKEN`.
+4. Follow Meta's current [access-token documentation](https://developers.facebook.com/docs/facebook-login/guides/access-tokens/)
+   for the appropriate token type, permissions, validity and renewal. Store the
+   selected Page token as `META_ACCESS_TOKEN`; do not assume any token is permanent.
 
 ### Required repo setting
 
